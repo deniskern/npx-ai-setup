@@ -84,6 +84,18 @@ Run the same command again — the script auto-detects and offers:
 
 ---
 
+## Testing
+
+Run local smoke checks before publishing:
+
+```bash
+npm test
+```
+
+CI also runs `tests/smoke.sh` automatically on every pull request and push to `main`.
+
+---
+
 ## GitHub Releases (Slack-ready)
 
 AI Setup installs `.github/workflows/release-from-changelog.yml` into target projects.
