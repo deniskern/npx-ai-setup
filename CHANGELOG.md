@@ -11,6 +11,15 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 ## [Unreleased]
 
 
+## [v1.2.6] — 2026-03-06
+
+- **Template modernization**: migrated command templates and docs from deprecated `Task` tool wording to `Agent` wording for current Claude Code semantics
+- **Hooks expansion**: added `PostToolUseFailure` logging, `ConfigChange` auditing guard, and `TaskCompleted` gate hook templates with settings wiring
+- **Statusline improvements**: switched to workspace JSON fields, added lightweight git caching, and standardized generated `statusLine` settings (`type: command`, `padding`)
+- **Detection + safety**: improved Shopware/Shopify auto-detection signals, introduced local Shopware skill fallback, and hardened Shopware MCP setup to avoid writing credentials into `.mcp.json`
+- **Setup efficiency**: skipped expensive context regeneration in skills-only runs and deduplicated skill installs
+- **Quality gates**: added CI smoke workflow for PRs/main pushes and a tracked pre-push hook that runs `npm test`
+
 ## [v1.2.5] — 2026-03-05
 
 - **Spec 054**: Bang-Syntax Context Injection — `## Context` sections with `!git` commands in commit, review, pr commands eliminate 2-3 tool-call round-trips for context gathering
