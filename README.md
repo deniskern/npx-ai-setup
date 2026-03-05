@@ -94,6 +94,24 @@ npm test
 
 CI also runs `tests/smoke.sh` automatically on every pull request and push to `main`.
 
+To enforce tests before every push, install the tracked git hook once per clone:
+
+```bash
+npm run hooks:install
+```
+
+Check current hook path:
+
+```bash
+npm run hooks:status
+```
+
+Temporary bypass (only if needed):
+
+```bash
+SKIP_PREPUSH_TESTS=1 git push
+```
+
 ---
 
 ## GitHub Releases (Slack-ready)

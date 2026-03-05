@@ -17,7 +17,9 @@
     "onedot"
   ],
   "scripts": {
-    "test": "bash tests/smoke.sh"
+    "test": "bash tests/smoke.sh",
+    "hooks:install": "git config core.hooksPath .githooks",
+    "hooks:status": "git config --get core.hooksPath"
   },
   "license": "MIT"
 }

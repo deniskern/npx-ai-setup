@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ "${SKIP_PREPUSH_TESTS:-0}" = "1" ]; then
+  echo "Skipping pre-push tests (SKIP_PREPUSH_TESTS=1)."
+  exit 0
+fi
+
+echo "Running pre-push checks: npm test"
+npm test
+echo "Pre-push checks passed."
