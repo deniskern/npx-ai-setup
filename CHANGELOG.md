@@ -10,6 +10,15 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v1.2.7] — 2026-03-06
+
+- **Release automation hardening**: `release-from-changelog` now supports `create` tag events as a fallback for delayed push events; release docs/command include a manual workflow trigger backup.
+- **CodeRabbit plugin integration**: automatic registration of `coderabbitai/claude-plugin` in `extraKnownMarketplaces` + `enabledPlugins`, CLI install with fallback (`claude-plugin@coderabbitai` and `coderabbitai/claude-plugin`), plus installation summary and README coverage.
+- **Update visibility improvements**: `update-check` now runs on `SessionStart` and `UserPromptSubmit`; version source fallback chain (`npm` -> GitHub Release -> GitHub Tag); added CLI update notice and statusline badge `ai-setup vX -> vY`.
+- **Cross-repo context (framework-agnostic)**: new `cross-repo-context` SessionStart hook with preferred `.agents/context/repo-group.json` map and optional Shopware naming fallback.
+- **Multi-repo setup wizard**: `ai-setup` now offers an interactive prompt to create `.agents/context/repo-group.json` with parent-directory repo discovery and module assignment.
+- **Quality gates/tests**: smoke tests expanded for new functions and hook wiring (`show_cli_update_notice`, `setup_repo_group_context`, SessionStart hooks incl. `cross-repo-context`, and `repo-group.json` support).
+
 
 ## [v1.2.6] — 2026-03-06
 

@@ -74,6 +74,7 @@ CHECKS=(
   "setup.sh:install_hooks"
   "setup.sh:install_commands"
   "setup.sh:install_agents"
+  "setup.sh:setup_repo_group_context"
   "setup.sh:update_gitignore"
   "plugins.sh:install_gsd"
   "plugins.sh:install_claude_mem"
@@ -120,6 +121,18 @@ if awk '/"SessionStart"[[:space:]]*:[[:space:]]*\[/,/^[[:space:]]*\],?$/' templa
   pass "templates/claude/settings.json wires update-check.sh on SessionStart"
 else
   fail "templates/claude/settings.json missing SessionStart update-check.sh hook"
+fi
+
+if awk '/"SessionStart"[[:space:]]*:[[:space:]]*\[/,/^[[:space:]]*\],?$/' templates/claude/settings.json | grep -q 'cross-repo-context.sh'; then
+  pass "templates/claude/settings.json wires cross-repo-context.sh on SessionStart"
+else
+  fail "templates/claude/settings.json missing SessionStart cross-repo-context.sh hook"
+fi
+
+if grep -q 'repo-group.json' templates/claude/hooks/cross-repo-context.sh 2>/dev/null; then
+  pass "cross-repo-context hook supports repo-group.json map"
+else
+  fail "cross-repo-context hook missing repo-group.json map support"
 fi
 
 if awk '/"UserPromptSubmit"[[:space:]]*:[[:space:]]*\[/,/^[[:space:]]*\],?$/' templates/claude/settings.json | grep -q 'update-check.sh'; then

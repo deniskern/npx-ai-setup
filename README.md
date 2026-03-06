@@ -17,13 +17,41 @@ Supports Shopify, Nuxt, Next.js, Laravel, Shopware, Storyblok, or auto-detection
 | **CLAUDE.md** | Communication protocol, task routing (simple/medium/complex), verification gate |
 | **AGENTS.md** | Universal passive context for Cursor, Windsurf, Cline, and AGENTS.md-compatible tools |
 | **Settings** | Granular bash permissions, opusplan model, AUTOCOMPACT=30, ENABLE_TOOL_SEARCH |
-| **Hooks** | protect-files, auto-lint, circuit-breaker, context-freshness, update-check, notifications, SessionStart context reload, PostToolUseFailure log, ConfigChange audit, TaskCompleted gate, Stop quality gate |
+| **Hooks** | protect-files, auto-lint, circuit-breaker, context-freshness, update-check, cross-repo-context, notifications, SessionStart context reload, PostToolUseFailure log, ConfigChange audit, TaskCompleted gate, Stop quality gate |
 | **Rules** | `.claude/rules/` — general, testing, git, typescript (conditional) |
 | **Commands** | 16 slash commands for spec-driven development, reviews, releases, debugging |
 | **Agents** | 8 subagent templates for parallel verification, review, and architectural assessment |
 | **Context** | `.agents/context/` — STACK.md, ARCHITECTURE.md, CONVENTIONS.md (auto-generated) |
 | **GitHub** | `.github/copilot-instructions.md` + `.github/workflows/release-from-changelog.yml` |
 | **Skills** | AI-curated Claude Code skills matched to your stack via skills.sh |
+
+---
+
+## Multi-Repo Context (without naming convention)
+
+For projects split across multiple repositories (e.g. Shopware theme/plugin/shop or Laravel frontend/backend), add an optional map file:
+
+` .agents/context/repo-group.json `
+
+Example:
+
+```json
+{
+  "group": "or24",
+  "repos": [
+    { "name": "sw-theme-or24", "module": "theme", "path": "../sw-theme-or24" },
+    { "name": "sw-sub-theme-or24", "module": "sub-theme", "path": "../sw-sub-theme-or24" },
+    { "name": "sw-plugin-or24", "module": "plugin", "path": "../sw-plugin-or24" },
+    { "name": "sw-shop-or24", "module": "shop", "path": "../sw-shop-or24" }
+  ]
+}
+```
+
+On `SessionStart`, the `cross-repo-context` hook reads this file and injects a compact sibling-repo summary automatically.
+
+If the file is absent, it falls back to automatic discovery for `sw-<module>-<project>` naming.
+
+During `ai-setup`, you can create this file via an interactive prompt (`Multi-Repo Context` wizard).
 
 ---
 

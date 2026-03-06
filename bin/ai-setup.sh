@@ -139,6 +139,7 @@ install_specs
 install_commands
 install_shopify_skills
 install_agents
+setup_repo_group_context
 echo "📋 Writing installation metadata..."
 write_metadata
 update_gitignore

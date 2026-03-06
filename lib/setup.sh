@@ -236,6 +236,102 @@ install_agents() {
   done < <(find "$TPL/agents" -maxdepth 1 -type f -print0 | sort -z)
 }
 
+# Heuristic module detection from repository name.
+_detect_repo_module() {
+  local _name
+  _name=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')
+  case "$_name" in
+    *sub-theme*) echo "sub-theme" ;;
+    *theme*) echo "theme" ;;
+    *plugin*) echo "plugin" ;;
+    *shop*) echo "shop" ;;
+    *frontend*|*front-end*|*client*|*ui*) echo "frontend" ;;
+    *backend*|*back-end*|*api*|*server*) echo "backend" ;;
+    *core*) echo "core" ;;
+    *) echo "app" ;;
+  esac
+}
+
+# Optional wizard: creates .agents/context/repo-group.json for cross-repo context.
+setup_repo_group_context() {
+  local group_file=".agents/context/repo-group.json"
+  mkdir -p .agents/context
+
+  if [ -f "$group_file" ]; then
+    echo "🔗 Multi-repo context map already exists, skipping."
+    return 0
+  fi
+
+  echo ""
+  echo "🔗 Multi-Repo Context (optional)"
+  read -p "   Setup shared repo map (.agents/context/repo-group.json)? (y/N) " SETUP_MULTI_REPO
+  [[ "$SETUP_MULTI_REPO" =~ ^[Yy]$ ]] || return 0
+
+  local current_repo parent_dir default_group group_name
+  current_repo="$(basename "$PWD")"
+  parent_dir="$(cd .. && pwd)"
+  default_group="$current_repo"
+  if [[ "$current_repo" == *-* ]]; then
+    default_group="${current_repo##*-}"
+  fi
+
+  read -p "   Group name [${default_group}]: " group_name
+  [ -n "$group_name" ] || group_name="$default_group"
+
+  local repos_json
+  repos_json=$(jq -n --arg g "$group_name" '{group:$g,repos:[]}')
+
+  local selected=0
+  local dir repo_name include_ans module module_default rel_path
+  while IFS= read -r dir; do
+    [ -d "$dir" ] || continue
+    repo_name="$(basename "$dir")"
+
+    # Filter obvious non-project directories.
+    if [ ! -d "$dir/.git" ] && [ ! -f "$dir/package.json" ] && [ ! -f "$dir/composer.json" ]; then
+      continue
+    fi
+
+    if [ "$repo_name" = "$current_repo" ]; then
+      read -p "   Include ${repo_name} (current repo)? (Y/n) " include_ans
+      [[ "$include_ans" =~ ^[Nn]$ ]] && continue
+    else
+      read -p "   Include ${repo_name}? (y/N) " include_ans
+      [[ "$include_ans" =~ ^[Yy]$ ]] || continue
+    fi
+
+    module_default="$(_detect_repo_module "$repo_name")"
+    read -p "      Module for ${repo_name} [${module_default}]: " module
+    [ -n "$module" ] || module="$module_default"
+
+    if [ "$repo_name" = "$current_repo" ]; then
+      rel_path="."
+    else
+      rel_path="../${repo_name}"
+    fi
+
+    repos_json=$(printf '%s' "$repos_json" \
+      | jq --arg n "$repo_name" --arg m "$module" --arg p "$rel_path" '.repos += [{name:$n,module:$m,path:$p}]')
+    selected=$((selected + 1))
+  done < <(find "$parent_dir" -maxdepth 1 -mindepth 1 -type d ! -name ".*" | sort)
+
+  # Ensure current repo is present.
+  if ! printf '%s' "$repos_json" | jq -e --arg n "$current_repo" '.repos[]? | select(.name == $n)' >/dev/null 2>&1; then
+    module_default="$(_detect_repo_module "$current_repo")"
+    repos_json=$(printf '%s' "$repos_json" \
+      | jq --arg n "$current_repo" --arg m "$module_default" --arg p "." '.repos += [{name:$n,module:$m,path:$p}]')
+    selected=$((selected + 1))
+  fi
+
+  if [ "$selected" -lt 2 ]; then
+    echo "   ⏭️  Skipping map (need at least 2 repos in group)."
+    return 0
+  fi
+
+  printf '%s\n' "$repos_json" | jq '.' > "$group_file"
+  echo "   ✅ Created $group_file (${selected} repos)"
+}
+
 # Update .gitignore with AI setup entries
 update_gitignore() {
   echo "🚫 Updating .gitignore..."

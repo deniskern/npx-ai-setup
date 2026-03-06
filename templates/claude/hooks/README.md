@@ -11,6 +11,7 @@
 | `config-change-audit.sh` | ConfigChange | Audits config changes and blocks unsafe settings (`disableAllHooks`, `Bash(*)`) | Extend blocked settings checks |
 | `task-completed-gate.sh` | TaskCompleted | Blocks closing tasks with TODO/TBD/WIP markers or unresolved merge conflict markers | Adjust validation patterns |
 | `update-check.sh` | SessionStart + UserPromptSubmit | Checks for newer `ai-setup` versions (cached, non-blocking) and resets circuit-breaker log | Adjust cache TTL/source strategy |
+| `cross-repo-context.sh` | SessionStart | Loads sibling repo context via `.agents/context/repo-group.json` (preferred, any framework) or fallback `sw-<module>-<project>` discovery | Adjust map format, naming fallback, summary sources |
 | `context-freshness.sh` | UserPromptSubmit | Warns when `.agents/context/` is stale | Runs silently unless project files changed |
 
 **Exit codes:** `0` = pass, `1` = fail with feedback, `2` = blocked
