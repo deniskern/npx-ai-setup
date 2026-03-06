@@ -2,6 +2,49 @@
 # Fresh install steps: requirements, templates, hooks, commands, agents
 # Requires: core.sh ($TPL, $TEMPLATE_MAP, $SHOPIFY_SKILLS_MAP)
 
+# Install a template file, updating it if the template is newer.
+# Skips if installed file matches template checksum.
+# Updates silently if user hasn't modified the file (checksum matches .ai-setup.json).
+# Skips with notice if user has modified the file (preserves user changes).
+# Usage: _install_or_update_file <template_path> <target_path>
+_install_or_update_file() {
+  local src="$1"
+  local target="$2"
+  local name="${target##*/}"
+
+  if [ ! -f "$target" ]; then
+    mkdir -p "$(dirname "$target")"
+    cp "$src" "$target"
+    [[ "$target" == *.sh ]] && chmod +x "$target"
+    return 0
+  fi
+
+  # File exists — compare checksums
+  local tpl_cs cur_cs
+  tpl_cs=$(compute_checksum "$src")
+  cur_cs=$(compute_checksum "$target")
+
+  # Already identical — skip silently
+  [ "$tpl_cs" = "$cur_cs" ] && return 1
+
+  # Template is newer — check if user modified the installed file
+  if [ -f .ai-setup.json ] && command -v jq >/dev/null 2>&1; then
+    local stored_cs
+    stored_cs=$(jq -r --arg f "$target" '.files[$f] // empty' .ai-setup.json 2>/dev/null)
+    if [ -n "$stored_cs" ] && [ "$stored_cs" != "$cur_cs" ]; then
+      # User modified this file — don't overwrite
+      echo "  ⏭️  $target (user-modified, kept)"
+      return 1
+    fi
+  fi
+
+  # Not user-modified — safe to update
+  cp "$src" "$target"
+  [[ "$target" == *.sh ]] && chmod +x "$target"
+  echo "  ✅ $target (updated)"
+  return 0
+}
+
 # Check requirements: node >= 18, npm, jq, AI CLI detection
 # Sets: $AI_CLI
 check_requirements() {
@@ -97,11 +140,7 @@ install_agents_md() {
 install_settings() {
   echo "⚙️  Writing .claude/settings.json..."
   mkdir -p .claude
-  if [ ! -f .claude/settings.json ]; then
-    cp "$TPL/claude/settings.json" .claude/settings.json
-  else
-    echo "  .claude/settings.json already exists, skipping."
-  fi
+  _install_or_update_file "$TPL/claude/settings.json" .claude/settings.json
 }
 
 # Install hook scripts
@@ -111,12 +150,7 @@ install_hooks() {
 
   while IFS= read -r -d '' _hook_path; do
     _hook_name="${_hook_path##*/}"
-    if [ ! -f ".claude/hooks/$_hook_name" ]; then
-      cp "$_hook_path" ".claude/hooks/$_hook_name"
-      case "$_hook_name" in *.sh) chmod +x ".claude/hooks/$_hook_name" ;; esac
-    else
-      echo "  .claude/hooks/$_hook_name already exists, skipping."
-    fi
+    _install_or_update_file "$_hook_path" ".claude/hooks/$_hook_name"
   done < <(find "$TPL/claude/hooks" -maxdepth 1 -type f -print0 | sort -z)
 }
 
@@ -129,11 +163,7 @@ install_rules() {
     _rule_name="${_rule_path##*/}"
     # Skip typescript.md — handled conditionally below via TS_RULES_MAP
     [ "$_rule_name" = "typescript.md" ] && continue
-    if [ ! -f ".claude/rules/$_rule_name" ]; then
-      cp "$_rule_path" ".claude/rules/$_rule_name"
-    else
-      echo "  .claude/rules/$_rule_name already exists, skipping."
-    fi
+    _install_or_update_file "$_rule_path" ".claude/rules/$_rule_name"
   done < <(find "$TPL/claude/rules" -maxdepth 1 -type f -print0 | sort -z)
 
   # Conditional: install TypeScript rules only when TS files are detected
@@ -144,11 +174,7 @@ install_rules() {
     for _ts_mapping in "${TS_RULES_MAP[@]}"; do
       local _ts_tpl="${_ts_mapping%%:*}"
       local _ts_target="${_ts_mapping#*:}"
-      if [ ! -f "$_ts_target" ]; then
-        cp "$SCRIPT_DIR/$_ts_tpl" "$_ts_target"
-      else
-        echo "  $_ts_target already exists, skipping."
-      fi
+      _install_or_update_file "$SCRIPT_DIR/$_ts_tpl" "$_ts_target"
     done
   fi
 }
@@ -159,12 +185,7 @@ install_copilot() {
   while IFS= read -r -d '' _gh_path; do
     local _rel="${_gh_path#$TPL/github/}"
     local _target=".github/$_rel"
-    mkdir -p "$(dirname "$_target")"
-    if [ ! -f "$_target" ]; then
-      cp "$_gh_path" "$_target"
-    else
-      echo "  ${_target} already exists, skipping."
-    fi
+    _install_or_update_file "$_gh_path" "$_target"
   done < <(find "$TPL/github" -type f -print0 | sort -z)
 }
 
@@ -172,16 +193,8 @@ install_copilot() {
 install_specs() {
   echo "📋 Setting up spec-driven workflow..."
   mkdir -p specs/completed
-  if [ ! -f specs/TEMPLATE.md ]; then
-    cp "$TPL/specs/TEMPLATE.md" specs/TEMPLATE.md
-  else
-    echo "  specs/TEMPLATE.md already exists, skipping."
-  fi
-  if [ ! -f specs/README.md ]; then
-    cp "$TPL/specs/README.md" specs/README.md
-  else
-    echo "  specs/README.md already exists, skipping."
-  fi
+  _install_or_update_file "$TPL/specs/TEMPLATE.md" specs/TEMPLATE.md
+  _install_or_update_file "$TPL/specs/README.md" specs/README.md
   if [ ! -f specs/completed/.gitkeep ]; then
     touch specs/completed/.gitkeep
   fi
@@ -193,11 +206,7 @@ install_commands() {
   mkdir -p .claude/commands
   while IFS= read -r -d '' _cmd_path; do
     _cmd_name="${_cmd_path##*/}"
-    if [ ! -f ".claude/commands/$_cmd_name" ]; then
-      cp "$_cmd_path" ".claude/commands/$_cmd_name"
-    else
-      echo "  .claude/commands/$_cmd_name already exists, skipping."
-    fi
+    _install_or_update_file "$_cmd_path" ".claude/commands/$_cmd_name"
   done < <(find "$TPL/commands" -maxdepth 1 -type f -print0 | sort -z)
 }
 
@@ -215,11 +224,7 @@ install_shopify_skills() {
       if [ -f "$skill_dir/prompt.md" ] && [ ! -f "$skill_dir/SKILL.md" ]; then
         mv "$skill_dir/prompt.md" "$skill_dir/SKILL.md"
       fi
-      if [ ! -f "$local_target" ]; then
-        cp "$TPL/${local_tpl#templates/}" "$local_target"
-      else
-        echo "  $local_target already exists, skipping."
-      fi
+      _install_or_update_file "$TPL/${local_tpl#templates/}" "$local_target"
     done
   fi
 }
@@ -230,11 +235,7 @@ install_agents() {
   mkdir -p .claude/agents
   while IFS= read -r -d '' _agent_path; do
     _agent_name="${_agent_path##*/}"
-    if [ ! -f ".claude/agents/$_agent_name" ]; then
-      cp "$_agent_path" ".claude/agents/$_agent_name"
-    else
-      echo "  .claude/agents/$_agent_name already exists, skipping."
-    fi
+    _install_or_update_file "$_agent_path" ".claude/agents/$_agent_name"
   done < <(find "$TPL/agents" -maxdepth 1 -type f -print0 | sort -z)
 }
 
