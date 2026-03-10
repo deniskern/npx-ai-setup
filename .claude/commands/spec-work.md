@@ -38,20 +38,28 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
    ```
    Check off each item (`[x]`) as you complete it so the user can follow along.
 
-9. **Execute each step** in order:
-   - Implement the change
-   - After completing a step, edit the spec file to check it off: `- [ ]` -> `- [x]`
-   - Update the printed progress checklist to reflect the completed step
-   - If a step is blocked or unclear, stop and ask the user
+9. **Resume check**: Before executing, scan the spec file for already-checked steps (`- [x]`). If any are found, print a summary:
+   ```
+   Resuming Spec NNN — skipping N completed steps: Step 1, Step 2, ...
+   Continuing from Step N.
+   ```
+   Skip those steps and begin from the first unchecked step. If all steps are already checked, jump to step 10.
 
-10. **Verify acceptance criteria**: After all steps are done, check each acceptance criterion. Mark them as checked in the spec.
+10. **Execute each step** in order:
+    - Implement the change
+    - After completing a step, edit the spec file to check it off: `- [ ]` -> `- [x]`
+    - Update the printed progress checklist to reflect the completed step
+    - Commit the completed step: `git add -A && git commit -m "spec(NNN): step N — <title>"`
+    - If a step is blocked or unclear, stop and ask the user
 
-11. **Update CHANGELOG.md**: Add an entry to the `## [Unreleased]` section in `CHANGELOG.md`:
+11. **Verify acceptance criteria**: After all steps are done, check each acceptance criterion. Mark them as checked in the spec.
+
+12. **Update CHANGELOG.md**: Add an entry to the `## [Unreleased]` section in `CHANGELOG.md`:
     - Find the `## [Unreleased]` heading (it's just below the `<!-- Entries are prepended below this line, newest first -->` comment)
     - Insert after `## [Unreleased]`: `- **Spec NNN**: [Spec title] — [1-sentence summary of what changed]`
     - Do NOT create date headings — entries accumulate under [Unreleased] until `/release` is run
 
-12. **Verify implementation**: Spawn `verify-app` via Agent tool with the prompt:
+13. **Verify implementation**: Spawn `verify-app` via Agent tool with the prompt:
     > "Verify that the implementation for spec NNN is correct. Check if the project has a test suite and run it. Check if there is a build command and run it. Report PASS or FAIL."
     - If verify-app returns **PASS**: continue to the next step.
     - If verify-app returns **FAIL**: trigger the **Haiku Investigator** (exactly once — never in a loop):
@@ -65,13 +73,16 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     - If the second verify-app returns **PASS**: continue normally.
     - If the second verify-app returns **FAIL**: set status to `in-review`, report the investigator's diagnosis and remaining error, **stop**. Do NOT proceed to step 13 (code-reviewer). Do NOT run the investigator again. Suggest: `Fix the reported issues and re-run /spec-work NNN`.
 
-13. **Auto-review**: Spawn the `code-reviewer` agent via Agent tool to review the changes. Pass the spec content and the current branch name so the agent can run the correct diff.
-    - If verdict is **FAIL**: set status to `in-review`. Report the issues. Suggest: `Run /spec-review NNN to review manually.`
+14. **Update status**: Set spec status to `in-review` now — before spawning code-reviewer. This ensures status is saved even if the agent call fails.
+
+15. **Auto-review**: Spawn the `code-reviewer` agent via Agent tool to review the changes. Pass the spec content and the current branch name so the agent can run the correct diff.
+    - If verdict is **FAIL**: leave status as `in-review`. Report the issues. Suggest: `Run /spec-review NNN to review manually.`
     - If verdict is **PASS** or **CONCERNS**: set status to `completed`, move spec file `specs/NNN-*.md` → `specs/completed/NNN-*.md`. Report: "Auto-review passed. Spec NNN completed."
 
 ## Rules
+- **ALWAYS update status and move the file when done — this is the single most important step.** Status update (step 14) happens before the review agent — never skip it.
 - Follow the spec exactly — nothing outside the Steps and within scope.
 - Check off each step in the spec file as you complete it (progress tracking).
+- Commit after each completed step (`git add -A && git commit -m "spec(NNN): step N — <title>"`). This enables crash resilience and resume.
 - If a step fails or is blocked, leave it unchecked, set status to `blocked`, and ask the user.
-- Commit after logical groups of changes, not after every single step.
-- If called with `--complete` flag, skip steps 12-13: set status directly to `completed` and move to `specs/completed/` (legacy behavior).
+- If called with `--complete` flag, skip steps 13–15: set status directly to `completed` and move to `specs/completed/` (legacy behavior).

@@ -72,8 +72,23 @@ Read the 2-3 most relevant source files. Use the implementation sketch from Phas
 
 List any relevant installed skills in the spec Context section.
 
-### Step 3 — Create the spec file
+### Step 3 — Create the spec file (with auto-split check)
 Translate the Phase 1e implementation sketch into spec steps. Steps should reflect actual implementation path, not generic placeholders.
+
+**After drafting**, check two auto-split triggers before writing the file:
+
+**Trigger A — Size**: draft exceeds 60 lines OR more than 8 steps.
+**Trigger B — Mixed layers**: steps span fundamentally different architectural layers (e.g. frontend + backend, API + UI, data migration + feature logic, infra + app code).
+
+If either trigger fires, split into two specs automatically:
+1. Create `specs/NNN-<first-title>.md` with steps for the first concern/layer
+2. Create `specs/NNN+1-<second-title>.md` with steps for the second concern/layer
+3. Add to each spec's Context: "Part N of 2 — see Spec NNN±1 for the other layer."
+4. Add to each spec's Out of Scope: "Everything in Spec NNN±1."
+5. If one spec depends on the other, note: "Requires Spec NNN to be completed first."
+6. Report: "Task split into Spec NNN and Spec NNN+1 — [reason: size / mixed layers]."
+
+If neither trigger fires, write a single spec file.
 
 ### Step 4 — Present the spec
 Show the spec to the user for review and refinement.

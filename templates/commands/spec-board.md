@@ -1,7 +1,6 @@
 ---
 model: haiku
-mode: plan
-allowed-tools: Read, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 ---
 
 Displays a Kanban board of all specs with status and step progress. Use for an overview of the current spec pipeline.
@@ -63,12 +62,37 @@ After the board, show:
 Total: N specs | B backlog, P in-progress, R in-review, X blocked, D done
 ```
 
-If any specs have all steps checked but status is still `in-progress`, flag them:
+### 6. Consistency Check + Repair
+
+After the board and summary, scan all specs for inconsistencies. Detect:
+
+**Type A — Stale in-progress**: spec has all steps `- [x]` but status is still `in-progress` or `in-review` (not moved to `specs/completed/`).
+
+**Type B — Wrong location**: spec has status `completed` but file is still in `specs/` (not in `specs/completed/`).
+
+If any inconsistencies are found, list them:
 ```
-Ready for review: #NNN Title (all steps complete, run /spec-review NNN)
+⚠️  Inconsistencies found:
+  #NNN Title — all steps done but status is "in-progress" (Type A)
+  #MMM Title — status "completed" but file not in specs/completed/ (Type B)
 ```
 
+Use `AskUserQuestion` to ask:
+```
+Fix these inconsistencies automatically?
+A) Fix all — update status and move files now
+B) Fix selected — I'll choose one by one
+C) Skip — leave as is
+```
+
+- **Option A**: For each inconsistency:
+  - Type A: set status to `completed`, move `specs/NNN-*.md` → `specs/completed/NNN-*.md`
+  - Type B: move `specs/NNN-*.md` → `specs/completed/NNN-*.md`
+  - Report each fix.
+- **Option B**: For each inconsistency, ask individually with AskUserQuestion (Fix / Skip).
+- **Option C**: Skip all fixes.
+
 ## Rules
-- Do NOT make any changes. This is read-only.
+- Only write or move files during the Consistency Check + Repair step (step 6) and only after user confirms.
 - If `specs/` does not exist or has no spec files, report "No specs found" and stop.
 - Only count checkboxes in the `## Steps` section, not `## Acceptance Criteria`.

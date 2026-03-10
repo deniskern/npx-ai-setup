@@ -10,22 +10,37 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
-- **Spec 071 — Developer Workflow Guide**: installs `.claude/WORKFLOW-GUIDE.md` with Quick Start, full commands reference (20 commands with examples), Claude Code essentials (context files, subagents, hooks), and troubleshooting section; installed and kept up to date via `_install_or_update_file` checksum logic.
-- **Command modernization**: all commands migrated from `Task` to `Agent` tool; added `argument-hint`, `disable-model-invocation`, and inline `Context` blocks with `!git` pre-fetching for commit, pr, review, and spec-work commands.
-- **spec-work hardened**: progress checklist printed before execution; Haiku Investigator sub-agent introduced for auto-diagnosing build/test failures (single-shot, no loop); step numbers renumbered; `--complete` flag skip updated to steps 12–13.
-- **spec-review upgraded**: 10-metric quality scoring system (0–100 each, threshold 85 avg / 70 min); Definition of Done gate from CONVENTIONS.md; file-read cap (5 files max); verdict thresholds updated.
-- **spec-work-all tightened**: Agent-based parallel worktree launch; per-wave prompts compressed; post-processing references updated.
-- **spec-validate installed**: new `/spec-validate` command validates spec quality before execution; installed from templates.
-- **update command installed**: new `/update` command for in-session ai-setup upgrades; installed from templates.
-- **Agent metadata additions**: `max_turns` added to build-validator (10), context-refresher (15), verify-app (20), staff-reviewer (20); `memory: project` added to code-reviewer and staff-reviewer.
-- **context-refresher**: optional repomix snapshot step added (best-effort, silent on failure).
-- **grill strengthened**: Scope Challenge step 0 with AskUserQuestion (A/B/C paths); existing-code Grep pass before flagging; A/B/C resolution options per issue; NOT-reviewed exclusions list; self-verification table as final step.
-- **reflect expanded**: ARCHITECTURAL and STACK signal categories added alongside CORRECTION/AFFIRMATION; targets ARCHITECTURE.md and STACK.md in addition to CLAUDE.md and CONVENTIONS.md.
-- **release command**: note added that pushing a vX.Y.Z tag auto-creates GitHub Release body from CHANGELOG.md via installed workflow.
-- **New hooks**: config-change-audit.sh, context-monitor.sh, mcp-health.sh, post-tool-failure-log.sh, task-completed-gate.sh.
-- **New rules**: agents.md, general.md, git.md, testing.md installed to `.claude/rules/`.
-- **New specs**: 071 (Developer Workflow Guide), 072 (Spec Status Reliability with auto-split, crash resilience, per-step commits).
-- **liquid-linter agent**: added to `.claude/agents/`.
+### Developer Workflow Guide (Spec 071)
+Neue Entwickler wissen nach dem Setup sofort, was sie tun können — ohne die Dokumentation durchsuchen zu müssen. Die Datei `.claude/WORKFLOW-GUIDE.md` wird bei jedem Setup installiert und enthält: Quick Start, den vollständigen Spec-Workflow, alle 20 Slash-Commands mit Beispielen, eine Übersicht über Subagents und Hooks sowie eine Troubleshooting-Sektion.
+*Technisch: Template `templates/claude/WORKFLOW-GUIDE.md` → `_install_or_update_file` → `.claude/WORKFLOW-GUIDE.md`; Checksum-Logik erhält Nutzer-Änderungen; kein Context-Load (keine Token-Kosten); Tipp in `templates/CLAUDE.md` zeigt Entwicklern den Einstiegspunkt.*
+
+### Spec-Workflow: Crash-Resilience und Selbstheilung (Spec 072)
+Specs die mitten in der Ausführung abbrechen (Context-Komprimierung, Abstürze) können jetzt nahtlos fortgesetzt werden — ohne verlorene Arbeit. `/spec-work` erkennt bereits abgehakte Schritte und überspringt sie automatisch. Jeder abgeschlossene Schritt wird sofort committed, sodass beim Neustart nichts verloren ist. `/spec-board` erkennt inkonsistente Zustände (Schritte fertig, Status noch `in-progress`) und bietet an, sie mit einem Klick zu bereinigen. `/spec` teilt zu große oder mehrschichtige Tasks automatisch in separate Specs auf.
+*Technisch: `spec-work` — Resume-Check bei Schritt 9 (scannt `- [x]`), per-Step-Commit `spec(NNN): step N`, Status auf `in-review` vor code-reviewer. `spec-board` — YAML `mode: plan` entfernt, `Write, Edit, AskUserQuestion` hinzugefügt, Step 6 Consistency Check (Type A: stale in-progress, Type B: completed aber nicht verschoben). `spec-work-all` — expliziter Fallback bei fehlgeschlagenem Subagent → Status `blocked`. `spec` — auto-split bei >60 Zeilen / >8 Steps / mixed layers.*
+
+### Robustere Commands und Subagents
+Commands antworten schneller und präziser, weil Kontextdaten jetzt vorab geladen werden — ohne extra Tool-Calls. Subagents laufen zuverlässiger mit klar definierten Grenzen und erinnern sich an Projektkonventionen.
+*Technisch: Alle Commands von `Task` → `Agent` migriert; `argument-hint`, `disable-model-invocation` und inline `Context`-Blöcke mit `!git`-Prefetching (commit, pr, review, spec-work). Agents: `max_turns` für build-validator (10), context-refresher (15), verify-app (20), staff-reviewer (20); `memory: project` für code-reviewer und staff-reviewer. context-refresher: optionaler Repomix-Snapshot (best-effort, silent).*
+
+### Qualitätssicherung: /spec-review und /grill verschärft
+Specs werden jetzt nach 10 messbaren Metriken bewertet — ein klares Ampelsystem statt subjektiver Einschätzung. Code-Reviews prüfen zuerst, ob ähnliche Logik bereits existiert, und validieren jeden Befund gegen eine konkrete Zeile im Code.
+*Technisch: `spec-review` — 10-Metrik-Scoring (0–100, Schwelle 85 avg / 70 min), Definition-of-Done-Gate aus CONVENTIONS.md, Datei-Lesecap (5 Dateien). `grill` — Scope Challenge Step 0 mit A/B/C-Auswahl, Grep-Pass vor Flagging, A/B/C-Optionen pro Issue, NOT-reviewed-Ausschlussliste, Self-Verification-Table.*
+
+### /reflect: Lernen aus der Session
+`/reflect` erfasst jetzt auch Architektur-Entdeckungen und Stack-Entscheidungen aus der Session — nicht nur Korrekturen. Das bedeutet: weniger vergessenes Wissen zwischen Sessions.
+*Technisch: Neue Signalkategorien ARCHITECTURAL und STACK; schreibt in `ARCHITECTURE.md` und `STACK.md` zusätzlich zu `CLAUDE.md` und `CONVENTIONS.md`.*
+
+### Neue Monitoring-Hooks und Regeln
+Fünf neue Hooks überwachen Config-Änderungen, MCP-Gesundheit und fehlgeschlagene Tool-Calls — und protokollieren sie automatisch. Vier Regeldateien dokumentieren Coding-Standards, Git-Konventionen, Testing-Anforderungen und Agent-Delegation.
+*Technisch: config-change-audit.sh, context-monitor.sh, mcp-health.sh, post-tool-failure-log.sh, task-completed-gate.sh. Rules: agents.md, general.md, git.md, testing.md in `.claude/rules/`. liquid-linter Agent hinzugefügt.*
+
+### /spec-validate und /update
+Specs können jetzt vor der Ausführung auf Qualität geprüft werden — 10 Metriken, klares Scoring. Updates des ai-setup-Systems sind direkt aus Claude Code heraus möglich, ohne das Terminal zu verlassen.
+*Technisch: `/spec-validate` und `/update` aus Templates installiert.*
+
+### Release-Automation
+GitHub Releases werden jetzt automatisch mit dem passenden CHANGELOG-Abschnitt befüllt, wenn ein Version-Tag gepusht wird.
+*Technisch: Hinweis in `release`-Command, dass `.github/workflows/release-from-changelog.yml` das `vX.Y.Z`-Tag abfängt und den Release-Body aus `CHANGELOG.md` befüllt.*
 
 ## [v1.2.8] — 2026-03-09
 

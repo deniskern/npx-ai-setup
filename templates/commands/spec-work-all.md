@@ -59,6 +59,13 @@ Spec content:
 #### Wave post-processing — after each subagent returns
 For each completed subagent, using the branch and worktree path from the Agent result:
 
+If the subagent **failed or returned no usable result**:
+1. Set spec status to `blocked`
+2. Add a `## Review Feedback` section to the spec with: "subagent failed — [error message or 'no result returned']"
+3. Report: "Spec NNN blocked — subagent did not complete. Run `/spec-work NNN` to retry manually."
+4. Skip remaining post-processing for this spec.
+
+If the subagent **succeeded**:
 1. Check all spec steps off in `specs/NNN-*.md`
 2. Mark all acceptance criteria as checked
 3. Set spec status to `in-review`
