@@ -1,6 +1,6 @@
 # Spec: Multi-Tool Skills Symlinks for Codex and OpenCode
 
-> **Spec ID**: 074 | **Created**: 2026-03-10 | **Status**: in-review | **Branch**: —
+> **Spec ID**: 074 | **Created**: 2026-03-10 | **Status**: completed | **Branch**: —
 
 <!-- Status lifecycle: draft → in-progress → in-review → completed (or blocked at any stage) -->
 
