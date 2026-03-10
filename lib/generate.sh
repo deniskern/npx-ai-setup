@@ -353,6 +353,9 @@ $(cat CLAUDE.md 2>/dev/null)
 --- AGENTS.md (current) ---
 $(cat AGENTS.md 2>/dev/null)"
 
+    # Sanitize CONTEXT: replace backticks with single quotes to prevent heredoc command substitution
+    CONTEXT=$(printf '%s' "$CONTEXT" | tr '`' "'")
+
     # Extended context for project context generation
     CTX_PKG=$(cat package.json 2>/dev/null || echo "No package.json")
     CTX_TSCONFIG=$(cat tsconfig.*.json 2>/dev/null; [ -f tsconfig.json ] && cat tsconfig.json 2>/dev/null || echo "No tsconfig")
@@ -445,8 +448,8 @@ Write 4-6 concise bullet points covering entry points, directory layout, data fl
 
 ## Commands
 Based on package.json scripts, list the most important commands (dev, build, lint, test, etc.) with a short description.
-If the project includes spec workflow commands or skills, also include `/spec`, `/spec-board`, `/spec-review`, `/spec-validate`, `/spec-work`, and `/spec-work-all`.
-For Codex-compatible projects, do not claim custom `/spec*` client commands. Instead add one bullet noting that Codex uses the corresponding skills via `.codex/skills` with `$spec*` or natural language, while `/spec*` remains client-dependent.
+If the project includes spec workflow commands or skills, also include /spec, /spec-board, /spec-review, /spec-validate, /spec-work, and /spec-work-all.
+For Codex-compatible projects, do not claim custom /spec* client commands. Instead add one bullet noting that Codex uses the corresponding skills via .codex/skills with \$spec* or natural language, while /spec* remains client-dependent.
 
 ## Critical Rules
 Based on eslint/prettier and detected framework/system ($SYSTEM), write actionable engineering rules.
