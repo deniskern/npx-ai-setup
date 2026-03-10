@@ -473,6 +473,42 @@ ensure_skills_alias() {
   fi
 }
 
+# Create .codex/skills -> .claude/skills symlink if codex is installed.
+ensure_codex_skills_alias() {
+  command -v codex >/dev/null 2>&1 || return 0
+  local alias=".codex/skills"
+  mkdir -p .codex
+  if [ -L "$alias" ]; then
+    local alias_target
+    alias_target=$(readlink "$alias" 2>/dev/null || echo "")
+    [ "$alias_target" = "../.claude/skills" ] && return 0
+    rm -f "$alias" 2>/dev/null || true
+  elif [ -e "$alias" ]; then
+    return 0
+  fi
+  if ln -s ../.claude/skills "$alias" 2>/dev/null; then
+    echo "  🔗 Linked $alias -> ../.claude/skills (Codex)"
+  fi
+}
+
+# Create .opencode/skills -> .claude/skills symlink if opencode is installed.
+ensure_opencode_skills_alias() {
+  command -v opencode >/dev/null 2>&1 || return 0
+  local alias=".opencode/skills"
+  mkdir -p .opencode
+  if [ -L "$alias" ]; then
+    local alias_target
+    alias_target=$(readlink "$alias" 2>/dev/null || echo "")
+    [ "$alias_target" = "../.claude/skills" ] && return 0
+    rm -f "$alias" 2>/dev/null || true
+  elif [ -e "$alias" ]; then
+    return 0
+  fi
+  if ln -s ../.claude/skills "$alias" 2>/dev/null; then
+    echo "  🔗 Linked $alias -> ../.claude/skills (OpenCode)"
+  fi
+}
+
 # Heuristic module detection from repository name.
 _detect_repo_module() {
   local _name
