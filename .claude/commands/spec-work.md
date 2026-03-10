@@ -71,16 +71,18 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     
     Apply the investigator's suggested fix as a **single targeted edit**, then run verify-app once more.
     - If the second verify-app returns **PASS**: continue normally.
-    - If the second verify-app returns **FAIL**: set status to `in-review`, report the investigator's diagnosis and remaining error, **stop**. Do NOT proceed to step 13 (code-reviewer). Do NOT run the investigator again. Suggest: `Fix the reported issues and re-run /spec-work NNN`.
+    - If the second verify-app returns **FAIL**: set status to `in-review`, report the investigator's diagnosis and remaining error, **stop**. Do NOT proceed to step 16 (code-reviewer). Do NOT run the investigator again. Suggest: `Fix the reported issues and re-run /spec-work NNN`.
 
-14. **Update status**: Set spec status to `in-review` now — before spawning code-reviewer. This ensures status is saved even if the agent call fails.
+14. **Optional cleanup**: Offer to run `/simplify` to improve code quality before review. If the user confirms (or execution is non-interactive), invoke it. Skip if the user declines or if no significant code was changed.
 
-15. **Auto-review**: Spawn the `code-reviewer` agent via Agent tool to review the changes. Pass the spec content and the current branch name so the agent can run the correct diff.
+15. **Update status**: Set spec status to `in-review` now — before spawning code-reviewer. This ensures status is saved even if the agent call fails.
+
+16. **Auto-review**: Spawn the `code-reviewer` agent via Agent tool to review the changes. Pass the spec content and the current branch name so the agent can run the correct diff.
     - If verdict is **FAIL**: leave status as `in-review`. Report the issues. Suggest: `Run /spec-review NNN to review manually.`
     - If verdict is **PASS** or **CONCERNS**: set status to `completed`, move spec file `specs/NNN-*.md` → `specs/completed/NNN-*.md`. Report: "Auto-review passed. Spec NNN completed."
 
 ## Rules
-- **ALWAYS update status and move the file when done — this is the single most important step.** Status update (step 14) happens before the review agent — never skip it.
+- **ALWAYS update status and move the file when done — this is the single most important step.** Status update (step 15) happens before the review agent — never skip it.
 - Follow the spec exactly — nothing outside the Steps and within scope.
 - Check off each step in the spec file as you complete it (progress tracking).
 - Commit after each completed step (`git add -A && git commit -m "spec(NNN): step N — <title>"`). This enables crash resilience and resume.

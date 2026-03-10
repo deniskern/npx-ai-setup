@@ -17,7 +17,7 @@ Add an optional `/simplify` cleanup step to `spec-work`, document `ralph-loop` a
 ## Steps
 
 - [x] Step 1: In `templates/commands/spec-work.md`, insert a new step 14 between verify-app (step 13) and status update (current step 14): "Offer to run `/simplify` to clean up the implementation. If the user confirms or no user input is expected, invoke it. This step is optional — skip if already clean or user declines." Renumber subsequent steps (14→15, 15→16).
-- [ ] Step 2: Apply the same change to `.claude/commands/spec-work.md` (installed copy).
+- [x] Step 2: Apply the same change to `.claude/commands/spec-work.md` (installed copy).
 - [ ] Step 3: In `templates/claude/rules/general.md`, add a `## Web Fetching` section: "Prefer `defuddle parse <url> --md` over WebFetch for reading web pages — it removes navigation and clutter, saving ~80% tokens. Alternative: prepend `https://markdown.new/` to any URL for instant markdown conversion. Use WebFetch only when defuddle is unavailable or the page requires JS rendering."
 - [ ] Step 4: Apply same rule change to `.claude/rules/general.md` (installed copy).
 - [ ] Step 5: In `templates/claude/WORKFLOW-GUIDE.md`, add `## Advanced Techniques` section covering: (a) ralph-loop — iterative task loops, usage example, `/cancel-ralph`; (b) defuddle + markdown.new — token-efficient web fetching with examples.
