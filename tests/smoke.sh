@@ -72,6 +72,7 @@ CHECKS=(
   "setup.sh:check_requirements"
   "setup.sh:cleanup_legacy"
   "setup.sh:install_hooks"
+  "setup.sh:install_workflow_guide"
   "setup.sh:install_commands"
   "setup.sh:install_spec_skills"
   "setup.sh:install_agents"

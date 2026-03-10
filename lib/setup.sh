@@ -236,14 +236,17 @@ install_shopify_skills() {
 }
 
 install_spec_skills() {
+  [ "${#SPEC_SKILLS_MAP[@]}" -gt 0 ] || return 0
   echo "  📚 Installing spec workflow skills..."
   for mapping in "${SPEC_SKILLS_MAP[@]}"; do
     local local_tpl="${mapping%%:*}"
     local local_target="${mapping#*:}"
-    local skill_dir
+    local skill_dir src_path
     skill_dir="$(dirname "$local_target")"
+    src_path="$TPL/${local_tpl#templates/}"
+    [ -f "$src_path" ] || continue
     mkdir -p "$skill_dir"
-    _install_or_update_file "$TPL/${local_tpl#templates/}" "$local_target"
+    _install_or_update_file "$src_path" "$local_target"
   done
 }
 
@@ -801,29 +804,17 @@ install_statusline_project() {
   if [ -f ".claude/settings.json" ]; then
     local TMP
     TMP=$(mktemp)
-    jq --arg cmd "$status_cmd" '.statusLine = {"type":"command","command":$cmd,"padding":2}' ".claude/settings.json" > "$TMP" && mv "$TMP" ".claude/settings.json"
+    if jq --arg cmd "$status_cmd" '.statusLine = {"type":"command","command":$cmd,"padding":2}' ".claude/settings.json" > "$TMP"; then
+      mv "$TMP" ".claude/settings.json"
+    else
+      rm -f "$TMP"
+      echo "  ⚠️  Failed to update .claude/settings.json (jq error)"
+      return 1
+    fi
   else
-    jq -n --arg cmd "$status_cmd" '{"statusLine":{"type":"command","command":$cmd,"padding":2}}' > ".claude/settings.json"
+    jq -n --arg cmd "$status_cmd" '{"statusLine":{"type":"command","command":$cmd,"padding":2}}' > ".claude/settings.json" || return 1
   fi
   echo "  Statusline installed -> claude-powerline (@owloops/claude-powerline)"
-}
-
-# Install spec workflow skills (spec-work, spec-create, spec-board) from templates/skills/.
-# Skips silently if template skills are not present in this package.
-install_spec_skills() {
-  local skills_src="$SCRIPT_DIR/templates/skills"
-  [ -d "$skills_src" ] || return 0
-  mkdir -p .claude/skills
-  local installed=0
-  while IFS= read -r -d '' skill_dir; do
-    local skill_name="${skill_dir##*/}"
-    local target=".claude/skills/$skill_name"
-    [ -d "$target" ] && continue
-    cp -R "$skill_dir" "$target"
-    installed=$((installed + 1))
-  done < <(find "$skills_src" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
-  [ "$installed" -gt 0 ] && echo "  📦 Installed $installed spec skill(s) -> .claude/skills/"
-  return 0
 }
 
 # Generate repomix codebase snapshot in background (once, if not already present)
