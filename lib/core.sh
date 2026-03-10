@@ -3,7 +3,7 @@
 # Requires: SCRIPT_DIR, TPL
 
 # Files with special handling excluded from generic TEMPLATE_MAP (e.g. mcp.json uses merge logic)
-TEMPLATE_EXCLUDES=("mcp.json" "statusline.sh")
+TEMPLATE_EXCLUDES=("mcp.json")
 
 # Build TEMPLATE_MAP dynamically from templates/ directory.
 # Applies consistent prefix rules:

@@ -13,7 +13,7 @@ Replace the custom `statusline.sh` script with `@owloops/claude-powerline` for a
 ## Steps
 - [x] Step 1: Rewrite `install_statusline_project()` in `lib/setup.sh` — set statusLine command to `npx -y @owloops/claude-powerline@latest --style=powerline --theme=dark`; copy `templates/.claude-powerline.json` → `.claude/claude-powerline.json` (skip if already present); remove `cp statusline.sh` lines
 - [x] Step 2: Create `templates/.claude-powerline.json` with default config: dark theme, powerline style, enabled segments (directory, git, model, session, today, context), autoWrap enabled
-- [ ] Step 3: Delete `templates/statusline.sh` (no longer installed); update `lib/core.sh` TEMPLATE_EXCLUDES to remove `statusline.sh` entry
+- [x] Step 3: Delete `templates/statusline.sh` (no longer installed); update `lib/core.sh` TEMPLATE_EXCLUDES to remove `statusline.sh` entry
 
 ## Acceptance Criteria
 - [ ] Fresh install: `.claude/settings.json` statusLine points to `npx -y @owloops/claude-powerline@latest`
