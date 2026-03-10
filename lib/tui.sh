@@ -190,6 +190,20 @@ ask_regen_parts() {
   return 0
 }
 
+# Format change count for a category: "2 changed" / "1 new" / "unchanged"
+_scan_category_label() {
+  local changed="$1" new="$2"
+  local parts=()
+  [ "$changed" -gt 0 ] && parts+=("${changed} changed")
+  [ "$new" -gt 0 ] && parts+=("${new} new")
+  if [ ${#parts[@]} -eq 0 ]; then
+    echo "unchanged"
+  else
+    local IFS=", "
+    echo "${parts[*]}"
+  fi
+}
+
 # ==============================================================================
 # UPDATE PART SELECTOR
 # ==============================================================================

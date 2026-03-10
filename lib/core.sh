@@ -100,6 +100,20 @@ get_installed_version() {
   fi
 }
 
+# Restore SYSTEM from .ai-setup.json metadata if not already set.
+# Skips "auto" values (those require detection, not restoration).
+# Usage: restore_system_from_metadata [--quiet]
+restore_system_from_metadata() {
+  [ -n "$SYSTEM" ] && return 0
+  [ -f .ai-setup.json ] || return 0
+  local stored
+  stored=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
+  [ -z "$stored" ] && return 0
+  [ "$stored" = "auto" ] && return 0
+  SYSTEM="$stored"
+  [ "${1:-}" != "--quiet" ] && echo "  🔍 Restored system from previous run: $SYSTEM"
+}
+
 # Compute checksum for a file (cksum outputs: checksum size filename)
 compute_checksum() {
   if [ -f "$1" ]; then

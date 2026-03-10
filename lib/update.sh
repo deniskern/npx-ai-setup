@@ -76,10 +76,7 @@ handle_version_check() {
 
   if [ -n "$INSTALLED_VERSION" ] && [ "$INSTALLED_VERSION" = "$PACKAGE_VERSION" ]; then
     # Same version — pre-scan to check if templates actually differ
-    # Restore SYSTEM for scan
-    if [ -z "$SYSTEM" ] && [ -f .ai-setup.json ]; then
-      SYSTEM=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
-    fi
+    restore_system_from_metadata --quiet
     scan_template_changes
 
     echo ""
@@ -105,10 +102,7 @@ handle_version_check() {
         regen_ok=0
         if command -v claude &>/dev/null; then
           if ask_regen_parts; then
-            if [ -z "$SYSTEM" ] && [ -f .ai-setup.json ]; then
-              SYSTEM=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
-              [ -n "$SYSTEM" ] && echo "  🔍 Restored system from previous run: $SYSTEM"
-            fi
+            restore_system_from_metadata
             if [ -z "$SYSTEM" ]; then
               select_system
             fi
@@ -138,9 +132,7 @@ handle_version_check() {
 
   elif [ -n "$INSTALLED_VERSION" ]; then
     # Different version — pre-scan to show change count
-    if [ -z "$SYSTEM" ] && [ -f .ai-setup.json ]; then
-      SYSTEM=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
-    fi
+    restore_system_from_metadata --quiet
     scan_template_changes
 
     echo ""
@@ -174,13 +166,13 @@ handle_version_check() {
 # Sets SCAN_* globals (changed/new/total counts per category) and SCAN_TOTAL_CHANGES.
 # Must be called before ask_update_parts() to provide change counts.
 scan_template_changes() {
-  SCAN_HOOKS_CHANGED=0; SCAN_HOOKS_NEW=0; SCAN_HOOKS_TOTAL=0
-  SCAN_SETTINGS_CHANGED=0; SCAN_SETTINGS_NEW=0; SCAN_SETTINGS_TOTAL=0
-  SCAN_CLAUDE_MD_CHANGED=0; SCAN_CLAUDE_MD_NEW=0; SCAN_CLAUDE_MD_TOTAL=0
-  SCAN_AGENTS_MD_CHANGED=0; SCAN_AGENTS_MD_NEW=0; SCAN_AGENTS_MD_TOTAL=0
-  SCAN_COMMANDS_CHANGED=0; SCAN_COMMANDS_NEW=0; SCAN_COMMANDS_TOTAL=0
-  SCAN_AGENTS_CHANGED=0; SCAN_AGENTS_NEW=0; SCAN_AGENTS_TOTAL=0
-  SCAN_OTHER_CHANGED=0; SCAN_OTHER_NEW=0; SCAN_OTHER_TOTAL=0
+  SCAN_HOOKS_CHANGED=0; SCAN_HOOKS_NEW=0
+  SCAN_SETTINGS_CHANGED=0; SCAN_SETTINGS_NEW=0
+  SCAN_CLAUDE_MD_CHANGED=0; SCAN_CLAUDE_MD_NEW=0
+  SCAN_AGENTS_MD_CHANGED=0; SCAN_AGENTS_MD_NEW=0
+  SCAN_COMMANDS_CHANGED=0; SCAN_COMMANDS_NEW=0
+  SCAN_AGENTS_CHANGED=0; SCAN_AGENTS_NEW=0
+  SCAN_OTHER_CHANGED=0; SCAN_OTHER_NEW=0
   SCAN_TOTAL_CHANGES=0
 
   local all_mappings=("${TEMPLATE_MAP[@]}")
@@ -193,10 +185,6 @@ scan_template_changes() {
     local target="${mapping#*:}"
     local cat
     cat=$(get_template_category "$mapping")
-
-    # Count total per category
-    local var_total="SCAN_${cat^^}_TOTAL"
-    eval "$var_total=\$(( ${!var_total} + 1 ))"
 
     if [ ! -f "$target" ]; then
       # New file
@@ -222,20 +210,6 @@ scan_template_changes() {
       SCAN_TOTAL_CHANGES=$((SCAN_TOTAL_CHANGES + 1))
     fi
   done
-}
-
-# Format change count for a category: "2 changed" / "1 new" / "unchanged"
-_scan_category_label() {
-  local changed="$1" new="$2"
-  local parts=()
-  [ "$changed" -gt 0 ] && parts+=("${changed} changed")
-  [ "$new" -gt 0 ] && parts+=("${new} new")
-  if [ ${#parts[@]} -eq 0 ]; then
-    echo "unchanged"
-  else
-    local IFS=", "
-    echo "${parts[*]}"
-  fi
 }
 
 # Process a set of template mappings: install new, update changed, skip unchanged (silently).
@@ -308,18 +282,17 @@ run_smart_update() {
   echo "🔍 Analyzing templates..."
 
   # Restore SYSTEM from metadata if not set via --system flag
-  if [ -z "$SYSTEM" ] && [ -f .ai-setup.json ]; then
-    SYSTEM=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
-    [ -n "$SYSTEM" ] && echo "  🔍 Restored system from previous run: $SYSTEM"
-  fi
+  restore_system_from_metadata
 
   # Normalize legacy skills layout in existing projects.
   if command -v ensure_skills_alias >/dev/null 2>&1; then
     ensure_skills_alias
   fi
 
-  # Pre-scan templates to detect actual changes per category
-  scan_template_changes
+  # Pre-scan templates to detect actual changes per category (skip if already scanned)
+  if [ -z "${SCAN_TOTAL_CHANGES+x}" ]; then
+    scan_template_changes
+  fi
 
   UPD_UPDATED=0
   UPD_SKIPPED=0
