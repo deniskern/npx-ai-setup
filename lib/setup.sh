@@ -812,7 +812,14 @@ install_statusline_project() {
       return 1
     fi
   else
-    jq -n --arg cmd "$status_cmd" '{"statusLine":{"type":"command","command":$cmd,"padding":2}}' > ".claude/settings.json" || return 1
+    local TMP2
+    TMP2=$(mktemp)
+    if jq -n --arg cmd "$status_cmd" '{"statusLine":{"type":"command","command":$cmd,"padding":2}}' > "$TMP2"; then
+      mv "$TMP2" ".claude/settings.json"
+    else
+      rm -f "$TMP2"
+      return 1
+    fi
   fi
   echo "  Statusline installed -> claude-powerline (@owloops/claude-powerline)"
 }
