@@ -14,16 +14,16 @@ Users report only 1 of 3 `.agents/context/` files on fresh installs. Root cause:
 - [x] Step 1: In `lib/generate.sh`, increase `--max-turns` for all 3 generation calls: CLAUDE.md 3→5, AGENTS.md 3→5, context files 4→8
 - [x] Step 2: In `lib/generate.sh`, add a retry block for partial context generation (~line 562): if `CTX_COUNT < 3` and exit was 0, retry once with `--max-turns 12`, re-check, update `CTX_COUNT`
 - [x] Step 3: In `lib/generate.sh`, add retry blocks for CLAUDE.md and AGENTS.md: if verification fails (checksum unchanged) and exit was 0, retry once with `--max-turns 6`
-- [ ] Step 4: Create `tests/integration.sh` — temp dir with minimal `package.json`, runs `bin/ai-setup.sh` non-interactively (skip claude-dependent generation), verifies all expected files/dirs exist
-- [ ] Step 5: In `tests/integration.sh`, add template-sync check: every `templates/commands/*.md` must have a matching `.claude/commands/*.md` installed
-- [ ] Step 6: Add `install_workflow_guide` to function-presence checks in `tests/smoke.sh`
-- [ ] Step 7: Verify both test suites pass: `bash tests/smoke.sh && bash tests/integration.sh`
+- [x] Step 4: Create `tests/integration.sh` — temp dir with minimal `package.json`, runs `bin/ai-setup.sh` non-interactively (skip claude-dependent generation), verifies all expected files/dirs exist
+- [x] Step 5: In `tests/integration.sh`, add template-sync check: every `templates/commands/*.md` must have a matching `.claude/commands/*.md` installed
+- [x] Step 6: Add `install_workflow_guide` to function-presence checks in `tests/smoke.sh`
+- [x] Step 7: Verify both test suites pass: `bash tests/smoke.sh && bash tests/integration.sh`
 
 ## Acceptance Criteria
-- [ ] All 3 `claude -p` calls have sufficient `--max-turns` (>=5 for edits, >=8 for writes)
-- [ ] All 3 generation calls have a single-retry fallback on failure
-- [ ] `tests/integration.sh` runs in <5s without network or API dependencies
-- [ ] Both `tests/smoke.sh` and `tests/integration.sh` pass green
+- [x] All 3 `claude -p` calls have sufficient `--max-turns` (>=5 for edits, >=8 for writes)
+- [x] All 3 generation calls have a single-retry fallback on failure
+- [x] `tests/integration.sh` runs in <5s without network or API dependencies
+- [x] Both `tests/smoke.sh` and `tests/integration.sh` pass green
 
 ## Files to Modify
 - `lib/generate.sh` - increase max-turns, add retry logic for all 3 calls
