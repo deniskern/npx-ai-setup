@@ -10,6 +10,8 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 076**: /simplify in spec-work + Advanced Tools — added optional `/simplify` cleanup step to spec-work between verify-app and code-reviewer; added Web Fetching rule preferring defuddle and markdown.new over WebFetch; documented ralph-loop and defuddle/markdown.new in WORKFLOW-GUIDE.md Advanced Techniques section.
+
 - **Spec 073**: Generation reliability and install coverage — raised Claude generation turn budgets, added single-retry fallbacks for no-op or partial outputs, and added an offline integration test that verifies installed command templates on a fresh setup.
 
 - **Spec 075**: Replace Statusline with claude-powerline — `install_statusline_project()` now wires `@owloops/claude-powerline` via npx with a dark powerline theme and copies a default `.claude/claude-powerline.json` config; the custom `statusline.sh` script is removed.
