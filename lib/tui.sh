@@ -190,18 +190,54 @@ ask_regen_parts() {
   return 0
 }
 
+# Format change count for a category: "2 changed" / "1 new" / "unchanged"
+_scan_category_label() {
+  local changed="$1" new="$2"
+  local parts=()
+  [ "$changed" -gt 0 ] && parts+=("${changed} changed")
+  [ "$new" -gt 0 ] && parts+=("${new} new")
+  if [ ${#parts[@]} -eq 0 ]; then
+    echo "unchanged"
+  else
+    local IFS=", "
+    echo "${parts[*]}"
+  fi
+}
+
 # ==============================================================================
 # UPDATE PART SELECTOR
 # ==============================================================================
 # Sets UPD_HOOKS, UPD_SETTINGS, UPD_CLAUDE_MD, UPD_AGENTS_MD, UPD_COMMANDS,
 # UPD_AGENTS, UPD_OTHER globals.
+# Requires: SCAN_*_CHANGED and SCAN_*_NEW globals from scan_template_changes().
+# Pre-selects only categories with actual changes. Shows change counts per category.
 # Returns 1 if the user selected nothing (skip template update).
 ask_update_parts() {
   local options=("Hooks" "Settings" "CLAUDE.md" "AGENTS.md" "Commands" "Agents" "Other")
-  local descriptions=(".claude/hooks + .claude/rules" ".claude/settings.json (permissions, hooks, env)" "Root CLAUDE.md template" "Root AGENTS.md template" ".claude/commands/ (spec, review, commit...)" ".claude/agents/ (reviewers, planners, validators...)" "specs/, .github/, misc templates")
+  local base_descriptions=(".claude/hooks + .claude/rules" ".claude/settings.json" "Root CLAUDE.md template" "Root AGENTS.md template" ".claude/commands/" ".claude/agents/" "specs/, .github/, misc")
   local count=7
   local selected=0
-  local checked=(1 1 1 1 1 1 1)  # all pre-selected
+
+  # Build per-category change labels and pre-select only changed categories
+  local -a descriptions=()
+  local -a checked=()
+  local -a cat_changes=()
+  local -a cat_news=()
+
+  cat_changes=("${SCAN_HOOKS_CHANGED:-0}" "${SCAN_SETTINGS_CHANGED:-0}" "${SCAN_CLAUDE_MD_CHANGED:-0}" "${SCAN_AGENTS_MD_CHANGED:-0}" "${SCAN_COMMANDS_CHANGED:-0}" "${SCAN_AGENTS_CHANGED:-0}" "${SCAN_OTHER_CHANGED:-0}")
+  cat_news=("${SCAN_HOOKS_NEW:-0}" "${SCAN_SETTINGS_NEW:-0}" "${SCAN_CLAUDE_MD_NEW:-0}" "${SCAN_AGENTS_MD_NEW:-0}" "${SCAN_COMMANDS_NEW:-0}" "${SCAN_AGENTS_NEW:-0}" "${SCAN_OTHER_NEW:-0}")
+
+  for ((i=0; i<count; i++)); do
+    local label
+    label=$(_scan_category_label "${cat_changes[$i]}" "${cat_news[$i]}")
+    if [ "$label" = "unchanged" ]; then
+      descriptions+=("${base_descriptions[$i]} — unchanged")
+      checked+=("0")
+    else
+      descriptions+=("${base_descriptions[$i]} — $label")
+      checked+=("1")
+    fi
+  done
 
   echo ""
   echo "  Select which categories to update:"
