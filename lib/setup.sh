@@ -25,7 +25,7 @@ _install_or_update_file() {
   cur_cs=$(compute_checksum "$target")
 
   # Already identical — skip silently
-  [ "$tpl_cs" = "$cur_cs" ] && return 1
+  [ "$tpl_cs" = "$cur_cs" ] && return 0
 
   # Template is newer — check if user modified the installed file
   if [ -f .ai-setup.json ] && command -v jq >/dev/null 2>&1; then
@@ -34,7 +34,7 @@ _install_or_update_file() {
     if [ -n "$stored_cs" ] && [ "$stored_cs" != "$cur_cs" ]; then
       # User modified this file — don't overwrite
       echo "  ⏭️  $target (user-modified, kept)"
-      return 1
+      return 0
     fi
   fi
 
