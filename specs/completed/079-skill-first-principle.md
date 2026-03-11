@@ -1,6 +1,6 @@
 # Spec: Skill-First Principle — Always Use Installed Skills
 
-> **Spec ID**: 079 | **Created**: 2026-03-11 | **Status**: in-progress | **Branch**: —
+> **Spec ID**: 079 | **Created**: 2026-03-11 | **Status**: completed | **Branch**: —
 
 ## Goal
 
@@ -21,14 +21,14 @@ This principle must be enforced at three layers:
 - [x] Sync same rule to `.claude/rules/general.md` (active project copy)
 - [x] Add "Skill-First" section to `templates/CLAUDE.md` under Working Style
 - [x] Add skill-discovery reminder to `templates/agents/code-reviewer.md` and `verify-app.md`
-- [ ] Verify: read updated `general.md` and confirm rule is present and clear
+- [x] Verify: read updated `general.md` and confirm rule is present and clear
 
 ## Acceptance Criteria
 
-- [ ] `templates/claude/rules/general.md` contains the skill-first rule
-- [ ] `.claude/rules/general.md` (active) contains the same rule
-- [ ] `templates/CLAUDE.md` documents skill-first under Working Style
-- [ ] Rule is unambiguous: scan → match → invoke via Skill tool, never reimplement
+- [x] `templates/claude/rules/general.md` contains the skill-first rule
+- [x] `.claude/rules/general.md` (active) contains the same rule
+- [x] `templates/CLAUDE.md` documents skill-first under Working Style
+- [x] Rule is unambiguous: scan → match → invoke via Skill tool, never reimplement
 
 ## Files to Modify
 
