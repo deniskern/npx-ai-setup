@@ -18,13 +18,15 @@ Creates a spec file in `specs/NNN-title.md` for an approved task before coding b
 
 3. **Determine the next spec number** — run `ls specs/*.md | sort | tail -1` to find the highest number, increment by 1.
 
-4. **Think through implementation**:
+4. **Discover installed skills** — run `ls .claude/skills/` to see all available skills in this project. Keep this list in mind when writing steps — if a step's action is covered by an installed skill, reference it as `` `/skill-name` `` instead of describing the action in prose.
+
+5. **Think through implementation**:
    - Which files change?
    - What's the exact change in each file?
    - Edge cases and failure modes?
    - Hidden complexity?
 
-5. **Write the spec file** `specs/NNN-title.md` using this template:
+6. **Write the spec file** `specs/NNN-title.md` using this template:
    - Goal
    - Context
    - Steps
