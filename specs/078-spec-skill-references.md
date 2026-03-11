@@ -17,8 +17,8 @@ Skills live in `.claude/skills/` (each as a directory). The skill name = directo
 - [x] Add step to `spec/skill.md`: before writing steps, run `ls .claude/skills/` to discover available skills
 - [x] Add rule to `spec/skill.md`: if a step's action is covered by an installed skill, write the step as `` `/skill-name` `` rather than prose description
 - [x] Add rule to `spec-work/skill.md`: if a step contains a skill reference (e.g. `` `/shopify-liquid` ``), invoke it via the `Skill` tool instead of reimplementing manually
-- [ ] Update `templates/skills/spec/skill.md` with the same rules (source of truth for new installs)
-- [ ] Update `templates/skills/spec-work/skill.md` with the skill-invocation rule
+- [x] Update `templates/skills/spec/skill.md` with the same rules (source of truth for new installs)
+- [x] Update `templates/skills/spec-work/skill.md` with the skill-invocation rule
 - [ ] Update `templates/specs/TEMPLATE.md`: add inline comment showing skill-reference step syntax
 - [ ] Sync the same rules to `templates/skills/spec-create/skill.md` if it exists and differs
 
