@@ -2,7 +2,7 @@
 
 ## Memory
 
-**Built-in Auto Memory** — Claude automatically saves notes to `~/.claude/projects/<hash>/memory/MEMORY.md`. No setup required. Claude writes to this file during sessions and reads it back at the start of each conversation to maintain continuity.
+**Built-in Auto Memory** — Claude automatically saves notes to `.agents/memory/MEMORY.md` in this project. No setup required. Claude writes to this file during sessions and reads it back at the start of each conversation to maintain continuity.
 
 **claude-mem** (optional) — structured observation database with semantic search across sessions. Install if you want cross-session search and team-shared memory:
 ```

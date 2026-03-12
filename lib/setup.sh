@@ -637,6 +637,7 @@ update_gitignore() {
       echo ".ai-setup.json" >> .gitignore
       echo ".ai-setup-backup/" >> .gitignore
       echo ".agents/context/.state" >> .gitignore
+      echo ".agents/memory/" >> .gitignore
       echo ".agents/repomix-snapshot.md" >> .gitignore
       echo "CLAUDE.local.md" >> .gitignore
       echo ".codex/skills" >> .gitignore
@@ -646,6 +647,7 @@ update_gitignore() {
       grep -q "\.ai-setup\.json" .gitignore 2>/dev/null || echo ".ai-setup.json" >> .gitignore
       grep -q "\.ai-setup-backup" .gitignore 2>/dev/null || echo ".ai-setup-backup/" >> .gitignore
       grep -q "\.agents/context/\.state" .gitignore 2>/dev/null || echo ".agents/context/.state" >> .gitignore
+      grep -q "\.agents/memory" .gitignore 2>/dev/null || echo ".agents/memory/" >> .gitignore
       grep -q "repomix-snapshot" .gitignore 2>/dev/null || echo ".agents/repomix-snapshot.md" >> .gitignore
       grep -q "CLAUDE\.local\.md" .gitignore 2>/dev/null || echo "CLAUDE.local.md" >> .gitignore
       grep -q "\.codex/skills" .gitignore 2>/dev/null || echo ".codex/skills" >> .gitignore
