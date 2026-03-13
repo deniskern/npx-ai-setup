@@ -25,7 +25,7 @@ Relevant files: `templates/commands/spec.md`, `templates/commands/spec-review.md
 
 ## Steps
 
-- [ ] **Step 1 — Update spec template acceptance criteria structure**
+- [x] **Step 1 — Update spec template acceptance criteria structure**
   In `templates/commands/spec.md`, find the section where acceptance criteria are defined (Phase 2 — Write the spec). Change the Acceptance Criteria section from freetext bullets to:
   ```markdown
   ## Acceptance Criteria

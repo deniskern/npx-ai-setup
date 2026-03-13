@@ -121,8 +121,23 @@ Use `AskUserQuestion` to ask: "Branch fuer diese Spec erstellen?"
 - [ ] Step 3: description
 
 ## Acceptance Criteria
-- [ ] Criterion 1
-- [ ] Criterion 2
+
+<!-- Use only the categories that apply — omit empty ones. -->
+<!-- Truths: verified by running a command or observing output -->
+<!-- Artifacts: verified by confirming files exist with real content (not stubs) -->
+<!-- Key Links: verified by confirming imports/references connect -->
+
+### Truths
+Observable behaviors that must be true when this spec is done:
+- [ ] "[behavior description that can be verified by running a command or observing output]"
+
+### Artifacts
+Files that must exist with real implementation (not stubs):
+- [ ] `path/to/file.ts` — [what it exports/contains] (min [N] lines)
+
+### Key Links
+Critical wiring between artifacts that must actually connect:
+- [ ] `file-a.ts` → `file-b.ts` via import of `[function/type]`
 
 ## Files to Modify
 - `path/to/file` - reason
