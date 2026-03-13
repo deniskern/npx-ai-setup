@@ -20,7 +20,7 @@ Both files need small generalizations before they can be distributed:
 
 ## Steps
 
-- [ ] **Step 1 — Create templates/commands/challenge.md**
+- [x] **Step 1 — Create templates/commands/challenge.md**
   Copy `.claude/commands/challenge.md` to `templates/commands/challenge.md` and generalize Phase 2:
   - Replace the hardcoded `"one command, zero config, template-based"` principle text with: `"the project's core principles as defined in .agents/context/CONCEPT.md"`. If `CONCEPT.md` does not exist, skip the concept fit check.
   - Keep all other phases (1, 3–7) identical to the source file.
