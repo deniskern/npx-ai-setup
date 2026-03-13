@@ -22,7 +22,7 @@ Relevant files: `templates/commands/spec-work.md`, `templates/commands/reflect.m
 
 ## Steps
 
-- [ ] **Step 1 — Create decisions register template**
+- [x] **Step 1 — Create decisions register template**
   Create `templates/decisions.md` with this content:
   ```markdown
   # Decisions Register
