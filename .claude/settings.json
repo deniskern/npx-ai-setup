@@ -55,11 +55,6 @@
             "type": "command",
             "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/cross-repo-context.sh",
             "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/update-check.sh",
-            "timeout": 5
           }
         ]
       }
