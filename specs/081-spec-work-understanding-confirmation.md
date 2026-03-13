@@ -33,7 +33,7 @@ Skills available: spec, spec-work, spec-review, spec-validate, spec-board, spec-
   ```
   Renumber all subsequent steps (old Step 3 becomes Step 4, etc.).
 
-- [ ] **Step 2 — Mirror change in `.claude/skills/spec-work/`**
+- [x] **Step 2 — Mirror change in `.claude/skills/spec-work/`**
   Apply the identical change to `.claude/skills/spec-work/SKILL.md` (project-local copy).
 
 ## Acceptance Criteria
