@@ -58,7 +58,7 @@ Relevant files: `templates/commands/spec.md`, `templates/commands/spec-review.md
   In `templates/commands/spec-work.md`, find the **"Verify acceptance criteria"** step (currently step 11, step 12 if Spec 081 has run first). Add guidance:
   - "Check Truths by running the described commands. Check Artifacts by reading the files and confirming real implementation. Check Key Links by verifying imports exist."
 
-- [ ] **Step 4 — Update verify-app agent**
+- [x] **Step 4 — Update verify-app agent**
   In `templates/agents/verify-app.md`, add awareness of the structured format so it can check Artifacts and Key Links programmatically (glob for files, grep for imports).
 
 ## Files to Modify
