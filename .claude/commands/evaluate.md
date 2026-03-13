@@ -5,7 +5,7 @@ argument-hint: "<url-or-pasted-text>"
 allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, AskUserQuestion
 ---
 
-Systematically evaluates an external idea, article, tool, or pattern against the existing npx-ai-setup template inventory. Input: $ARGUMENTS
+Systematically evaluates an external idea, article, tool, or pattern against the existing project's Claude Code setup. Input: $ARGUMENTS
 
 ## Phase 1 — Acquire Input
 
@@ -32,14 +32,14 @@ If nothing can be extracted, report "No actionable Claude Code patterns found" a
 
 ## Phase 2 — Build Existing Inventory (Shallow Pass)
 
-Scan the project to understand what we already have. Run all reads in parallel:
+Scan the project to understand what we already have. Run all reads in parallel. Scan whichever of these directories exist in the current project:
 
-1. Glob `templates/commands/*.md` — list all filenames
-2. Glob `templates/agents/*.md` — list all filenames
-3. Glob `templates/claude/rules/*.md` — list all filenames
-4. Glob `templates/claude/hooks/*.sh` — list all hook filenames
-5. Read `templates/claude/settings.json` — note hook types and field names (no need to read full content)
-6. Glob `.claude/commands/*.md` — list project-local commands
+1. `.claude/commands/` or `templates/commands/` — list all .md filenames
+2. `.claude/agents/` or `templates/agents/` — list all .md filenames
+3. `.claude/rules/` or `templates/claude/rules/` — list all .md filenames
+4. `.claude/hooks/` or `templates/claude/hooks/` — list all .sh filenames
+5. `.claude/settings.json` or `templates/claude/settings.json` — note hook types and field names (no need to read full content)
+6. `.claude/commands/` (project-local) — list all filenames
 
 Produce a compact **Existing Inventory** by category (names only at this stage).
 
@@ -49,7 +49,7 @@ Produce a compact **Existing Inventory** by category (names only at this stage).
 
 For each item in the Proposal Inventory:
 
-**Step 3a — Initial match**: Use Grep to search the `templates/` directory for the concept name, key terms, or related keywords. Identify the most likely existing equivalent.
+**Step 3a — Initial match**: Use Grep to search `.claude/` and `templates/` directories (whichever exist) for the concept name, key terms, or related keywords. Identify the most likely existing equivalent.
 
 **Step 3b — Deep read for non-obvious cases**: If a potential match is found and it's not immediately clear whether it's REDUNDANT or could be improved:
 - Read the **full content** of the matching existing file(s)
@@ -83,10 +83,10 @@ For each item in the Proposal Inventory:
 | # | Pattern | Class | Existing File | Detail |
 |---|---------|-------|---------------|--------|
 | 1 | name    | NEW   | —             | —      |
-| 2 | name    | PARTIAL | templates/commands/foo.md | Proposal adds: [specific line/approach missing from ours] |
-| 3 | name    | BETTER  | templates/agents/bar.md   | Proposal is stronger because: [specific reason] |
-| 4 | name    | REDUNDANT | templates/commands/baz.md | Our version covers this fully |
-| 5 | name    | WORSE   | templates/claude/rules/general.md | Our version handles: [what theirs misses] |
+| 2 | name    | PARTIAL | [commands-dir]/foo.md | Proposal adds: [specific line/approach missing from ours] |
+| 3 | name    | BETTER  | [agents-dir]/bar.md   | Proposal is stronger because: [specific reason] |
+| 4 | name    | REDUNDANT | [commands-dir]/baz.md | Our version covers this fully |
+| 5 | name    | WORSE   | [hooks-dir]/general.md | Our version handles: [what theirs misses] |
 ```
 
 For **PARTIAL** and **BETTER** findings, the Detail column must be specific:

@@ -1,5 +1,5 @@
 ---
-**Status**: draft
+**Status**: in-review
 **Branch**: —
 **Complexity**: low
 ---
@@ -71,11 +71,11 @@ Relevant files: `templates/commands/spec-work.md`, `templates/commands/reflect.m
 
 ## Acceptance Criteria
 
-- [ ] `templates/decisions.md` exists with append-only table format and column definitions
-- [ ] `templates/CLAUDE.md` Project Context section references `decisions.md`
-- [ ] `templates/commands/spec-work.md` prompts Claude to append decisions after each step (only when a meaningful choice was made)
-- [ ] `templates/commands/reflect.md` appends architectural signals to `decisions.md` when the file exists
-- [ ] `templates/skills/spec-work/SKILL.md` mirrors the spec-work.md change
+- [x] `templates/decisions.md` exists with append-only table format and column definitions
+- [x] `templates/CLAUDE.md` Project Context section references `decisions.md`
+- [x] `templates/commands/spec-work.md` prompts Claude to append decisions after each step (only when a meaningful choice was made)
+- [x] `templates/commands/reflect.md` appends architectural signals to `decisions.md` when the file exists
+- [x] `templates/skills/spec-work/SKILL.md` mirrors the spec-work.md change
 
 ## Out of Scope
 
