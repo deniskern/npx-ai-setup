@@ -1,5 +1,5 @@
 ---
-**Status**: draft
+**Status**: in-review
 **Branch**: —
 **Complexity**: medium
 ---
@@ -73,18 +73,18 @@ Relevant files: `templates/commands/spec.md`, `templates/commands/spec-review.md
 ## Acceptance Criteria
 
 ### Truths
-- [ ] A spec created with `/spec` produces acceptance criteria in Truths/Artifacts/Key Links format
-- [ ] `/spec-review` checks each category type with appropriate verification method
+- [x] A spec created with `/spec` produces acceptance criteria in Truths/Artifacts/Key Links format
+- [x] `/spec-review` checks each category type with appropriate verification method
 
 ### Artifacts
-- [ ] `templates/commands/spec.md` contains the three-category acceptance criteria template
-- [ ] `templates/commands/spec-review.md` contains category-specific review instructions
+- [x] `templates/commands/spec.md` contains the three-category acceptance criteria template
+- [x] `templates/commands/spec-review.md` contains category-specific review instructions
 
 ### Key Links
-- [ ] `spec-work.md` step 11 references the structured verification categories
-- [ ] `verify-app.md` includes instructions for checking Artifacts (file existence) and Key Links (import verification)
-- [ ] `templates/skills/spec-review/SKILL.md` mirrors the spec-review.md change
-- [ ] `templates/skills/spec-work/SKILL.md` mirrors the spec-work.md change
+- [x] `spec-work.md` step 11 references the structured verification categories
+- [x] `verify-app.md` includes instructions for checking Artifacts (file existence) and Key Links (import verification)
+- [x] `templates/skills/spec-review/SKILL.md` mirrors the spec-review.md change
+- [x] `templates/skills/spec-work/SKILL.md` mirrors the spec-work.md change
 
 ## Out of Scope
 
