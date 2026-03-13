@@ -1,5 +1,5 @@
 ---
-**Status**: draft
+**Status**: in-review
 **Branch**: —
 **Complexity**: low
 ---
@@ -62,11 +62,11 @@ Both files need small generalizations before they can be distributed:
 
 ## Acceptance Criteria
 
-- [ ] `templates/commands/challenge.md` reads `.agents/context/CONCEPT.md` for principles; falls back gracefully if CONCEPT.md does not exist
-- [ ] `templates/commands/evaluate.md` Phase 2 scans `.claude/` and `templates/` (whichever exist) instead of hardcoded `templates/` only
-- [ ] `.claude/commands/challenge.md` no longer contains "one command, zero config, template-based" — replaced with CONCEPT.md reference
-- [ ] `.claude/commands/evaluate.md` no longer contains "npx-ai-setup template inventory" — replaced with generic phrasing
-- [ ] Both template files use the same frontmatter format (`model`, `mode`, `argument-hint`, `allowed-tools`) as existing commands in `templates/commands/`
+- [x] `templates/commands/challenge.md` reads `.agents/context/CONCEPT.md` for principles; falls back gracefully if CONCEPT.md does not exist
+- [x] `templates/commands/evaluate.md` Phase 2 scans `.claude/` and `templates/` (whichever exist) instead of hardcoded `templates/` only
+- [x] `.claude/commands/challenge.md` no longer contains "one command, zero config, template-based" — replaced with CONCEPT.md reference
+- [x] `.claude/commands/evaluate.md` no longer contains "npx-ai-setup template inventory" — replaced with generic phrasing
+- [x] Both template files use the same frontmatter format (`model`, `mode`, `argument-hint`, `allowed-tools`) as existing commands in `templates/commands/`
 
 ## Out of Scope
 

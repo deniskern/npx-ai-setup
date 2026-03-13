@@ -9,6 +9,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 <!-- Entries are prepended below this line, newest first -->
 
 ## [Unreleased]
+- **Spec 086**: Challenge and Evaluate Commands in Templates — distributes generalized challenge.md and evaluate.md to templates/commands/ so all installed projects receive them
 - **Spec 082**: Decisions Register Template — adds append-only decisions.md template for tracking architectural decisions across sessions
 - **Spec 085**: Context Budget Awareness Rule — adds context budget instruction to CLAUDE.md and spec-work.md to prioritize handoff over last implementation step
 - **Spec 084**: Debugging Discipline Methodology — adds 6-point structured debugging methodology to bug.md and spec-work.md verification failure path
