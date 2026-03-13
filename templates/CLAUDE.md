@@ -44,6 +44,7 @@ Before multi-file changes or new features, read `.agents/context/`:
 - `STACK.md` - Technology stack, versions, key dependencies, and what to avoid
 - `ARCHITECTURE.md` - System architecture, directory structure, and data flow
 - `CONVENTIONS.md` - Coding standards, naming patterns, error handling, and testing
+- `decisions.md` — Architectural decisions register (read before planning or research, if the file exists)
 
 ## Commands
 <!-- Auto-Init populates this -->

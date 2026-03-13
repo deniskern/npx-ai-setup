@@ -54,7 +54,7 @@ Relevant files: `templates/commands/spec-work.md`, `templates/commands/reflect.m
   In `templates/commands/reflect.md`, add to the ARCHITECTURAL signals classification:
   - After detecting architectural signals, also check if `decisions.md` exists. If yes, append new architectural decisions as rows. Use the next sequential D-number.
 
-- [ ] **Step 5 — Add read-on-planning instruction to CLAUDE.md**
+- [x] **Step 5 — Add read-on-planning instruction to CLAUDE.md**
   In `templates/CLAUDE.md` (root of `templates/`, NOT `templates/claude/CLAUDE.md`), in the "Project Context (read before complex tasks)" section, add a new bullet after the existing `.agents/context/` entries:
   - "- `decisions.md` — Architectural decisions register (read before planning or research, if the file exists)"
 
