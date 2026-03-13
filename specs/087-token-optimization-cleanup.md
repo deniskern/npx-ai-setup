@@ -39,9 +39,9 @@ All fixes must be applied in both local `.claude/` and `templates/`.
 
 6. [x] **Remove `spec` skill duplicate** — delete `.claude/skills/spec/` locally and remove the `spec` entry from `SPEC_SKILLS_MAP` in `lib/setup.sh`. Keep `spec-create` and all `.claude/commands/spec.md` intact.
 
-7. **Strengthen Haiku routing rule in `agents.md`** — mark Haiku for Explore agents as CRITICAL, add cost note (Sonnet = 12× Haiku). Move model routing table to top of file.
+7. [x] **Strengthen Haiku routing rule in `agents.md`** — mark Haiku for Explore agents as CRITICAL, add cost note (Sonnet = 12× Haiku). Move model routing table to top of file.
 
-8. **Add `paths:` scoping to rules files** — add `paths:` frontmatter to `agents.md`, `git.md`, `testing.md` (local + templates) so they only load when relevant files are in context.
+8. [x] **Add `paths:` scoping to rules files** — add `paths:` frontmatter to `agents.md`, `git.md`, `testing.md` (local + templates) so they only load when relevant files are in context.
 
 9. **Add `MAX_MCP_OUTPUT_TOKENS`** — add `"MAX_MCP_OUTPUT_TOKENS": "10000"` to `env` in `templates/claude/settings.json` and local `.claude/settings.json` to cap large MCP responses.
 

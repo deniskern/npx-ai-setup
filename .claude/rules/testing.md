@@ -1,3 +1,12 @@
+---
+paths:
+  - "**/*.test.*"
+  - "**/*.spec.*"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/*.test.sh"
+---
+
 # Testing Rules
 
 ## Test First

@@ -1,3 +1,9 @@
+---
+paths:
+  - ".claude/**"
+  - "specs/**"
+---
+
 # Agent Delegation Rules
 
 ## CRITICAL: Model Routing
