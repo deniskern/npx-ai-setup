@@ -46,7 +46,7 @@ Relevant files: `templates/commands/spec-work.md`, `templates/commands/reflect.m
 - [x] **Step 2 — Verify automatic installation**
   No changes to `lib/core.sh` or `bin/ai-setup.sh` are needed. The existing `build_template_map()` in `lib/core.sh` picks up all root-level files in `templates/` via the fallback `*) target="${rel}" ;;` case. `_install_or_update_file()` in `lib/setup.sh` handles idempotency automatically (skips if file exists and matches checksum, skips with notice if user-modified). Verify the logic holds by reading `lib/core.sh:39-46` and `lib/setup.sh:15-39`.
 
-- [ ] **Step 3 — Integrate into spec-work execution**
+- [x] **Step 3 — Integrate into spec-work execution**
   In `templates/commands/spec-work.md`, add after step 10 (Execute each step):
   - "If you made an architectural, pattern, library, or convention decision during this step that downstream work should know about, append it to `decisions.md` in the project root. Not every step produces decisions — only append when a meaningful choice was made."
 

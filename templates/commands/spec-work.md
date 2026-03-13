@@ -60,6 +60,7 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     - Update the printed progress checklist to reflect the completed step
     - Commit the completed step: `git add -A && git commit -m "spec(NNN): step N — <title>"`
     - If a step is blocked or unclear, stop and ask the user
+    - If you made an architectural, pattern, library, or convention decision during this step that downstream work should know about, append it to `decisions.md` in the project root. Not every step produces decisions — only append when a meaningful choice was made.
 
 12. **Verify acceptance criteria**: After all steps are done, check each acceptance criterion. Mark them as checked in the spec.
 
