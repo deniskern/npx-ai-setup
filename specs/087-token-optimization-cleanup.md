@@ -29,7 +29,7 @@ All fixes must be applied in both local `.claude/` and `templates/`.
 
 1. [x] **Remove update-check from SessionStart** — edit `.claude/settings.json` and `templates/claude/settings.json`: remove the `update-check.sh` entry from the `SessionStart` hook array. Keep it in `UserPromptSubmit`.
 
-2. **Add `.claudeignore`** — create `.claudeignore` locally and `templates/.claudeignore` with: `node_modules/`, `dist/`, `.ai-setup-backup/`
+2. [x] **Add `.claudeignore`** — create `.claudeignore` locally and `templates/.claudeignore` with: `node_modules/`, `dist/`, `.ai-setup-backup/`
 
 3. **Trim `git.md` Safety Rules** — in `.claude/rules/git.md` and `templates/claude/rules/git.md`: remove the "Safety Rules" section (never force-push, --no-verify, --no-gpg-sign, reset --hard) — these duplicate the system prompt verbatim.
 
