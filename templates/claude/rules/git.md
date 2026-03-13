@@ -17,12 +17,6 @@ Bug fixes: `fix/short-description`
 Spec branches: `spec/NNN-description`
 Chore/tooling: `chore/short-description`
 
-## Safety Rules
-Never force-push to `main` or `master`.
-Never use `--no-verify` to skip hooks — fix the underlying issue instead.
-Never use `--no-gpg-sign` unless explicitly requested by the user.
-Never `git reset --hard` without confirming with the user first.
-
 ## Commit Hygiene
 One logical change per commit — do not bundle unrelated changes.
 Stage specific files rather than `git add -A` to avoid committing secrets or generated artifacts.
