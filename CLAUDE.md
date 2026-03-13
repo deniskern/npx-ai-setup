@@ -61,35 +61,15 @@ Your context will be compacted automatically — this is normal. Before compacti
 - Track remaining work in the spec or a todo list
 After fresh start: review git log, open specs, check test state.
 
+Run /compact when context reaches 80% — quality degrades beyond this threshold.
+
 If you see `[CONTEXT STALE]` in your context: note that project context files may be outdated, but continue with the current task. Do not interrupt work to refresh context.
 
-## Prompt Cache Strategy
-Claude caches prompts as a prefix — static content first, dynamic content last maximizes cache hits:
-1. **System prompt + tools** — globally cached across all sessions
-2. **CLAUDE.md** — cached per project (do not edit mid-session)
-3. **Session context** (`.agents/context/`) — cached per session
-4. **Conversation messages** — dynamic, appended each turn
-
-Do not edit CLAUDE.md or tool definitions mid-session — it breaks the cache for all subsequent turns.
-Pass dynamic updates (timestamps, file changes) via messages, not by editing static layers.
-
-## Working Style
-Read relevant code before answering questions about it.
-Implement changes rather than only suggesting them.
-Use subagents for parallel or isolated work. For simple tasks, work directly.
-
 ## Spec-Driven Development
-Specs live in `specs/` -- structured task plans created before coding.
+Specs live in `specs/` — structured task plans created before coding.
 
 **When to suggest a spec:** Changes across 3+ files, new features, architectural changes, ambiguous requirements.
 **Skip specs for:** Single-file fixes, typos, config changes.
-
-**Workflow:**
-1. `/spec "task"` (Opus in plan mode - creates detailed plan, you approve, spec file is created)
-2. Review and refine spec if needed
-3. `/spec-work NNN` (Sonnet executes the approved plan step-by-step)
-4. `/spec-work-all` (Sonnet executes all draft specs in parallel via subagents)
-5. Completed specs move to `specs/completed/`
 
 See `specs/README.md` for details.
 

@@ -83,32 +83,9 @@ Your context will be compacted automatically — this is normal. Before compacti
 - Track remaining work in the spec or a todo list
 After fresh start: review git log, open specs, check test state.
 
+Run /compact when context reaches 80% — quality degrades beyond this threshold.
+
 If you see `[CONTEXT STALE]` in your context: note that project context files may be outdated, but continue with the current task. Do not interrupt work to refresh context.
-
-**Context budget:** When context is running low (you receive a compaction warning, or you sense the conversation is very long):
-- Stop implementing new steps
-- Prioritize writing a handoff: commit current work, update the spec with progress, or write HANDOFF.md
-- A partial handoff that enables clean resumption is more valuable than one more half-finished step
-- Never sacrifice handoff quality for one more implementation step
-
-## Prompt Cache Strategy
-Claude caches prompts as a prefix — static content first, dynamic content last maximizes cache hits:
-1. **System prompt + tools** — globally cached across all sessions
-2. **CLAUDE.md** — cached per project (do not edit mid-session)
-3. **Session context** (`.agents/context/`) — cached per session
-4. **Conversation messages** — dynamic, appended each turn
-
-Do not edit CLAUDE.md or tool definitions mid-session — it breaks the cache for all subsequent turns.
-Pass dynamic updates (timestamps, file changes) via messages, not by editing static layers.
-
-## Working Style
-Read relevant code before answering questions about it.
-Implement changes rather than only suggesting them.
-Use subagents for parallel or isolated work. For simple tasks, work directly.
-
-**Skill-First:** Before implementing anything manually, run `ls .claude/skills/` to check installed skills.
-If a skill covers the task, invoke it via the `Skill` tool — never reimplement what a skill already does.
-If no skill matches, ask the user before proceeding with manual implementation.
 
 ## Parallel Orchestration
 Use subagents by default for focused delegated work.
@@ -130,26 +107,10 @@ When current capabilities are insufficient, search the skills.sh marketplace for
 Check `.claude/skills/` first to avoid installing duplicates. Only install when genuinely needed for the task.
 
 ## Spec-Driven Development
-Specs live in `specs/` -- structured task plans created before coding.
+Specs live in `specs/` — structured task plans created before coding.
 
 **When to suggest a spec:** Changes across 3+ files, new features, architectural changes, ambiguous requirements.
 **Skip specs for:** Single-file fixes, typos, config changes.
-
-**Spec status lifecycle:** `draft` → `in-progress` → `in-review` → `completed` (or `blocked` at any stage)
-
-**Workflow:**
-1. `/spec "task"` — Plan: Opus challenges the idea, creates spec if approved (status: `draft`)
-2. Review and refine spec if needed
-3. `/spec-work NNN` — Execute: Sonnet implements the spec step-by-step; prompts for branch creation and optional auto-review (status: `in-progress` → `in-review` or `completed`)
-4. `/spec-work-all` — Execute all: parallel agents using native `isolation: "worktree"`, one branch per spec
-5. `/spec-review NNN` — Review: Opus reviews changes against acceptance criteria (status: `completed`)
-6. `/spec-board` — Overview: Kanban-style board showing all specs with status and step progress
-
-**Parallel execution (`/spec-work-all`):**
-- Uses native `isolation: "worktree"` — Claude Code manages worktrees automatically
-- Each agent gets its own branch (`spec/NNN-title`) with no merge conflicts
-- Specs with dependencies run in sequential waves
-- After completion, each spec is ready for `/spec-review`
 
 See `specs/README.md` for details.
 

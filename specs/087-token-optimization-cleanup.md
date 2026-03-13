@@ -35,7 +35,7 @@ All fixes must be applied in both local `.claude/` and `templates/`.
 
 4. [x] **Trim `general.md` routing duplicate** — in `.claude/rules/general.md` and `templates/claude/rules/general.md`: remove the "Subagent Model Routing" section (already in `agents.md`).
 
-5. **Trim `CLAUDE.md` meta-prose + add compact guidance** — in project `CLAUDE.md` and `templates/CLAUDE.md`: remove "Prompt Cache Strategy" section, remove "Skill-First" paragraph (covered by `general.md`), collapse spec workflow steps to pointer `See specs/README.md`, remove redundant "Working Style" bullets. Add to Context Management section: `Run /compact when context reaches 80% — quality degrades beyond this threshold.`
+5. [x] **Trim `CLAUDE.md` meta-prose + add compact guidance** — in project `CLAUDE.md` and `templates/CLAUDE.md`: remove "Prompt Cache Strategy" section, remove "Skill-First" paragraph (covered by `general.md`), collapse spec workflow steps to pointer `See specs/README.md`, remove redundant "Working Style" bullets. Add to Context Management section: `Run /compact when context reaches 80% — quality degrades beyond this threshold.`
 
 6. **Remove `spec` skill duplicate** — delete `.claude/skills/spec/` locally and remove the `spec` entry from `SPEC_SKILLS_MAP` in `lib/setup.sh`. Keep `spec-create` and all `.claude/commands/spec.md` intact.
 
