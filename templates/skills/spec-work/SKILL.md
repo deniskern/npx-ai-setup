@@ -26,6 +26,7 @@ Executes a spec from `specs/NNN-*.md` step by step, commits after each step, and
    - Check it off in the spec
    - Commit with `git commit -m "spec(NNN): step N — <title>"`
    - If blocked, stop and ask
+   - If you made an architectural, pattern, library, or convention decision during this step that downstream work should know about, append it to `decisions.md` in the project root. Not every step produces decisions — only append when a meaningful choice was made.
    - **Context budget:** If you've been working for many steps and context is growing large, prioritize completing the current step fully (including its commit) over starting the next step. If compaction seems imminent, update the spec with progress markers (`[x]` for completed steps) before continuing — this ensures the next session can resume cleanly.
 
 8. **Verify acceptance criteria** — check each one off in the spec.

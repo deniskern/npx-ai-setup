@@ -58,7 +58,7 @@ Relevant files: `templates/commands/spec-work.md`, `templates/commands/reflect.m
   In `templates/CLAUDE.md` (root of `templates/`, NOT `templates/claude/CLAUDE.md`), in the "Project Context (read before complex tasks)" section, add a new bullet after the existing `.agents/context/` entries:
   - "- `decisions.md` — Architectural decisions register (read before planning or research, if the file exists)"
 
-- [ ] **Step 6 — Mirror spec-work change in the spec-work skill**
+- [x] **Step 6 — Mirror spec-work change in the spec-work skill**
   Apply the identical addition from Step 3 to `templates/skills/spec-work/SKILL.md` so the skill copy stays in sync with the command.
 
 ## Files to Modify
