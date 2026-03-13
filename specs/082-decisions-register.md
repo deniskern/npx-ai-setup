@@ -43,7 +43,7 @@ Relevant files: `templates/commands/spec-work.md`, `templates/commands/reflect.m
   - **Rationale**: Why this choice (one sentence)
   - **Revisable?**: No, or Yes — trigger condition
 
-- [ ] **Step 2 — Verify automatic installation**
+- [x] **Step 2 — Verify automatic installation**
   No changes to `lib/core.sh` or `bin/ai-setup.sh` are needed. The existing `build_template_map()` in `lib/core.sh` picks up all root-level files in `templates/` via the fallback `*) target="${rel}" ;;` case. `_install_or_update_file()` in `lib/setup.sh` handles idempotency automatically (skips if file exists and matches checksum, skips with notice if user-modified). Verify the logic holds by reading `lib/core.sh:39-46` and `lib/setup.sh:15-39`.
 
 - [ ] **Step 3 — Integrate into spec-work execution**
