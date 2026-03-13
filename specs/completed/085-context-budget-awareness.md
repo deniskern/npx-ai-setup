@@ -1,5 +1,5 @@
 ---
-**Status**: draft
+**Status**: in-review
 **Branch**: —
 **Complexity**: low
 ---
@@ -48,11 +48,11 @@ Relevant files: `templates/CLAUDE.md`, `templates/commands/spec-work.md`
 
 ## Acceptance Criteria
 
-- [ ] `templates/CLAUDE.md` Context Management section contains the context budget rule as a new paragraph (not replacing existing content)
-- [ ] `templates/commands/spec-work.md` has a context budget note at the end of the Execute each step bullet list
-- [ ] `templates/skills/spec-work/SKILL.md` mirrors the spec-work.md change
-- [ ] Both additions use directive language ("Stop", "Prioritize"), not suggestive language
-- [ ] The CLAUDE.md addition does not overlap with the existing "Before compaction: Commit current work or save state to HANDOFF.md" bullet — it adds the "when to start" trigger, not the "what to do" instruction
+- [x] `templates/CLAUDE.md` Context Management section contains the context budget rule as a new paragraph (not replacing existing content)
+- [x] `templates/commands/spec-work.md` has a context budget note at the end of the Execute each step bullet list
+- [x] `templates/skills/spec-work/SKILL.md` mirrors the spec-work.md change
+- [x] Both additions use directive language ("Stop", "Prioritize"), not suggestive language
+- [x] The CLAUDE.md addition does not overlap with the existing "Before compaction: Commit current work or save state to HANDOFF.md" bullet — it adds the "when to start" trigger, not the "what to do" instruction
 
 ## Out of Scope
 

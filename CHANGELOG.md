@@ -9,6 +9,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 <!-- Entries are prepended below this line, newest first -->
 
 ## [Unreleased]
+- **Spec 085**: Context Budget Awareness Rule — adds context budget instruction to CLAUDE.md and spec-work.md to prioritize handoff over last implementation step
 - **Spec 084**: Debugging Discipline Methodology — adds 6-point structured debugging methodology to bug.md and spec-work.md verification failure path
 - **Spec 083**: Structured Verification Must-Haves — replaces freetext acceptance criteria with Truths/Artifacts/Key Links structure for mechanical verification
 - **Spec 081**: Understanding Confirmation in spec-work — adds a 3-bullet confirmation step for high-complexity specs before branch creation
