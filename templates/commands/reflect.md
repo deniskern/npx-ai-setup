@@ -1,7 +1,7 @@
 ---
 model: opus
 mode: plan
-allowed-tools: Read, Write, Edit, Glob, AskUserQuestion
+allowed-tools: Read, Write, Edit, Glob, AskUserQuestion, mcp__plugin_claude-mem_mcp-search__save_memory
 ---
 
 Analyze the current session for corrections, architectural discoveries, and stack decisions — convert them into permanent rules.
@@ -89,6 +89,28 @@ Only write items the user approved. For each approved item:
 - If appending to ARCHITECTURE.md, add under the most relevant existing section header (or create a new one if none fits)
 - If appending to STACK.md, add under the most relevant existing section header (or create a new one if none fits)
 - Keep additions minimal and self-contained
+
+### 6. Save deliberate decisions to claude-mem (automatic, no approval needed)
+
+After writing approved changes, automatically call `mcp__plugin_claude-mem_mcp-search__save_memory` for every approved **CORRECTION signal**.
+
+Do NOT save AFFIRMATION, ARCHITECTURAL, or STACK signals — those live in project files and are always loaded.
+
+For each approved correction, call save_memory with:
+- `title`: `decision: [component or context] — [what was decided]`
+  Example: `decision: SliderWrapper — keep ClientOnly without SSR fallback`
+- `text`: structured block:
+  ```
+  Project: [project name from git remote or directory name]
+  Context: [component, file, or feature area]
+  Decision: [what was deliberately chosen]
+  Avoid: [what Claude must NOT suggest — the rejected alternative]
+  Reason: [why, one sentence]
+  ```
+
+This enables semantic retrieval in future sessions: if Claude is about to suggest the rejected approach, the search match surfaces the saved decision before the suggestion is made.
+
+If `mcp__plugin_claude-mem_mcp-search__save_memory` is not available (plugin not installed), skip this step silently — do not error.
 
 ## Rules
 - Never delete or overwrite existing rules — append only.
