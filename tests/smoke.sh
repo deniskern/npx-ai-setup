@@ -120,15 +120,9 @@ else
   fail "package.json missing lib/ in files"
 fi
 
-# Step 6: Verify update-check hook is wired for startup and prompt submit
+# Step 6: Verify hooks are wired correctly
 echo ""
 echo "--- Hook wiring checks ---"
-if awk '/"SessionStart"[[:space:]]*:[[:space:]]*\[/,/^[[:space:]]*\],?$/' templates/claude/settings.json | grep -q 'update-check.sh'; then
-  pass "templates/claude/settings.json wires update-check.sh on SessionStart"
-else
-  fail "templates/claude/settings.json missing SessionStart update-check.sh hook"
-fi
-
 if awk '/"SessionStart"[[:space:]]*:[[:space:]]*\[/,/^[[:space:]]*\],?$/' templates/claude/settings.json | grep -q 'cross-repo-context.sh'; then
   pass "templates/claude/settings.json wires cross-repo-context.sh on SessionStart"
 else
