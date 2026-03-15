@@ -141,7 +141,16 @@ else
   fail "templates/claude/settings.json missing UserPromptSubmit update-check.sh hook"
 fi
 
-# Step 7: Verify skills alias migration is wired in both setup and update paths
+# Step 7: Verify spec-work validation gate
+echo ""
+echo "--- Spec-work validation gate ---"
+if grep -q 'Validation gate\|validation gate\|skip-validate' templates/commands/spec-work.md 2>/dev/null; then
+  pass "templates/commands/spec-work.md has validation gate"
+else
+  fail "templates/commands/spec-work.md missing validation gate"
+fi
+
+# Step 8: Verify skills alias migration is wired in both setup and update paths
 echo ""
 echo "--- Skills alias migration wiring ---"
 if grep -q 'ensure_skills_alias' bin/ai-setup.sh 2>/dev/null; then

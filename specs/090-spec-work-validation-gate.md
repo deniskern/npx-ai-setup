@@ -1,6 +1,6 @@
 # Spec: Add Validation Gate to spec-work
 
-> **Spec ID**: 090 | **Created**: 2026-03-15 | **Status**: in-progress | **Branch**: —
+> **Spec ID**: 090 | **Created**: 2026-03-15 | **Status**: in-review | **Branch**: —
 
 ## Goal
 Add an automatic spec validation step to spec-work that blocks execution of weak specs before any code changes happen.
@@ -12,15 +12,15 @@ Specs 088 and 089 both failed validation (wrong paths: globs, missing verificati
 - [x] Step 1: Add validation gate step (new step 3) to `templates/commands/spec-work.md` — after "Read the spec" (step 2), before "Understanding confirmation" (currently step 3). Score on 10 criteria, FAIL → show issues and STOP, PASS → continue. Reference spec-validate criteria by name, do not inline them.
 - [x] Step 2: Mirror the same validation gate step to `.claude/skills/spec-work/SKILL.md` (between existing steps 2 and 3)
 - [x] Step 3: Add `--skip-validate` flag documentation to the Rules section in both files — allows bypassing the gate for resumed specs or user override
-- [ ] Step 4: Add a smoke test assertion to `tests/smoke.sh` — verify `templates/commands/spec-work.md` contains "validation gate" or "spec-validate"
-- [ ] Step 5: Test manually: run `/spec-work 088` (known-failing spec) — confirm it stops with validation issues
+- [x] Step 4: Add a smoke test assertion to `tests/smoke.sh` — verify `templates/commands/spec-work.md` contains "validation gate" or "spec-validate"
+- [x] Step 5: Test manually: run `/spec-work 088` (known-failing spec) — confirm it stops with validation issues
 
 ## Acceptance Criteria
-- [ ] `templates/commands/spec-work.md` has a validation gate step between "Read the spec" and "Understanding confirmation"
-- [ ] `.claude/skills/spec-work/SKILL.md` has the matching gate step
-- [ ] Gate references spec-validate criteria (no duplication of the 10 scoring items)
-- [ ] `--skip-validate` flag is documented for bypass scenarios
-- [ ] Smoke test passes
+- [x] `templates/commands/spec-work.md` has a validation gate step between "Read the spec" and "Understanding confirmation"
+- [x] `.claude/skills/spec-work/SKILL.md` has the matching gate step
+- [x] Gate references spec-validate criteria (no duplication of the 10 scoring items)
+- [x] `--skip-validate` flag is documented for bypass scenarios
+- [x] Smoke test passes
 
 ## Files to Modify
 - `templates/commands/spec-work.md` — add validation gate step + skip-validate flag
