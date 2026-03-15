@@ -1,6 +1,6 @@
 # Spec: Complexity-based Model Routing in spec-work
 
-> **Spec ID**: 091 | **Created**: 2026-03-15 | **Status**: in-progress | **Complexity**: low | **Branch**: —
+> **Spec ID**: 091 | **Created**: 2026-03-15 | **Status**: completed | **Complexity**: low | **Branch**: —
 
 ## Goal
 Route spec execution to Haiku, Sonnet, or Opus based on a `**Complexity**` field in the spec header, saving tokens on simple specs and using stronger models only when warranted.

@@ -9,6 +9,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 <!-- Entries are prepended below this line, newest first -->
 
 ## [Unreleased]
+- **Spec 091**: Complexity-based Model Routing in spec-work — Haiku/Sonnet/Opus automatically selected for implementation based on `**Complexity**` field; Opus sets the field when creating specs
 - **Spec 090**: Validation Gate in spec-work — spec-work now scores specs on 10 criteria before executing; blocks weak specs with actionable feedback
 - **Spec 089**: Personal Config Token Optimization — MEMORY.md deduplicated, unused skills archived, context7 duplicate removed, global BASH_MAX_OUTPUT_LENGTH and MAX_MCP_OUTPUT_TOKENS set
 - **Spec 088**: Template Token Optimization — BASH_MAX_OUTPUT_LENGTH added to template settings, agents.md dispatch table extracted to docs/, CLAUDE.md Context Management trimmed
