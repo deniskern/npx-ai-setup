@@ -78,14 +78,8 @@ Never mark work as completed without BOTH:
 2. Explicit statement: "Verification complete: [what was checked and result]"
 
 ## Context Management
-Your context will be compacted automatically — this is normal. Before compaction:
-- Commit current work or save state to HANDOFF.md
-- Track remaining work in the spec or a todo list
+Run /compact at 80% context. Before compaction: commit work and note remaining tasks.
 After fresh start: review git log, open specs, check test state.
-
-Run /compact when context reaches 80% — quality degrades beyond this threshold.
-
-If you see `[CONTEXT STALE]` in your context: note that project context files may be outdated, but continue with the current task. Do not interrupt work to refresh context.
 
 ## Parallel Orchestration
 Use subagents by default for focused delegated work.
