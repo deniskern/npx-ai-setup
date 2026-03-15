@@ -10,7 +10,7 @@ Spec 091 introduced model routing but spawning any subagent (even Haiku) adds in
 
 ## Steps
 - [x] Step 1: Update `templates/commands/spec-work.md` step 11a — change `low` from "spawn Haiku subagent" to "execute directly (no subagent)"; keep `medium` → Sonnet subagent and `high` → Opus subagent
-- [ ] Step 2: Mirror the change to `.claude/skills/spec-work/SKILL.md` step 8a
+- [x] Step 2: Mirror the change to `.claude/skills/spec-work/SKILL.md` step 8a
 
 ## Acceptance Criteria
 - [ ] `templates/commands/spec-work.md` step 11a states `low` executes directly without subagent
