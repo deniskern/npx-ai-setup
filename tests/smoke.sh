@@ -192,6 +192,15 @@ else
   fail "ensure_skills_alias missing looping skill-link repair call"
 fi
 
+# Step 10: Verify circuit breaker has spec-active threshold override
+echo ""
+echo "--- Circuit breaker spec-aware thresholds ---"
+if grep -q 'in-progress' templates/claude/hooks/circuit-breaker.sh 2>/dev/null; then
+  pass "circuit-breaker.sh raises thresholds when spec is in-progress"
+else
+  fail "circuit-breaker.sh missing spec-active threshold override"
+fi
+
 # Summary
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed"

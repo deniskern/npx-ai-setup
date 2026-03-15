@@ -10,7 +10,7 @@ The circuit breaker fires at 8 edits/10 min — correct for detecting infinite l
 
 ## Steps
 - [x] Step 1: In `templates/claude/hooks/circuit-breaker.sh`, after the existing whitelist block, add a spec-active check: if `specs/*.md` contains `Status.*in-progress`, set `BLOCK=20` and `WARN=12` instead of the defaults (8 and 5)
-- [ ] Step 2: Add smoke test asserting `circuit-breaker.sh` contains the spec-active detection logic
+- [x] Step 2: Add smoke test asserting `circuit-breaker.sh` contains the spec-active detection logic
 
 ## Acceptance Criteria
 - [ ] `templates/claude/hooks/circuit-breaker.sh` contains a check for `in-progress` specs that raises BLOCK to 20 and WARN to 12
