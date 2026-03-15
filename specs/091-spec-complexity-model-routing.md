@@ -23,11 +23,11 @@ spec-work currently always runs on Sonnet regardless of spec complexity. Simple 
 - [ ] Step 5: Add smoke test asserting `specs/TEMPLATE.md` contains `Complexity`
 
 ## Acceptance Criteria
-- [ ] `specs/TEMPLATE.md` header contains `**Complexity**: low | medium | high` with definitions documented
-- [ ] `templates/commands/spec.md` embedded template includes `**Complexity**` field and Opus receives instructions to set it automatically
-- [ ] `templates/commands/spec-work.md` routes step 12 to Haiku/Sonnet/Opus by complexity; unset defaults to Sonnet
-- [ ] `.claude/skills/spec-work/SKILL.md` mirrors the routing logic
-- [ ] Smoke tests pass (`./tests/smoke.sh`)
+- [x] `specs/TEMPLATE.md` header contains `**Complexity**: low | medium | high` with definitions documented
+- [x] `templates/commands/spec.md` embedded template includes `**Complexity**` field and Opus receives instructions to set it automatically
+- [x] `templates/commands/spec-work.md` routes step 12 to Haiku/Sonnet/Opus by complexity; unset defaults to Sonnet
+- [x] `.claude/skills/spec-work/SKILL.md` mirrors the routing logic
+- [x] Smoke tests pass (`./tests/smoke.sh`)
 
 ## Files to Modify
 - `specs/TEMPLATE.md` — add `**Complexity**` field + definitions table
