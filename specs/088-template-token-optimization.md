@@ -10,7 +10,7 @@ Token optimizer audit identified three concrete template improvements: BASH_MAX_
 
 ## Steps
 - [x] Step 1: Add `BASH_MAX_OUTPUT_LENGTH: "20000"` to `templates/claude/settings.json` env block
-- [ ] Step 2: Create `templates/claude/docs/agent-dispatch.md` with the 9-row dispatch table from `templates/claude/rules/agents.md`
+- [x] Step 2: Create `templates/claude/docs/agent-dispatch.md` with the 9-row dispatch table from `templates/claude/rules/agents.md`
 - [ ] Step 3: Replace the 9-row table in `templates/claude/rules/agents.md` with a 3-line stub pointing to `.claude/docs/agent-dispatch.md`; keep model cost table (Haiku/Sonnet/Opus rows)
 - [ ] Step 4: Mirror Step 1 to `.claude/settings.json` (project-local); mirror Steps 2-3 to `.claude/rules/agents.md` and create `.claude/docs/agent-dispatch.md`
 - [ ] Step 5: Trim `templates/CLAUDE.md` Context Management section from 9 to 3 lines — run at session START per CONVENTIONS.md rule ("editing CLAUDE.md mid-session breaks prompt cache")
