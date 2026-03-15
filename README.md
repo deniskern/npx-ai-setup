@@ -100,6 +100,7 @@ npx github:onedot-digital-crew/npx-ai-setup [flags]
 
 --system nuxt,storyblok   # Set framework (auto, shopify, nuxt, next, laravel, shopware, storyblok)
 --regenerate              # Re-run Auto-Init without reinstalling files
+--patch <pattern>         # Fast sync: copy only templates matching pattern (e.g. --patch spec-work)
 ```
 
 ---
