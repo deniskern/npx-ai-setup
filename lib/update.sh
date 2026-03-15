@@ -301,6 +301,9 @@ run_patch() {
     exit 1
   fi
 
+  # Restore system from metadata so shopify-specific maps are included if applicable
+  restore_system_from_metadata --quiet
+
   local all_mappings=("${TEMPLATE_MAP[@]}" "${SPEC_SKILLS_MAP[@]}")
   if [[ "${SYSTEM:-}" == *shopify* ]]; then
     all_mappings+=("${SHOPIFY_SKILLS_MAP[@]}")

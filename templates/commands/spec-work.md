@@ -61,9 +61,8 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
 
 11a. **Model routing by complexity** (before step 12): Read the `**Complexity**` field from the spec header:
     - If `**Complexity**: low` — execute step 12 directly (no subagent — overhead not justified for simple tasks)
-    - If `**Complexity**: medium` or unset/missing — spawn subagent with `model: sonnet` for step 12 (default)
-    - If `**Complexity**: high` — spawn subagent with `model: opus` for step 12
-    For subagent spawns: pass the spec content and remaining unchecked steps as execution context.
+    - If `**Complexity**: medium` or unset/missing — spawn subagent with `model: sonnet` for step 12 (default); pass spec content and remaining unchecked steps as context
+    - If `**Complexity**: high` — spawn subagent with `model: opus` for step 12; pass spec content and remaining unchecked steps as context
 
 12. **Execute each step** in order:
     - Implement the change

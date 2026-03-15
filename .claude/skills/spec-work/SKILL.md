@@ -42,9 +42,8 @@ Executes a spec from `specs/NNN-*.md` step by step, commits after each step, and
 
 8a. **Model routing by complexity** (before step 9): Read the `**Complexity**` field from the spec header:
     - If `**Complexity**: low` — execute step 9 directly (no subagent — overhead not justified for simple tasks)
-    - If `**Complexity**: medium` or unset/missing — spawn subagent with `model: sonnet` for step 9 (default)
-    - If `**Complexity**: high` — spawn subagent with `model: opus` for step 9
-    Pass the spec content and remaining unchecked steps to the subagent as its execution context.
+    - If `**Complexity**: medium` or unset/missing — spawn subagent with `model: sonnet` for step 9 (default); pass spec content and remaining unchecked steps as context
+    - If `**Complexity**: high` — spawn subagent with `model: opus` for step 9; pass spec content and remaining unchecked steps as context
 
 9. **Execute each step** in order:
    - Implement the change
