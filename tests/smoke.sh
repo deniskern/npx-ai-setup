@@ -153,7 +153,7 @@ fi
 # Step 8: Verify Complexity field in spec template
 echo ""
 echo "--- Spec template Complexity field ---"
-if grep -q '**Complexity**:' specs/TEMPLATE.md 2>/dev/null; then
+if grep -qF '**Complexity**:' specs/TEMPLATE.md 2>/dev/null; then
   pass "specs/TEMPLATE.md has Complexity field in header"
 else
   fail "specs/TEMPLATE.md missing Complexity field"
