@@ -1,6 +1,6 @@
 # Spec: Template Token Optimization
 
-> **Spec ID**: 088 | **Created**: 2026-03-15 | **Status**: in-progress | **Branch**: —
+> **Spec ID**: 088 | **Created**: 2026-03-15 | **Status**: in-review | **Branch**: —
 
 ## Goal
 Reduce per-session token overhead in ai-setup templates by ~400 tokens through env defaults, agents.md dispatch table extraction, and CLAUDE.md trimming.
@@ -14,14 +14,14 @@ Token optimizer audit identified three concrete template improvements: BASH_MAX_
 - [x] Step 3: Replace the 9-row table in `templates/claude/rules/agents.md` with a 3-line stub pointing to `.claude/docs/agent-dispatch.md`; keep model cost table (Haiku/Sonnet/Opus rows)
 - [x] Step 4: Mirror Step 1 to `.claude/settings.json` (project-local); mirror Steps 2-3 to `.claude/rules/agents.md` and create `.claude/docs/agent-dispatch.md`
 - [x] Step 5: Trim `templates/CLAUDE.md` Context Management section from 9 to 3 lines — run at session START per CONVENTIONS.md rule ("editing CLAUDE.md mid-session breaks prompt cache")
-- [ ] Step 6: Run `bash tests/smoke.sh` — verify all checks pass
+- [x] Step 6: Run `bash tests/smoke.sh` — verify all checks pass
 
 ## Acceptance Criteria
-- [ ] `BASH_MAX_OUTPUT_LENGTH: "20000"` present in template settings.json env block
-- [ ] `templates/claude/docs/agent-dispatch.md` exists with the full dispatch table
-- [ ] `templates/claude/rules/agents.md` has stub replacing the 9-row table
-- [ ] Template CLAUDE.md Context Management section is 3 lines or fewer
-- [ ] Smoke tests pass
+- [x] `BASH_MAX_OUTPUT_LENGTH: "20000"` present in template settings.json env block
+- [x] `templates/claude/docs/agent-dispatch.md` exists with the full dispatch table
+- [x] `templates/claude/rules/agents.md` has stub replacing the 9-row table
+- [x] Template CLAUDE.md Context Management section is 3 lines or fewer
+- [x] Smoke tests pass
 
 ## Files to Modify
 - `templates/claude/settings.json` — add BASH_MAX_OUTPUT_LENGTH
