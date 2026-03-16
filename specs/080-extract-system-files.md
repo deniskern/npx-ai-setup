@@ -1,6 +1,6 @@
 # Spec 080 — Extract System-Specific Logic into lib/systems/*.sh
 
-**Status:** draft
+**Status:** backlog
 **Created:** 2026-03-12
 
 ## Goal

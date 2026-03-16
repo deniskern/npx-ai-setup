@@ -1,8 +1,8 @@
 # Spec: Base/System Split — Two-Mode Setup Architecture
 
-> **Spec ID**: 077 | **Created**: 2026-03-10 | **Status**: draft | **Branch**: —
+> **Spec ID**: 077 | **Created**: 2026-03-10 | **Status**: backlog | **Branch**: —
 
-<!-- Status lifecycle: draft → in-progress → in-review → completed (or blocked at any stage) -->
+<!-- Backlog: Großes Architektur-Vorhaben. Erst diskutieren/brainstormen bevor implementiert wird. Voraussetzung: 080 als Vorstufe. -->
 
 ## Goal
 Split the setup script into two distinct modes: **Base** (always runs, system-agnostic) and **System** (runs on demand, system-specific). Extract all system-specific logic into `lib/systems/<system>.sh` plugins. Result: `npx @onedot/ai-setup` = generic foundation; `npx @onedot/ai-setup shopware` = Shopware addon on top.
