@@ -10,6 +10,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 096**: Snapshot freshness detection — hook warns [SNAPSHOT STALE] when repomix snapshot is older than 7 days; writes SNAPSHOT_AT/SNAPSHOT_HASH to .state
 - **Spec 097**: Skill search caching — skips curl + Claude ranking on re-runs when package.json + STACK.md unchanged; --force-skills flag bypasses cache
 - **Spec 095**: repomix XML output — switches snapshot format to XML with comment/whitespace stripping for ~15-20% token reduction; all 4 locations updated consistently
 - **Spec 078**: WORKFLOW-GUIDE Local API Dumps section — documents the dump→read→targeted-MCP pattern for token-efficient CMS/API workflows (Storyblok example)

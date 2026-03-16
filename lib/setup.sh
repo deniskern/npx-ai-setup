@@ -866,6 +866,11 @@ generate_repomix_snapshot() {
   if [ $REPOMIX_EXIT -eq 0 ] && [ -f ".agents/repomix-snapshot.xml" ]; then
     LINES=$(wc -l < .agents/repomix-snapshot.xml 2>/dev/null || echo "?")
     printf "\r  ✅ Snapshot written to .agents/repomix-snapshot.xml (%s lines)%*s\n" "$LINES" 10 ""
+    # Write snapshot state for freshness detection
+    if [ -f ".agents/context/.state" ]; then
+      echo "SNAPSHOT_HASH=$(cksum .agents/repomix-snapshot.xml 2>/dev/null | cut -d' ' -f1,2)" >> .agents/context/.state
+      echo "SNAPSHOT_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> .agents/context/.state
+    fi
   else
     printf "\r  ⏭️  repomix unavailable, skipping snapshot%*s\n" 20 ""
     rm -f .agents/repomix-snapshot.xml
