@@ -220,4 +220,28 @@ Both reduce token usage by ~80% compared to raw HTML. Use WebFetch only when the
 
 ---
 
+### Local API Dumps — MCP Acceleration
+
+MCP servers (Storyblok, Shopify, etc.) require discovery calls to find IDs and slugs. A local dump lets Claude read all entries instantly and make only targeted MCP calls — no pagination, no blind search.
+
+**Why:**
+- Instant ID/slug lookup without roundtrips
+- Batch analysis across all entries in one read
+- Reduces MCP calls by 80%+ on typical tasks
+
+**Example (Storyblok):**
+```bash
+npm run storyblok-dump
+# writes: scripts/storyblok-dump.json (JSONL with summary header)
+```
+
+**Pattern:**
+1. Run dump script → produces local JSONL/JSON file
+2. Read dump to find the IDs/slugs you need
+3. Make targeted MCP calls (`storyblok_get_story(id)`) — no discovery needed
+
+Any CMS or API with a list endpoint can follow this pattern.
+
+---
+
 *This guide is installed and kept up to date by `@onedot/ai-setup`. Do not reference it in CLAUDE.md (it is not loaded into context automatically).*

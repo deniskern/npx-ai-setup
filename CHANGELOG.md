@@ -10,6 +10,8 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 078**: WORKFLOW-GUIDE Local API Dumps section — documents the dump→read→targeted-MCP pattern for token-efficient CMS/API workflows (Storyblok example)
+
 ## [1.3.4] — 2026-03-15
 - **Spec 094**: Circuit Breaker spec-aware — raises block threshold (8→20) when a spec is in-progress; prevents false positives during planned migrations
 
