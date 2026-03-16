@@ -31,6 +31,9 @@ build_template_map() {
     # Skip skills/ — handled explicitly by SHOPIFY_SKILLS_MAP with system check
     [[ "$rel" == skills/* ]] && continue
 
+    # Skip scripts/ — handled explicitly by system-specific install functions
+    [[ "$rel" == scripts/* ]] && continue
+
     # Skip typescript.md — handled conditionally by TS_RULES_MAP in install_rules()
     [[ "$rel" == "claude/rules/typescript.md" ]] && continue
 

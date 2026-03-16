@@ -235,6 +235,26 @@ install_shopify_skills() {
   fi
 }
 
+install_storyblok_scripts() {
+  [[ "${SYSTEM:-}" == *storyblok* ]] || return 0
+  echo "  📦 Installing Storyblok scripts..."
+  local scripts_dir="scripts"
+  mkdir -p "$scripts_dir"
+  local target="$scripts_dir/storyblok-dump.ts"
+  _install_or_update_file "$TPL/scripts/storyblok-dump.ts" "$target"
+  # Add npm script entry if package.json present and entry missing
+  if [ -f "package.json" ] && command -v jq >/dev/null 2>&1; then
+    if ! jq -e '.scripts["storyblok-dump"]' package.json >/dev/null 2>&1; then
+      local tmp
+      tmp=$(mktemp)
+      jq '.scripts["storyblok-dump"] = "tsx scripts/storyblok-dump.ts"' package.json > "$tmp" && mv "$tmp" package.json
+      echo "  ✅ Added storyblok-dump script to package.json"
+    else
+      echo "  ⏭️  storyblok-dump script already in package.json"
+    fi
+  fi
+}
+
 install_spec_skills() {
   [ "${#SPEC_SKILLS_MAP[@]}" -gt 0 ] || return 0
   echo "  📚 Installing spec workflow skills..."
@@ -640,6 +660,7 @@ update_gitignore() {
       echo ".agents/memory/" >> .gitignore
       echo ".agents/repomix-snapshot.xml" >> .gitignore
       echo ".agents/.skill-cache.json" >> .gitignore
+      echo "scripts/storyblok-dump.json" >> .gitignore
       echo "CLAUDE.local.md" >> .gitignore
       echo ".codex/skills" >> .gitignore
       echo ".opencode/skills" >> .gitignore
@@ -651,6 +672,7 @@ update_gitignore() {
       grep -q "\.agents/memory" .gitignore 2>/dev/null || echo ".agents/memory/" >> .gitignore
       grep -q "repomix-snapshot" .gitignore 2>/dev/null || echo ".agents/repomix-snapshot.xml" >> .gitignore
       grep -q "skill-cache" .gitignore 2>/dev/null || echo ".agents/.skill-cache.json" >> .gitignore
+      grep -q "storyblok-dump\.json" .gitignore 2>/dev/null || echo "scripts/storyblok-dump.json" >> .gitignore
       grep -q "CLAUDE\.local\.md" .gitignore 2>/dev/null || echo "CLAUDE.local.md" >> .gitignore
       grep -q "\.codex/skills" .gitignore 2>/dev/null || echo ".codex/skills" >> .gitignore
       grep -q "\.opencode/skills" .gitignore 2>/dev/null || echo ".opencode/skills" >> .gitignore
@@ -663,6 +685,7 @@ update_gitignore() {
     echo ".agents/context/.state" >> .gitignore
     echo ".agents/repomix-snapshot.xml" >> .gitignore
     echo ".agents/.skill-cache.json" >> .gitignore
+    echo "scripts/storyblok-dump.json" >> .gitignore
     echo "CLAUDE.local.md" >> .gitignore
     echo ".codex/skills" >> .gitignore
     echo ".opencode/skills" >> .gitignore
