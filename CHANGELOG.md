@@ -37,7 +37,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 - **Spec 089**: Personal Config Token Optimization — MEMORY.md deduplicated, unused skills archived, context7 duplicate removed, global BASH_MAX_OUTPUT_LENGTH and MAX_MCP_OUTPUT_TOKENS set
 - **Spec 088**: Template Token Optimization — BASH_MAX_OUTPUT_LENGTH added to template settings, agents.md dispatch table extracted to docs/, CLAUDE.md Context Management trimmed
 
-## [Unreleased]
+## [1.3.2-patch] — 2026-03-13
 
 - **Spec 087**: Token Optimization: Config and Template Cleanup — reduced per-session token overhead by removing duplicate rules, trimming CLAUDE.md, scoping rules files with paths: frontmatter, capping MCP output, and fixing skill descriptions.
 - **fix**: Remove autocompactBuffer from powerline config — reclaims ~20% context per session.
