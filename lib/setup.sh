@@ -647,6 +647,10 @@ setup_repo_group_context() {
 }
 
 # Update .gitignore with AI setup entries
+# Team-vs-local boundary:
+#   GITIGNORED (machine-local): .state, repomix snapshot, skill cache, memory, dump outputs
+#   COMMITTED  (team-shared):   .agents/context/*.md (STACK, ARCHITECTURE, CONVENTIONS, PATTERNS, AUDIT)
+#   Never add .agents/context/*.md files to gitignore — they are shared team knowledge.
 update_gitignore() {
   echo "🚫 Updating .gitignore..."
   if [ -f .gitignore ]; then
