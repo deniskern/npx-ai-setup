@@ -8,7 +8,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 <!-- Entries are prepended below this line, newest first -->
 
-## [Unreleased]
+## [1.3.5] — 2026-03-16
 
 - **Spec 107**: SessionStart head-truncation — `cat` → `head -20` for STACK.md/CONVENTIONS.md injection, saves ~60-70% tokens per session
 - **Spec 106**: Aggressive .claudeignore — 54 patterns covering builds, caches, maps, binaries, locks + system-specific additions (Shopware, Nuxt, Next, Laravel); idempotent merge on re-runs
