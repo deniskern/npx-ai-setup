@@ -1,6 +1,6 @@
 # Spec: Aggressive .claudeignore Template
 
-> **Spec ID**: 106 | **Created**: 2026-03-16 | **Status**: in-review | **Branch**: — | **Complexity**: low
+> **Spec ID**: 106 | **Created**: 2026-03-16 | **Status**: completed | **Branch**: — | **Complexity**: low
 
 ## Goal
 Expand the `.claudeignore` template from 3 entries to a comprehensive blocklist that prevents Claude from indexing known token-wasting files.

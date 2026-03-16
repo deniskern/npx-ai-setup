@@ -1,6 +1,6 @@
 # Spec: jq-to-Node Fallback Wrapper
 
-> **Spec ID**: 103 | **Created**: 2026-03-16 | **Status**: in-review | **Branch**: — | **Complexity**: high
+> **Spec ID**: 103 | **Created**: 2026-03-16 | **Status**: completed | **Branch**: — | **Complexity**: high
 
 ## Goal
 Eliminate the hard jq dependency by creating a `_json` wrapper function that uses jq when available and falls back to Node.js one-liners when not.

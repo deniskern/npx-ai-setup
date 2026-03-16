@@ -1,6 +1,6 @@
 # Spec: Monorepo Auto-Discovery
 
-> **Spec ID**: 105 | **Created**: 2026-03-16 | **Status**: in-review | **Branch**: — | **Complexity**: medium
+> **Spec ID**: 105 | **Created**: 2026-03-16 | **Status**: completed | **Branch**: — | **Complexity**: medium
 
 ## Goal
 Auto-detect monorepo workspace packages and generate `repo-group.json` without manual wizard input.

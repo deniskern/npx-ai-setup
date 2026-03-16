@@ -1,6 +1,6 @@
 # Spec: Repomix System-Specific Ignore Patterns
 
-> **Spec ID**: 104 | **Created**: 2026-03-16 | **Status**: in-review | **Branch**: — | **Complexity**: low
+> **Spec ID**: 104 | **Created**: 2026-03-16 | **Status**: completed | **Branch**: — | **Complexity**: low
 
 ## Goal
 Generate a `.repomixignore` file with framework-specific exclusions so repomix snapshots stay within token budgets.

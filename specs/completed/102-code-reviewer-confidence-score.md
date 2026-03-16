@@ -1,6 +1,6 @@
 # Spec: code-reviewer Numeric Confidence Scoring
 
-> **Spec ID**: 102 | **Created**: 2026-03-16 | **Status**: in-review | **Branch**: —
+> **Spec ID**: 102 | **Created**: 2026-03-16 | **Status**: completed | **Branch**: —
 
 ## Goal
 Add numeric confidence scores (0–100) to code-reviewer findings and suppress anything below 80 — matching the quality bar of the official Anthropic code-review plugin.
