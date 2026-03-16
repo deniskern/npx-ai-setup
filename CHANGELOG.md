@@ -10,6 +10,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 107**: SessionStart head-truncation — `cat` → `head -20` for STACK.md/CONVENTIONS.md injection, saves ~60-70% tokens per session
 - **Spec 106**: Aggressive .claudeignore — 54 patterns covering builds, caches, maps, binaries, locks + system-specific additions (Shopware, Nuxt, Next, Laravel); idempotent merge on re-runs
 - **Spec 105**: Monorepo auto-discovery — detects npm/yarn/pnpm workspaces + lerna.json; auto-generates repo-group.json; non-monorepo projects unaffected
 - **Spec 104**: Repomix system-specific ignore — generates .repomixignore with base + SYSTEM patterns before snapshot; reduces snapshot size for large frameworks
