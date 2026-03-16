@@ -10,6 +10,11 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 106**: Aggressive .claudeignore — 54 patterns covering builds, caches, maps, binaries, locks + system-specific additions (Shopware, Nuxt, Next, Laravel); idempotent merge on re-runs
+- **Spec 105**: Monorepo auto-discovery — detects npm/yarn/pnpm workspaces + lerna.json; auto-generates repo-group.json; non-monorepo projects unaffected
+- **Spec 104**: Repomix system-specific ignore — generates .repomixignore with base + SYSTEM patterns before snapshot; reduces snapshot size for large frameworks
+- **Spec 103**: jq-to-Node fallback — `lib/json.sh` wrapper provides `_json_read`, `_json_valid`, `_json_merge`; jq now optional (Node.js fallback); 5+ call sites migrated
+- **Spec 102**: code-reviewer numeric confidence — findings include score `[HIGH:92]`; items below 80 suppressed; FAIL/CONCERNS/PASS thresholds updated
 - **Spec 101**: commit-commands added to official plugins — installs /commit, /commit-push-pr, /clean_gone on setup
 - **Spec 098**: Project onboarding audit — `--audit` flag + `/project-audit` skill; agent produces PATTERNS.md and AUDIT.md from efficient codebase read; asks before creating specs
 - **Spec 100**: gitignore team boundary — documents team-vs-local split; PATTERNS.md/AUDIT.md listed in CLAUDE.md and WORKFLOW-GUIDE as team-committed context

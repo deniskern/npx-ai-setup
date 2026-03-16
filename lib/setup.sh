@@ -28,9 +28,16 @@ _install_or_update_file() {
   [ "$tpl_cs" = "$cur_cs" ] && return 0
 
   # Template is newer — check if user modified the installed file
-  if [ -f .ai-setup.json ] && command -v jq >/dev/null 2>&1; then
+  if [ -f .ai-setup.json ] && _json_valid .ai-setup.json; then
     local stored_cs
-    stored_cs=$(jq -r --arg f "$target" '.files[$f] // empty' .ai-setup.json 2>/dev/null)
+    if [ "$_JSON_CMD" = "jq" ]; then
+      stored_cs=$(jq -r --arg f "$target" '.files[$f] // empty' .ai-setup.json 2>/dev/null)
+    else
+      stored_cs=$(node -e "
+        try{const d=JSON.parse(require('fs').readFileSync('.ai-setup.json','utf8'));
+        const v=(d.files||{})['$target'];if(v)process.stdout.write(v);}catch(e){}
+      " 2>/dev/null)
+    fi
     if [ -n "$stored_cs" ] && [ "$stored_cs" != "$cur_cs" ]; then
       # User modified this file — don't overwrite
       echo "  ⏭️  $target (user-modified, kept)"
@@ -51,7 +58,11 @@ check_requirements() {
   MISSING=()
   ! command -v node &>/dev/null && MISSING+=("node (>= 18)")
   ! command -v npm &>/dev/null && MISSING+=("npm")
-  ! command -v jq &>/dev/null && MISSING+=("jq (brew install jq)")
+  if ! command -v jq &>/dev/null && ! command -v node &>/dev/null; then
+    MISSING+=("jq or node (brew install jq, or install Node.js >= 18)")
+  elif ! command -v jq &>/dev/null; then
+    echo "  ℹ️  jq not found — Node.js JSON fallback active (install jq for better performance)"
+  fi
 
   if [ ${#MISSING[@]} -gt 0 ]; then
     echo "❌ Missing requirements:"
@@ -243,11 +254,11 @@ install_storyblok_scripts() {
   local target="$scripts_dir/storyblok-dump.ts"
   _install_or_update_file "$TPL/scripts/storyblok-dump.ts" "$target"
   # Add npm script entry if package.json present and entry missing
-  if [ -f "package.json" ] && command -v jq >/dev/null 2>&1; then
-    if ! jq -e '.scripts["storyblok-dump"]' package.json >/dev/null 2>&1; then
-      local tmp
-      tmp=$(mktemp)
-      jq '.scripts["storyblok-dump"] = "tsx scripts/storyblok-dump.ts"' package.json > "$tmp" && mv "$tmp" package.json
+  if [ -f "package.json" ]; then
+    local _existing_script
+    _existing_script=$(_json_read package.json '.scripts["storyblok-dump"]' 2>/dev/null || true)
+    if [ -z "$_existing_script" ]; then
+      _json_merge package.json '{"scripts":{"storyblok-dump":"tsx scripts/storyblok-dump.ts"}}'
       echo "  ✅ Added storyblok-dump script to package.json"
     else
       echo "  ⏭️  storyblok-dump script already in package.json"
@@ -668,6 +679,7 @@ update_gitignore() {
       echo "CLAUDE.local.md" >> .gitignore
       echo ".codex/skills" >> .gitignore
       echo ".opencode/skills" >> .gitignore
+      echo ".repomixignore" >> .gitignore
     else
       # Add new entries if missing from existing block
       grep -q "\.ai-setup\.json" .gitignore 2>/dev/null || echo ".ai-setup.json" >> .gitignore
@@ -680,6 +692,7 @@ update_gitignore() {
       grep -q "CLAUDE\.local\.md" .gitignore 2>/dev/null || echo "CLAUDE.local.md" >> .gitignore
       grep -q "\.codex/skills" .gitignore 2>/dev/null || echo ".codex/skills" >> .gitignore
       grep -q "\.opencode/skills" .gitignore 2>/dev/null || echo ".opencode/skills" >> .gitignore
+      grep -q "\.repomixignore" .gitignore 2>/dev/null || echo ".repomixignore" >> .gitignore
     fi
   else
     echo "# Claude Code / AI Setup" > .gitignore
@@ -693,6 +706,7 @@ update_gitignore() {
     echo "CLAUDE.local.md" >> .gitignore
     echo ".codex/skills" >> .gitignore
     echo ".opencode/skills" >> .gitignore
+    echo ".repomixignore" >> .gitignore
   fi
 
   # AGENTS.md should be tracked like CLAUDE.md (never ignored)
@@ -812,6 +826,49 @@ generate_opencode_config() {
   fi
 }
 
+# Install .claudeignore with universal patterns and optional system-specific additions.
+# Idempotent: merges new patterns into existing file, never removes user entries.
+install_claudeignore() {
+  if [ ! -f .claudeignore ]; then
+    cp "$TPL/.claudeignore" .claudeignore
+    echo "  📄 .claudeignore installed ($(wc -l < .claudeignore | tr -d ' ') patterns)"
+  else
+    # Merge: append template patterns not already present
+    local added=0
+    while IFS= read -r line; do
+      # Skip comments and blank lines for dedup check
+      [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
+      if ! grep -qxF "$line" .claudeignore 2>/dev/null; then
+        echo "$line" >> .claudeignore
+        added=$((added + 1))
+      fi
+    done < "$TPL/.claudeignore"
+    [ "$added" -gt 0 ] && echo "  📄 .claudeignore updated (+$added patterns)"
+  fi
+
+  # Append system-specific patterns
+  case "${SYSTEM:-}" in
+    shopware*)
+      for p in "var/cache/" "public/bundles/" "var/log/"; do
+        grep -qxF "$p" .claudeignore || echo "$p" >> .claudeignore
+      done
+      ;;
+    nuxt*)
+      for p in ".nuxt/" ".output/"; do
+        grep -qxF "$p" .claudeignore || echo "$p" >> .claudeignore
+      done
+      ;;
+    next*)
+      grep -qxF ".next/" .claudeignore || echo ".next/" >> .claudeignore
+      ;;
+    laravel*)
+      for p in "bootstrap/cache/" "storage/framework/"; do
+        grep -qxF "$p" .claudeignore || echo "$p" >> .claudeignore
+      done
+      ;;
+  esac
+}
+
 # Install repomix.config.json for codebase snapshot configuration
 install_repomix_config() {
   if [ ! -f repomix.config.json ]; then
@@ -857,6 +914,53 @@ install_statusline_project() {
 }
 
 # Generate repomix codebase snapshot in background (once, if not already present)
+# Generate .repomixignore with base patterns + SYSTEM-specific exclusions.
+# Repomix reads .repomixignore natively (like .gitignore). Machine-local artifact.
+install_repomixignore() {
+  [ -f .repomixignore ] && return 0
+
+  cat > .repomixignore << 'REPOMIX_IGNORE_EOF'
+# Base patterns — always excluded from repomix snapshots
+node_modules/
+vendor/
+dist/
+build/
+coverage/
+.git/
+*.lock
+*.lockb
+*.map
+*.min.js
+*.min.css
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.woff
+*.woff2
+*.ttf
+*.pdf
+REPOMIX_IGNORE_EOF
+
+  # Append system-specific patterns
+  case "${SYSTEM:-}" in
+    shopware*)
+      printf '\n# Shopware\nvar/cache/\nvar/log/\npublic/bundles/\n' >> .repomixignore
+      ;;
+    nuxt*)
+      printf '\n# Nuxt\n.nuxt/\n.output/\n' >> .repomixignore
+      ;;
+    next*)
+      printf '\n# Next.js\n.next/\n' >> .repomixignore
+      ;;
+    laravel*)
+      printf '\n# Laravel\nbootstrap/cache/\nstorage/framework/\nstorage/logs/\n' >> .repomixignore
+      ;;
+  esac
+  echo "  📄 .repomixignore generated"
+}
+
 generate_repomix_snapshot() {
   if [ -f ".agents/repomix-snapshot.xml" ]; then
     return 0

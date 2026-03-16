@@ -26,19 +26,9 @@ install_claude_mem() {
     echo "  🧠 Claude-Mem already installed, skipping."
   else
     # Merge extraKnownMarketplaces + enabledPlugins into .claude/settings.json
-    if command -v jq &>/dev/null && [ -f .claude/settings.json ]; then
-      CLAUDE_MEM_MERGE='{
-        "extraKnownMarketplaces": {
-          "thedotmack": {
-            "source": { "source": "github", "repo": "thedotmack/claude-mem" }
-          }
-        },
-        "enabledPlugins": {
-          "claude-mem@thedotmack": true
-        }
-      }'
-      TMP_SETTINGS=$(mktemp)
-      jq --argjson merge "$CLAUDE_MEM_MERGE" '. * $merge' .claude/settings.json > "$TMP_SETTINGS" && mv "$TMP_SETTINGS" .claude/settings.json
+    if [ -f .claude/settings.json ]; then
+      CLAUDE_MEM_MERGE='{"extraKnownMarketplaces":{"thedotmack":{"source":{"source":"github","repo":"thedotmack/claude-mem"}}},"enabledPlugins":{"claude-mem@thedotmack":true}}'
+      _json_merge .claude/settings.json "$CLAUDE_MEM_MERGE"
       echo "  🧠 Claude-Mem marketplace registered in .claude/settings.json"
     fi
 
@@ -68,19 +58,9 @@ install_coderabbit_plugin() {
   fi
 
   # Merge marketplace + enabled plugin hints into project settings.
-  if command -v jq &>/dev/null && [ -f .claude/settings.json ]; then
-    CODERABBIT_MERGE='{
-      "extraKnownMarketplaces": {
-        "coderabbitai": {
-          "source": { "source": "github", "repo": "coderabbitai/claude-plugin" }
-        }
-      },
-      "enabledPlugins": {
-        "claude-plugin@coderabbitai": true
-      }
-    }'
-    TMP_SETTINGS=$(mktemp)
-    jq --argjson merge "$CODERABBIT_MERGE" '. * $merge' .claude/settings.json > "$TMP_SETTINGS" && mv "$TMP_SETTINGS" .claude/settings.json
+  if [ -f .claude/settings.json ]; then
+    CODERABBIT_MERGE='{"extraKnownMarketplaces":{"coderabbitai":{"source":{"source":"github","repo":"coderabbitai/claude-plugin"}}},"enabledPlugins":{"claude-plugin@coderabbitai":true}}'
+    _json_merge .claude/settings.json "$CODERABBIT_MERGE"
     echo "  🐇 CodeRabbit marketplace registered in .claude/settings.json"
   fi
 
@@ -144,15 +124,12 @@ install_context7() {
   if [ -f .mcp.json ]; then
     if grep -q '"context7"' .mcp.json 2>/dev/null; then
       echo "  📚 Context7 already configured in .mcp.json, skipping."
-    elif command -v jq &>/dev/null; then
-      TMP_MCP=$(mktemp)
-      jq --argjson ctx "$CTX7_CONFIG" '.mcpServers += $ctx.mcpServers' .mcp.json > "$TMP_MCP" && mv "$TMP_MCP" .mcp.json
-      echo "  📚 Context7 MCP server added to .mcp.json"
     else
-      echo "  ⚠️  .mcp.json exists but jq not available to merge. Add manually."
+      _json_merge .mcp.json "$CTX7_CONFIG"
+      echo "  📚 Context7 MCP server added to .mcp.json"
     fi
   else
-    echo "$CTX7_CONFIG" | jq '.' > .mcp.json 2>/dev/null || echo "$CTX7_CONFIG" > .mcp.json
+    echo "$CTX7_CONFIG" > .mcp.json
     echo "  📚 Context7 MCP server configured in .mcp.json"
   fi
 

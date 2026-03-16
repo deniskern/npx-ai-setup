@@ -51,6 +51,7 @@ done
 
 # Load modules
 source "$SCRIPT_DIR/lib/_loader.sh"
+source_lib "json.sh"
 source_lib "core.sh"
 source_lib "process.sh"
 source_lib "detect.sh"
@@ -59,6 +60,7 @@ source_lib "skills.sh"
 source_lib "generate.sh"
 source_lib "update.sh"
 source_lib "setup.sh"
+source_lib "monorepo.sh"
 source_lib "plugins.sh"
 
 # Validate --system value (supports comma-separated list)
@@ -162,11 +164,15 @@ install_spec_skills
 install_shopify_skills
 install_storyblok_scripts
 install_agents
+detect_workspaces
+generate_workspace_repo_group
 setup_repo_group_context
 echo "📋 Writing installation metadata..."
 write_metadata
 update_gitignore
+install_claudeignore
 install_repomix_config
+install_repomixignore
 generate_repomix_snapshot
 
 # Plugins & extensions

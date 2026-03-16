@@ -103,13 +103,13 @@ VALID_SYSTEMS=(auto shopify nuxt next laravel shopware storyblok)
 
 # Get package version from package.json
 get_package_version() {
-  jq -r '.version' "$SCRIPT_DIR/package.json" 2>/dev/null || echo "unknown"
+  _json_read "$SCRIPT_DIR/package.json" '.version' 2>/dev/null || echo "unknown"
 }
 
 # Get installed version from .ai-setup.json
 get_installed_version() {
-  if [ -f .ai-setup.json ] && jq -e . .ai-setup.json >/dev/null 2>&1; then
-    jq -r '.version // empty' .ai-setup.json 2>/dev/null || echo ""
+  if [ -f .ai-setup.json ] && _json_valid .ai-setup.json; then
+    _json_read .ai-setup.json '.version' || echo ""
   else
     echo ""
   fi
@@ -122,7 +122,7 @@ restore_system_from_metadata() {
   [ -n "$SYSTEM" ] && return 0
   [ -f .ai-setup.json ] || return 0
   local stored
-  stored=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
+  stored=$(_json_read .ai-setup.json '.system')
   [ -z "$stored" ] && return 0
   [ "$stored" = "auto" ] && return 0
   SYSTEM="$stored"
@@ -147,20 +147,15 @@ write_metadata() {
 
   # Preserve original install time if updating
   local install_time="$timestamp"
-  if [ -f .ai-setup.json ] && jq -e . .ai-setup.json >/dev/null 2>&1; then
+  if [ -f .ai-setup.json ] && _json_valid .ai-setup.json; then
     local prev
-    prev=$(jq -r '.installed_at // empty' .ai-setup.json 2>/dev/null)
+    prev=$(_json_read .ai-setup.json '.installed_at')
     [ -n "$prev" ] && install_time="$prev"
   fi
 
-  # Build JSON with jq
+  # Build JSON
   local json
-  json=$(jq -n \
-    --arg ver "$version" \
-    --arg inst "$install_time" \
-    --arg upd "$timestamp" \
-    --arg sys "${SYSTEM:-}" \
-    '{version: $ver, installed_at: $inst, updated_at: $upd, system: $sys, files: {}}')
+  json=$(_json_build_metadata "$version" "$install_time" "$timestamp" "${SYSTEM:-}")
 
   for mapping in "${TEMPLATE_MAP[@]}"; do
     local tpl="${mapping%%:*}"
@@ -168,7 +163,7 @@ write_metadata() {
     if [ -f "$target" ]; then
       local cs
       cs=$(compute_checksum "$target")
-      json=$(echo "$json" | jq --arg f "$target" --arg c "$cs" '.files[$f] = $c')
+      json=$(echo "$json" | _json_set_file "$target" "$cs")
     fi
   done
 
@@ -180,7 +175,7 @@ write_metadata() {
       if [ -f "$target" ]; then
         local cs
         cs=$(compute_checksum "$target")
-        json=$(echo "$json" | jq --arg f "$target" --arg c "$cs" '.files[$f] = $c')
+        json=$(echo "$json" | _json_set_file "$target" "$cs")
       fi
     done
   fi
@@ -192,7 +187,7 @@ write_metadata() {
     if [ -f "$target" ]; then
       local cs
       cs=$(compute_checksum "$target")
-      json=$(echo "$json" | jq --arg f "$target" --arg c "$cs" '.files[$f] = $c')
+      json=$(echo "$json" | _json_set_file "$target" "$cs")
     fi
   done
 

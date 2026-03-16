@@ -52,7 +52,7 @@ detect_shopware_type() {
 
   # Plugin indicator: composer.json type field
   local ctype
-  ctype=$(jq -r '.type // ""' composer.json 2>/dev/null)
+  ctype=$(_json_read composer.json '.type')
   if [ "$ctype" = "shopware-platform-plugin" ] || [ "$ctype" = "shopware-bundle" ]; then
     SHOPWARE_TYPE="plugin"
     return 0

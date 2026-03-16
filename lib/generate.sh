@@ -663,7 +663,15 @@ EOF
 
   KEYWORDS=()
   if [ -f package.json ]; then
-    DEPS=$(jq -r '(.dependencies // {} | keys[]) , (.devDependencies // {} | keys[])' package.json 2>/dev/null | sort -u)
+    if [ "$_JSON_CMD" = "jq" ]; then
+      DEPS=$(jq -r '(.dependencies // {} | keys[]) , (.devDependencies // {} | keys[])' package.json 2>/dev/null | sort -u)
+    else
+      DEPS=$(node -e "
+        try{const p=JSON.parse(require('fs').readFileSync('package.json','utf8'));
+        const d=[...Object.keys(p.dependencies||{}),...Object.keys(p.devDependencies||{})];
+        [...new Set(d)].sort().forEach(x=>console.log(x));}catch(e){}
+      " 2>/dev/null)
+    fi
 
     for dep in $DEPS; do
       case "$dep" in
@@ -718,14 +726,21 @@ EOF
       # Cache check: skip search + Claude ranking if hashes match
       SKILL_CACHE_FILE=".agents/.skill-cache.json"
       CACHED_SELECTED=""
-      if [ -z "${FORCE_SKILLS:-}" ] && [ -f "$SKILL_CACHE_FILE" ] && command -v jq >/dev/null 2>&1; then
+      if [ -z "${FORCE_SKILLS:-}" ] && [ -f "$SKILL_CACHE_FILE" ]; then
         local _cur_pkg_hash _cur_stack_hash _cached_pkg _cached_stack
         _cur_pkg_hash=$(cksum package.json 2>/dev/null | cut -d' ' -f1,2)
         _cur_stack_hash=$(cksum .agents/context/STACK.md 2>/dev/null | cut -d' ' -f1,2)
-        _cached_pkg=$(jq -r '.pkg_hash // ""' "$SKILL_CACHE_FILE" 2>/dev/null)
-        _cached_stack=$(jq -r '.stack_hash // ""' "$SKILL_CACHE_FILE" 2>/dev/null)
+        _cached_pkg=$(_json_read "$SKILL_CACHE_FILE" '.pkg_hash')
+        _cached_stack=$(_json_read "$SKILL_CACHE_FILE" '.stack_hash')
         if [ -n "$_cur_pkg_hash" ] && [ "$_cur_pkg_hash" = "$_cached_pkg" ] && [ "$_cur_stack_hash" = "$_cached_stack" ]; then
-          CACHED_SELECTED=$(jq -r '.selected // [] | .[]' "$SKILL_CACHE_FILE" 2>/dev/null)
+          if [ "$_JSON_CMD" = "jq" ]; then
+            CACHED_SELECTED=$(jq -r '.selected // [] | .[]' "$SKILL_CACHE_FILE" 2>/dev/null)
+          else
+            CACHED_SELECTED=$(node -e "
+              try{const d=JSON.parse(require('fs').readFileSync('$SKILL_CACHE_FILE','utf8'));
+              (d.selected||[]).forEach(s=>console.log(s));}catch(e){}
+            " 2>/dev/null)
+          fi
           echo "  ♻️  Using cached skill selection (hash match)"
         fi
       fi
