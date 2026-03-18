@@ -126,7 +126,7 @@ restore_system_from_metadata() {
   [ -z "$stored" ] && return 0
   [ "$stored" = "auto" ] && return 0
   SYSTEM="$stored"
-  [ "${1:-}" != "--quiet" ] && echo "  🔍 Restored system from previous run: $SYSTEM"
+  [ "${1:-}" != "--quiet" ] && echo "  🔍 Restored system from previous run: $SYSTEM" || true
 }
 
 # Compute checksum for a file (cksum outputs: checksum size filename)
