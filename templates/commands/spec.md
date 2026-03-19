@@ -14,7 +14,23 @@ Before writing anything: challenge the idea hard, then think it completely throu
 ### 1a — Load Skills
 If `.claude/skills/` exists, glob all skill directories and read each `SKILL.md` (first 5 lines only). Apply their guidance throughout the entire process.
 
-### 1b — Clarify
+### 1b — Detect Input Type & Clarify
+
+**Check if `$ARGUMENTS` is a file path**: Test whether the argument resolves to an existing `.md` file.
+
+**If `$ARGUMENTS` is an existing `.md` file path** → enter **Draft Interview Mode**:
+1. Read the draft file completely
+2. Interview the user proactively and exhaustively via `AskUserQuestion` — covering all of:
+   - **Technical implementation**: architecture decisions, data flow, APIs, error handling, performance implications
+   - **Edge cases & failure modes**: what happens with invalid input, concurrency, timeouts, empty states
+   - **Tradeoffs**: alternatives considered, why this approach vs. others, cost/benefit
+   - **Dependencies & side effects**: what else breaks, what this depends on, migration path
+   - **UI/UX** (if applicable): interaction flow, accessibility, mobile behavior
+   Questions must be **non-obvious** — do not ask about things already answered in the draft. Ask about gaps, assumptions, and implicit decisions. Continue for minimum 3 rounds of questions until all areas are fully covered.
+3. After all questions are answered: update the draft file with the refined spec incorporating all interview insights
+4. Continue with Phase 1c (Concept Fit)
+
+**If `$ARGUMENTS` is plain text** → standard clarify flow:
 If the request is ambiguous or underspecified, ask 1-3 focused questions before proceeding. Wait for answers. Skip if the task is clear.
 
 ### 1c — Concept Fit
