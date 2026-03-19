@@ -112,6 +112,7 @@ Add a 'Shopware 6' section under Critical Rules:
 - Use Shopware plugin hooks and decorators for customization
 - Plugin structure: src/ (PHP), Resources/config/ (DI, routes), Resources/views/ (Twig), Resources/public/ (assets)
 - Run bin/console commands for cache clear, plugin lifecycle
+- Deployment: Never run dep, deployer, or any Deployer commands -- deployment is handled by the team's pipeline, not by Claude
 
 Also add a 'MCP Servers' section to CLAUDE.md:
 ## MCP Servers
@@ -141,6 +142,7 @@ Add a 'Shopware 6 Plugin' section under Critical Rules:
 - Tests: Integration tests extend KernelTestBase; unit tests are plain PHPUnit
 - Criteria Performance: Minimize associations -- only add what the use-case requires
 - Code Style: PSR-12 standards, strict_types=1, typed properties
+- Deployment: Never run dep, deployer, or any Deployer commands -- deployment is handled by the team's pipeline, not by Claude
 
 Also add a 'MCP Servers' section to CLAUDE.md:
 ## MCP Servers
