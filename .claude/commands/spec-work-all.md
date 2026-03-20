@@ -73,16 +73,18 @@ If the subagent **succeeded**:
    - Add: `- **Spec NNN**: [Title] — [1-sentence summary]`
    - Insert after the `## [Unreleased]` heading
 5. Remove the worktree (branch is preserved for `/spec-review`):
-   `git worktree remove --force <worktree-path-from-agent-result>`
+   `git worktree remove --force <worktree-path-from-agent-result> || true`
 
 **Wave 2+**: After each wave completes, launch the next wave of specs that are now unblocked.
 
 ### 4. Final summary
-After all waves complete, report:
-- Completed specs (with spec ID, title, and branch name)
-- Failed specs (with spec ID and reason)
-- Total: N completed, M failed
-- Next step: `Run /spec-review NNN for each completed spec, or /spec-board for overview`
+After all waves complete:
+1. Run `git worktree prune` to clean up stale worktree registrations
+2. Report:
+   - Completed specs (with spec ID, title, and branch name)
+   - Failed specs (with spec ID and reason)
+   - Total: N completed, M failed
+   - Next step: `Run /spec-review NNN for each completed spec, or /spec-board for overview`
 
 ## Rules
 - Follow each spec exactly — no scope creep
