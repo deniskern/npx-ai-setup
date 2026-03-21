@@ -11,17 +11,6 @@ if [ ! -d "$SPECS_DIR" ]; then
   exit 0
 fi
 
-# Collect spec files (main + completed)
-mapfile_compat() {
-  # bash 3.2 compatible alternative to mapfile
-  local arr_name="$1"
-  local i=0
-  while IFS= read -r line; do
-    eval "${arr_name}[$i]=\"\$line\""
-    i=$((i + 1))
-  done
-}
-
 # Parse a single spec file, outputs: ID|TITLE|STATUS|BRANCH|DONE|TOTAL
 parse_spec() {
   local file="$1"
@@ -33,13 +22,13 @@ parse_spec() {
     case "$line" in
       *"Spec ID"*) id="${line##*Spec ID**: }" ; id="${id%%|*}" ; id="${id// /}" ;;
     esac
-    # Frontmatter: Status
+    # Frontmatter: Status (anchored to blockquote prefix to avoid false matches)
     case "$line" in
-      *"Status"*"draft"*) status="draft" ;;
-      *"Status"*"in-progress"*) status="in-progress" ;;
-      *"Status"*"in-review"*) status="in-review" ;;
-      *"Status"*"blocked"*) status="blocked" ;;
-      *"Status"*"completed"*) status="completed" ;;
+      "> "*"Status"*"draft"*) status="draft" ;;
+      "> "*"Status"*"in-progress"*) status="in-progress" ;;
+      "> "*"Status"*"in-review"*) status="in-review" ;;
+      "> "*"Status"*"blocked"*) status="blocked" ;;
+      "> "*"Status"*"completed"*) status="completed" ;;
     esac
     # Frontmatter: Branch
     case "$line" in

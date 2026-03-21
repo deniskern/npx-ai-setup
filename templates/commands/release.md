@@ -1,5 +1,4 @@
 ---
-model: none
 disable-model-invocation: true
 allowed-tools: Bash
 ---

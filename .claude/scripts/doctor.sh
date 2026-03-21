@@ -24,9 +24,14 @@ add_row() {
 }
 
 # 1. Hooks directory exists
-if [ -d ".claude/hooks" ] && [ "$(find .claude/hooks -name "*.sh" 2>/dev/null | wc -l)" -gt 0 ]; then
-  count="$(find .claude/hooks -name "*.sh" | wc -l | tr -d ' ')"
-  add_row "$PASS" "Hooks"               "${count} hook script(s) found"
+if [ -d ".claude/hooks" ]; then
+  hooks_list="$(find .claude/hooks -name "*.sh" 2>/dev/null)"
+  count="$(printf '%s\n' "$hooks_list" | grep -c '.' 2>/dev/null || echo 0)"
+  if [ "$count" -gt 0 ]; then
+    add_row "$PASS" "Hooks"               "${count} hook script(s) found"
+  else
+    add_row "$FAIL" "Hooks"               ".claude/hooks/ missing or empty"
+  fi
 else
   add_row "$FAIL" "Hooks"               ".claude/hooks/ missing or empty"
 fi
@@ -101,9 +106,14 @@ else
 fi
 
 # 8. Skills directory
-if [ -d ".claude/skills" ] && [ "$(find .claude/skills -name "*.md" 2>/dev/null | wc -l)" -gt 0 ]; then
-  count="$(find .claude/skills -name "*.md" | wc -l | tr -d ' ')"
-  add_row "$PASS" "Skills"              "${count} skill(s) installed"
+if [ -d ".claude/skills" ]; then
+  skills_list="$(find .claude/skills -name "*.md" 2>/dev/null)"
+  count="$(printf '%s\n' "$skills_list" | grep -c '.' 2>/dev/null || echo 0)"
+  if [ "$count" -gt 0 ]; then
+    add_row "$PASS" "Skills"              "${count} skill(s) installed"
+  else
+    add_row "$WARN" "Skills"              "No skills found in .claude/skills/"
+  fi
 else
   add_row "$WARN" "Skills"              "No skills found in .claude/skills/"
 fi
