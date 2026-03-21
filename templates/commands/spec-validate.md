@@ -2,7 +2,7 @@
 model: sonnet
 mode: plan
 argument-hint: "[spec number]"
-allowed-tools: Read, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion, Bash
 ---
 
 Validates spec $ARGUMENTS against 10 quality metrics before execution. Run before `/spec-work` to catch weak specs early.
@@ -12,13 +12,30 @@ Validates spec $ARGUMENTS against 10 quality metrics before execution. Run befor
 ### 1. Find the spec
 If `$ARGUMENTS` is a number (e.g. `011`), open `specs/011-*.md`. If it's a filename, open that directly. If empty, list all draft specs in `specs/` and ask which to validate.
 
-### 2. Validate status
+### 2. Run prep script
+
+Run the prep script to pre-parse the spec structure before reading it yourself:
+
+```bash
+bash .claude/scripts/spec-validate-prep.sh $ARGUMENTS
+```
+
+Use the prep output to populate the scoring table in step 5 — it provides:
+- Which required sections are present or missing
+- Step count and completion state
+- Acceptance criteria count
+- Files to Modify count
+- Structural score (0–100)
+
+If the script is not present, proceed without it (read the spec file directly).
+
+### 3. Validate status
 Only validate specs with `Status: draft`. If `in-progress`, `in-review`, or `completed` → report status and stop.
 
-### 3. Load context
+### 4. Load context
 Read `.agents/context/CONVENTIONS.md` if it exists — use it to calibrate expectations for test coverage, code patterns, and integration standards.
 
-### 4. Score the spec
+### 5. Score the spec
 
 Evaluate each metric from 0–100. Be strict — a spec that doesn't answer the question scores ≤50.
 
@@ -35,7 +52,7 @@ Evaluate each metric from 0–100. Be strict — a spec that doesn't answer the 
 | 9 | **Out of Scope Clarity** | Is scope exclusion precise enough to prevent creep during execution? |
 | 10 | **Integration Awareness** | Does the spec account for how changes integrate with existing code, tests, or systems? |
 
-### 5. Present results
+### 6. Present results
 
 Display a score table:
 
@@ -58,7 +75,7 @@ Spec Validation — NNN: [title]
    Result: PASS ✓  |  FAIL ✗
 ```
 
-### 6. Verdict
+### 7. Verdict
 
 **PASS** (avg ≥ 80 AND no metric < 65):
 - Report: "Spec NNN is ready for execution. Run `/spec-work NNN`."

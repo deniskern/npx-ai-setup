@@ -6,18 +6,28 @@ allowed-tools: Read, Glob, Grep, Bash
 
 Reviews uncommitted changes and reports bugs, security issues, and improvements. Use before committing to catch issues.
 
-## Context
+## Step 1 — Run prep script
 
-- Current branch: `!git rev-parse --abbrev-ref HEAD`
-- Unstaged changes: `!git diff`
-- Staged changes: `!git diff --staged`
-- Branch diff vs main: `!git diff main...HEAD 2>/dev/null`
+Run the prep script first to collect all diffs and duplicate findings in one pass:
 
-## Process
+```bash
+bash .claude/scripts/review-prep.sh
+```
 
-1. Analyze all changes shown in Context above. If all diffs are empty, report "No changes found." and stop.
-2. For each changed file, read the full file to understand context around the changes.
-3. **What already exists** — Before reporting any finding, run one Grep pass across the codebase to check for similar functions, patterns, or logic. If duplicated logic is detected, note it explicitly: "Similar pattern already exists at [file:line] — verify this is intentional and not a copy-paste." Do not flag existing patterns as new problems.
+Use the output as your sole source of diff data and duplicate findings. Do NOT re-run git diff or grep for duplicates — the script already captured this.
+
+If the script is not present, fall back to:
+- `!git diff`
+- `!git diff --staged`
+- `!git diff main...HEAD 2>/dev/null`
+
+## Step 2 — Analyze
+
+Work only from the prep script output above.
+
+1. If all diffs are empty, report "No changes found." and stop.
+2. For each changed file listed in the prep report, read the full file to understand context around the changes.
+3. The prep report already contains duplicate findings — use them directly. Do not re-run grep for duplicates. If a name appears in multiple files, note it: "Similar pattern already exists at [file:line] — verify this is intentional and not a copy-paste."
 4. Analyze each change for:
    - **Bugs**: Logic errors, off-by-one, null/undefined, race conditions
    - **Security**: Injection, XSS, secrets exposure, OWASP top 10
