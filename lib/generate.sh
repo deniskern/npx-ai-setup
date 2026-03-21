@@ -1,7 +1,8 @@
 #!/bin/bash
 # AI generation: CLAUDE.md extension, context generation, skill discovery
-# Requires: core.sh, process.sh, detect.sh, skills.sh, shopware.sh
-# Requires: $SYSTEM, $TEMPLATE_MAP, $SHOPIFY_SKILLS_MAP, $REGEN_*
+# Requires: core.sh, process.sh, detect.sh, skills.sh
+# Requires: $SYSTEM, $TEMPLATE_MAP, $REGEN_*
+# System plugins loaded via load_system_plugins()
 
 # Count generated context files in .agents/context/.
 count_generated_context_files() {
@@ -381,8 +382,8 @@ EOF
 
   # Step 3: Search and install skills (AI-curated, haiku for ranking)
   if [ "$REGEN_SKILLS" = "yes" ]; then
-  # Ensure bundled Shopify skills are present when relevant.
-  if [[ "${SYSTEM:-}" == *shopify* ]]; then
+  # Ensure bundled system skills are present when relevant.
+  if [ "${#SHOPIFY_SKILLS_MAP[@]}" -gt 0 ] 2>/dev/null; then
     for mapping in "${SHOPIFY_SKILLS_MAP[@]}"; do
       local tpl="${mapping%%:*}"
       local target="${mapping#*:}"
@@ -706,56 +707,11 @@ Rules:
     echo "  No package.json found."
   fi
 
-  # System-specific default skills (always installed for known systems)
-  # Support multiple systems (comma-separated)
+  # System-specific default skills (delegated to system plugins)
   SYSTEM_SKILLS=()
-  IFS=',' read -ra SYSTEMS <<< "$SYSTEM"
-  for sys in "${SYSTEMS[@]}"; do
-    case "$sys" in
-      shopify)
-        SYSTEM_SKILLS+=(
-          "sickn33/antigravity-awesome-skills@shopify-development"
-          "jeffallan/claude-skills@shopify-expert"
-          "henkisdabro/wookstar-claude-code-plugins@shopify-theme-dev"
-        ) ;;
-      nuxt)
-        SYSTEM_SKILLS+=(
-          "antfu/skills@nuxt"
-          "onmax/nuxt-skills@nuxt"
-          "onmax/nuxt-skills@vue"
-          "onmax/nuxt-skills@vueuse"
-          "vuejs-ai/skills@vue-best-practices"
-          "vuejs-ai/skills@vue-testing-best-practices"
-        )
-        # Only add nuxt-ui skill if project actually uses it
-        if [[ " ${KEYWORDS[*]} " =~ " nuxt-ui " ]]; then
-          SYSTEM_SKILLS+=("nuxt/ui@nuxt-ui")
-        fi
-        ;;
-      next)
-        SYSTEM_SKILLS+=(
-          "vercel-labs/agent-skills@vercel-react-best-practices"
-          "vercel-labs/next-skills@next-best-practices"
-          "vercel-labs/next-skills@next-cache-components"
-          "jeffallan/claude-skills@nextjs-developer"
-          "wshobson/agents@nextjs-app-router-patterns"
-          "sickn33/antigravity-awesome-skills@nextjs-best-practices"
-        ) ;;
-      laravel)
-        SYSTEM_SKILLS+=(
-          "jeffallan/claude-skills@laravel-specialist"
-          "iserter/laravel-claude-agents@eloquent-best-practices"
-        ) ;;
-      shopware)
-        SYSTEM_SKILLS+=(
-          "bartundmett/skills@shopware6-best-practices"
-        ) ;;
-      storyblok)
-        SYSTEM_SKILLS+=(
-          "bartundmett/skills@storyblok-best-practices"
-        ) ;;
-    esac
-  done
+  if type system_get_default_skills &>/dev/null; then
+    system_get_default_skills
+  fi
 
   # Add curated keyword-based skills (from detected package.json dependencies)
   if [ ${#KEYWORDS[@]} -gt 0 ]; then

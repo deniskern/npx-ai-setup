@@ -13,7 +13,7 @@ Spec 111 extracted Shopware functions to `lib/shopware.sh` and skills functions 
 - [x] Step 2: Create `lib/systems/shopware.sh` — move `lib/shopware.sh` content here + `detect_shopware_type()` from detect.sh. Add `system_get_default_skills()` returning the Shopware skills array from generate.sh:709-752. Remove old `lib/shopware.sh`.
 - [x] Step 3: Create `lib/systems/shopify.sh` — move `SHOPIFY_SKILLS_MAP` from core.sh, Shopify agent-injection block from `_inject_agent_skills()` in setup-skills.sh, and Shopify system-skills entries from generate.sh. Add `system_get_default_skills()`.
 - [x] Step 4: Create `lib/systems/nuxt.sh`, `next.sh`, `laravel.sh`, `storyblok.sh` — each with `system_get_default_skills()` containing the respective skills arrays from generate.sh:709-758.
-- [ ] Step 5: Refactor `lib/generate.sh` — replace the system-skills switch-case (lines 709-758) with a call to `system_get_default_skills` (if function exists). Remove `SHOPIFY_SKILLS_MAP` references.
+- [x] Step 5: Refactor `lib/generate.sh` — replace the system-skills switch-case with a call to `system_get_default_skills` (if function exists). Guard `SHOPIFY_SKILLS_MAP` references.
 - [ ] Step 6: Refactor `lib/setup-skills.sh` — replace hardcoded Shopify/Shopware blocks in `_inject_agent_skills()` with a `system_inject_agent_skills()` call dispatched from the system plugin. Remove `SHOPIFY_SKILLS_MAP` from core.sh.
 - [ ] Step 7: Syntax-check all files (`bash -n lib/systems/*.sh lib/*.sh`), run E2E test with `--system shopware` and `--system shopify`.
 
