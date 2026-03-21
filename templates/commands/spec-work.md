@@ -73,6 +73,18 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     - If you made an architectural, pattern, library, or convention decision during this step that downstream work should know about, append it to `decisions.md` in the project root. Not every step produces decisions — only append when a meaningful choice was made.
     - **Context budget:** If you've been working for many steps and context is growing large, prioritize completing the current step fully (including its commit) over starting the next step. If compaction seems imminent, update the spec with progress markers (`[x]` for completed steps) before continuing — this ensures the next session can resume cleanly.
 
+    **Stall detection — apply during step execution:**
+
+    - **Per-step retry limit**: Track how many times you attempt the same step. If you retry the same step more than 3 times without completing it, mark it as blocked in the spec (`- [~] Step N (blocked: exceeded retry limit)`), set `**Status**: blocked`, and stop. Report: "Step N blocked after 3 retries. Fix the issue and re-run `/spec-work NNN`."
+    - **No-change detection**: After each completed step, run `git diff HEAD~1 --name-only` to check which files changed. Maintain a count of consecutive steps that produced no file changes. If 2 consecutive steps complete with no file changes detected, stop and ask the user via AskUserQuestion: "Two steps completed with no file changes detected. Is this expected?" Options: [Yes, continue] [No, investigate] [Abort spec work]. Only continue if user confirms.
+    - **Completion stats**: After all steps are done (before step 13), print a summary:
+      ```
+      Spec NNN — Execution Summary
+      Steps completed: N
+      Steps blocked:   N
+      Files changed:   N (list unique files)
+      ```
+
 13. **Verify acceptance criteria**: After all steps are done, check each acceptance criterion. Mark them as checked in the spec.
     For structured criteria (Truths / Artifacts / Key Links), verify each category mechanically:
     - **Truths**: Run the described commands and confirm output matches the stated behavior.

@@ -50,6 +50,8 @@ Executes a spec from `specs/NNN-*.md` step by step, commits after each step, and
    - Check it off in the spec: `- [ ]` → `- [x]`
    - Commit: `git add -A && git commit -m "spec(NNN): step N — <title>"`
    - If blocked, stop and ask
+   - **Stall detection**: If the same step is retried >3 times without completing, mark it blocked and stop. After each step, run `git diff HEAD~1 --name-only`; if 2 consecutive steps produce no file changes, ask the user before continuing.
+   - **Completion stats**: Before step 10, print steps completed, steps blocked, files changed.
 
 10. **Verify acceptance criteria** — check each one off in the spec.
 
