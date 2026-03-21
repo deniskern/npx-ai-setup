@@ -153,7 +153,7 @@ const path = process.argv[2];
 let cfg = {};
 try { cfg = JSON.parse(fs.readFileSync(path, 'utf8')); } catch(e) {}
 if (!cfg.statusLine) {
-  cfg.statusLine = "$(git branch --show-current 2>/dev/null || echo '-') | claude";
+  cfg.statusLine = "{cwd} | {gitBranch} | claude";
 }
 fs.writeFileSync(path, JSON.stringify(cfg, null, 2) + '\n');
 NODESCRIPT
