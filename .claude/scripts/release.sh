@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # release.sh — Version bump, CHANGELOG entry, git tag
 # Usage: bash .claude/scripts/release.sh [patch|minor|major]
-# Requires: bash 3.2+, git, python3 (or node) for JSON manipulation
+# Requires: bash 3.2+, git, python3 (for JSON and CHANGELOG manipulation)
 set -euo pipefail
 
 # ── Dependency checks ──────────────────────────────────────────────────────────
 if ! command -v git >/dev/null 2>&1; then
   echo "ERROR: git not found in PATH" >&2; exit 1
+fi
+if ! command -v python3 >/dev/null 2>&1 && ! command -v node >/dev/null 2>&1; then
+  echo "ERROR: python3 (or node) required for package.json and CHANGELOG manipulation" >&2; exit 1
 fi
 
 # ── Dirty check ────────────────────────────────────────────────────────────────
@@ -64,6 +67,8 @@ esac
 # ── Calculate new version ──────────────────────────────────────────────────────
 IFS='.' read -r VMAJOR VMINOR VPATCH <<< "$CURRENT_VERSION"
 VMAJOR="${VMAJOR:-0}"; VMINOR="${VMINOR:-0}"; VPATCH="${VPATCH:-0}"
+# Strip any pre-release suffix (e.g. "0-beta.1" -> "0") before arithmetic
+VPATCH="${VPATCH%%-*}"
 
 case "$BUMP" in
   major) VMAJOR=$((VMAJOR + 1)); VMINOR=0; VPATCH=0 ;;
@@ -104,46 +109,45 @@ esac
 
 # ── Update package.json ────────────────────────────────────────────────────────
 if command -v python3 >/dev/null 2>&1; then
-  python3 - <<PYEOF
+  python3 - "$NEW_VERSION" "$CURRENT_VERSION" <<'PYEOF'
 import json, sys
+new_version = sys.argv[1]
+current_version = sys.argv[2]
 with open('package.json', 'r') as f:
     data = json.load(f)
-data['version'] = '${NEW_VERSION}'
+data['version'] = new_version
 with open('package.json', 'w') as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
     f.write('\n')
-print("  Updated package.json: ${CURRENT_VERSION} -> ${NEW_VERSION}")
+print("  Updated package.json: {} -> {}".format(current_version, new_version))
 PYEOF
 elif command -v node >/dev/null 2>&1; then
-  node - <<NJEOF
+  node - "$NEW_VERSION" "$CURRENT_VERSION" <<'NJEOF'
 const fs = require('fs');
+const newVersion = process.argv[2];
+const currentVersion = process.argv[3];
 const p = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-p.version = '${NEW_VERSION}';
+p.version = newVersion;
 fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');
-console.log('  Updated package.json: ${CURRENT_VERSION} -> ${NEW_VERSION}');
+console.log('  Updated package.json: ' + currentVersion + ' -> ' + newVersion);
 NJEOF
 fi
 
 # ── Update CHANGELOG.md ────────────────────────────────────────────────────────
 # Replace [Unreleased] with versioned heading and insert new [Unreleased] above
-NEW_HEADER="## [Unreleased]"$'\n\n\n'"## [v${NEW_VERSION}] — ${TODAY}"
-
-if command -v python3 >/dev/null 2>&1; then
-  python3 - <<PYEOF
+# python3 is required (used above for package.json), so no sed fallback needed
+python3 - "$NEW_VERSION" "$TODAY" <<'PYEOF'
+import sys
+new_version = sys.argv[1]
+today = sys.argv[2]
+new_header = "## [Unreleased]\n\n\n## [v{}] — {}".format(new_version, today)
 with open('CHANGELOG.md', 'r') as f:
     content = f.read()
-updated = content.replace('## [Unreleased]', '${NEW_HEADER}', 1)
+updated = content.replace('## [Unreleased]', new_header, 1)
 with open('CHANGELOG.md', 'w') as f:
     f.write(updated)
-print('  Updated CHANGELOG.md: [Unreleased] -> [v${NEW_VERSION}] — ${TODAY}')
+print('  Updated CHANGELOG.md: [Unreleased] -> [v{}] — {}'.format(new_version, today))
 PYEOF
-else
-  # Portable sed fallback (GNU + BSD compatible via temp file)
-  TMPFILE="$(mktemp)"
-  sed "s|## \[Unreleased\]|${NEW_HEADER}|" CHANGELOG.md > "$TMPFILE"
-  mv "$TMPFILE" CHANGELOG.md
-  echo "  Updated CHANGELOG.md"
-fi
 
 # ── Commit and tag ─────────────────────────────────────────────────────────────
 git add package.json CHANGELOG.md
