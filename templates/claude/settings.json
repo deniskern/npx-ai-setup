@@ -62,7 +62,8 @@
       "Bash(gh pr *)",
       "Bash(gh issue *)",
       "Bash(jq:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Edit(.claude/commands)"
     ],
     "deny": [
       "Read(.env*)",
