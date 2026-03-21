@@ -93,6 +93,18 @@ install_official_plugins() {
   for i in "${!OFFICIAL_PLUGINS[@]}"; do
     IFS=':' read -r PNAME PDESC <<< "${OFFICIAL_PLUGINS[$i]}"
 
+    # Skip frontend-design only for known backend-only stacks
+    if [ "$PNAME" = "frontend-design" ] && [ -n "$SYSTEM" ] && [ "$SYSTEM" != "auto" ]; then
+      local is_backend_only="no"
+      for sys in $(echo "$SYSTEM" | tr ',' ' '); do
+        case "$sys" in shopware|laravel) is_backend_only="yes" ;; esac
+      done
+      if [ "$is_backend_only" = "yes" ]; then
+        echo "  ⏭️  frontend-design skipped (backend stack: ${SYSTEM})"
+        continue
+      fi
+    fi
+
     # Check if already installed (plugin cache or .claude/settings.json)
     if [ -d "${HOME}/.claude/plugins/cache/anthropics/${PNAME}" ] 2>/dev/null; then
       echo "  🔌 ${PNAME} already installed, skipping."
