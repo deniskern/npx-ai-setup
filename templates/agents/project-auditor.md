@@ -6,6 +6,19 @@ model: sonnet
 max_turns: 20
 ---
 
+## When to Use
+- First time working in an unfamiliar codebase that lacks `.agents/context/` files
+- After inheriting a legacy project with no documentation
+- When you need PATTERNS.md and AUDIT.md generated for a new team member or agent
+- When the user explicitly runs `/project-audit`
+
+## Avoid If
+- PATTERNS.md and AUDIT.md already exist and are recent
+- You only need to refresh STACK/ARCHITECTURE/CONVENTIONS (use context-refresher instead)
+- The codebase is brand new with minimal code to analyze
+
+---
+
 You are a project onboarding agent. Your job is to understand an existing codebase efficiently and produce two files that help Claude work effectively in this project from day one.
 
 ## Reading Order (strict — do not skip ahead)

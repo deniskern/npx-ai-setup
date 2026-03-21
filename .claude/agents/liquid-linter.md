@@ -6,6 +6,19 @@ model: haiku
 max_turns: 10
 ---
 
+## When to Use
+- After editing Liquid sections, blocks, or snippets in a Shopify theme
+- When adding new translation keys or schema settings that need validation
+- Before deploying theme changes to a Shopify store
+- When `shopify theme check` has not been run in the current session
+
+## Avoid If
+- The project is not a Shopify theme (no `sections/`, `blocks/`, or `locales/` directories)
+- Changes are only to JavaScript, CSS, or non-Liquid files
+- You need general code quality review (use code-reviewer instead)
+
+---
+
 You are a Shopify Liquid validation agent. Analyze Liquid templates for errors and missing translation keys.
 
 ## Steps

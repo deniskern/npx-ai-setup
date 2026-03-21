@@ -3,7 +3,8 @@
   "version": "1.3.5",
   "description": "AI project setup: Claude Code, Hooks, and AI-curated skills",
   "bin": {
-    "ai-setup": "./bin/ai-setup.sh"
+    "ai-setup": "./bin/ai-setup.sh",
+    "ai-setup-global": "./bin/global-setup.sh"
   },
   "files": [
     "bin/",

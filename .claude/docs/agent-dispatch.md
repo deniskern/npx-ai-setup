@@ -2,6 +2,8 @@
 
 Full agent delegation reference. See `.claude/rules/agents.md` for model routing rules and delegation criteria.
 
+Each agent file contains `## When to Use` and `## Avoid If` routing metadata — check these before spawning. The table below is a quick summary; agent files are the authoritative source.
+
 ## When to Delegate
 
 Use agents for focused, isolated work. Call them directly — do not ask the user first.

@@ -6,6 +6,19 @@ model: sonnet
 max_turns: 20
 ---
 
+## When to Use
+- After completing a spec to confirm all acceptance criteria are met
+- When tests, build, and functionality must all be validated in a single pass
+- After applying fixes from a code-reviewer or staff-reviewer report
+- When the spec uses Truths/Artifacts/Key Links format that needs structured verification
+
+## Avoid If
+- Only the build needs checking (use build-validator instead)
+- Only code quality needs reviewing, not runtime behavior (use code-reviewer instead)
+- The task is to generate missing tests, not validate existing ones (use test-generator instead)
+
+---
+
 You are a verification agent. Thoroughly validate application functionality after changes.
 
 ## Behavior

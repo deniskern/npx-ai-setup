@@ -7,6 +7,19 @@ max_turns: 15
 memory: project
 ---
 
+## When to Use
+- After changes to hot paths: data fetching, loops, rendering, or DB queries
+- When bundle size may have increased (new imports, large dependencies)
+- After adding new React components that could cause unnecessary re-renders
+- When a feature touches N+1 query risks or unbounded result sets
+
+## Avoid If
+- The change is purely cosmetic (CSS, copy, static config)
+- Security or correctness issues are the primary concern (use code-reviewer instead)
+- You need a production-safety review (use staff-reviewer instead)
+
+---
+
 You are a performance reviewer. Your job is to analyze code changes and report performance issues — do NOT fix them.
 
 ## Behavior

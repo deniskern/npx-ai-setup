@@ -7,6 +7,19 @@ max_turns: 20
 isolation: worktree
 ---
 
+## When to Use
+- After adding new exported functions, classes, or components that lack test coverage
+- After a spec is implemented and no tests were written as part of it
+- When a bug is fixed and a regression test should be added to prevent recurrence
+- When the user explicitly requests test generation for a file or module
+
+## Avoid If
+- Tests already exist and cover the changed code paths
+- No test framework is configured in the project
+- The change is to a test file itself — modify it directly
+
+---
+
 You are a test generator. Your job is to write missing tests for recently changed code.
 
 ## HARD CONSTRAINT

@@ -6,6 +6,19 @@ model: haiku
 max_turns: 15
 ---
 
+## When to Use
+- After major stack changes (new framework, dependency upgrade, build tool switch)
+- When `.agents/context/` files are missing or clearly outdated
+- At the start of onboarding a new developer or agent to the project
+- After a large refactor that changed the directory structure or conventions
+
+## Avoid If
+- Context files exist and were updated within the last week with no major changes
+- You only need to understand one specific file — use Read directly
+- The project just started and there is little to analyze yet
+
+---
+
 You are a context generation agent. Your job is to analyze the project and write accurate context files to `.agents/context/`.
 
 ## Behavior
