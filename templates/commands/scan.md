@@ -3,42 +3,30 @@ model: sonnet
 allowed-tools: Read, Bash, Glob
 ---
 
-Scans project dependencies for security vulnerabilities. Detects available tools and reports findings grouped by severity.
+Scans project dependencies for security vulnerabilities. Uses `scan-prep.sh` to gather and filter raw audit data before Claude analyzes it — zero tokens spent on data collection.
 
 ## Process
 
-1. **Detect project type and scanner**:
-   - Node.js: check for `package.json` → use `npm audit --json`
-   - Python: check for `requirements.txt` or `Pipfile` → use `pip-audit` (if installed) or `safety check`
-   - Ruby: check for `Gemfile.lock` → use `bundle-audit check --update` (if installed)
-   - Snyk: if `snyk` is installed globally → prefer `snyk test --json` for any project type
-
-2. **Run the scanner**:
-   - Execute the detected command
-   - Capture output (JSON where possible for reliable parsing)
-   - If the command fails due to missing tool, report which tool is needed and how to install it
-
-3. **Parse and group findings by severity**:
+1. **Run the prep script** (zero LLM tokens):
    ```
-   CRITICAL: N
-   HIGH: N
-   MEDIUM: N
-   LOW: N
+   ! bash .claude/scripts/scan-prep.sh
    ```
-   For each finding include: package name, installed version, fixed version (if available), CVE/advisory ID.
+   - Exit 0 → `NO_VULNERABILITIES_FOUND` — report clean and stop.
+   - Exit 1 → tool/config error — report the error message and stop.
+   - Exit 2 → vulnerabilities found, output contains pre-grouped severity summary.
 
-4. **Report results**:
-   - If no vulnerabilities: "No vulnerabilities found."
-   - If vulnerabilities found: show grouped output, then print remediation hint:
+2. **Analyze the prep output** — the script already groups by CRITICAL / HIGH / MEDIUM / LOW with package names, versions, and CVE IDs. Do not re-run the scanner.
+
+3. **Report results**:
+   - Show the grouped findings from prep output.
+   - For each severity group, add remediation hint:
      - Node.js: `npm audit fix` (non-breaking) or `npm audit fix --force` (breaking)
      - Python: `pip install --upgrade <package>`
      - Ruby: `bundle update <gem>`
      - Snyk: `snyk fix`
 
-5. **If no scanner is detected**: report clearly — "No supported scanner found. Install one of: snyk, npm (Node.js), pip-audit (Python), bundler-audit (Ruby)." Do not fail silently.
-
 ## Rules
 - Do NOT auto-fix — only report and suggest fix commands.
 - Do NOT install any tools — only use what is already available.
-- If `npm audit` returns exit code 1 (vulnerabilities found), treat as FAIL — do not suppress.
+- Do NOT re-run the scanner if prep script already ran.
 - Run in the project root.
