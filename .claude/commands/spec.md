@@ -55,6 +55,27 @@ Checklist:
 - Edge cases; failure behavior; recoverability
 - Hidden complexity; hard-to-test/debug parts; 6-month maintenance pain
 - Implicit dependencies and side effects
+- **Complexity = impact surface + risk** (e.g. "3 files, new dep — Risk: memory, scroll state"). NEVER time estimates.
+
+**Scope guardrail**: The spec boundary is FIXED once defined. Discussion clarifies HOW to implement, not WHETHER to add more. If user suggests new capabilities: "That belongs in its own spec. I'll note it for later." Capture deferred ideas — don't lose them, don't act on them.
+
+### 1e-bis — Surface Assumptions
+
+After thinking it through, scan 3-5 of the most relevant source files. Form a list of implicit assumptions underlying the implementation sketch.
+
+For each assumption, structure it as:
+- **Statement**: What you're assuming to be true
+- **Evidence**: File path or observable fact that supports it
+- **Confidence**: High / Medium / Low
+- **If Wrong**: Concrete consequence for the implementation
+
+Present assumptions via `AskUserQuestion`:
+> "Ich habe folgende implizite Annahmen identifiziert. Bitte bestaetigen, korrigieren oder ergaenzen:"
+> [list assumptions]
+> Options: "Alle bestaetigt", "Ich korrigiere Annahme X: ...", "Fehlende Annahme: ..."
+
+Wait for confirmation. Incorporate corrected or added assumptions before proceeding.
+Confirmed assumptions are added to the spec's Context section as a "Verified Assumptions" subsection.
 
 ### 1f — Overhead & Risk
 - Maintenance burden added?
@@ -130,6 +151,10 @@ Use `AskUserQuestion` to ask: "Branch fuer diese Spec erstellen?"
 
 ## Context
 [2-3 sentences. Why needed, what approach was chosen, relevant skills if any.]
+
+### Verified Assumptions
+<!-- Remove this section if no assumptions were confirmed in Phase 1e-bis -->
+- [Statement] — Evidence: `path/to/file` | Confidence: High | If Wrong: [consequence]
 
 ## Steps
 - [ ] Step 1: description
