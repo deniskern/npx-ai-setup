@@ -283,8 +283,20 @@ install_spec_skills() {
 install_agents() {
   echo "🤖 Installing subagent templates..."
   mkdir -p .claude/agents
+
+  # Detect frontend stack from package.json for conditional agent install
+  local _has_frontend=false
+  if [ -f "package.json" ] && grep -qE '"(react|vue|nuxt|next|svelte|astro)"' package.json 2>/dev/null; then
+    _has_frontend=true
+  fi
+
   while IFS= read -r -d '' _agent_path; do
     _agent_name="${_agent_path##*/}"
+    # frontend-developer agent: only install when a frontend framework is detected
+    if [ "$_agent_name" = "frontend-developer.md" ] && [ "$_has_frontend" = "false" ]; then
+      echo "  ⏭️  frontend-developer agent skipped (no frontend stack detected)"
+      continue
+    fi
     _install_or_update_file "$_agent_path" ".claude/agents/$_agent_name"
   done < <(find "$TPL/agents" -maxdepth 1 -type f -print0 | sort -z)
   _inject_agent_skills
