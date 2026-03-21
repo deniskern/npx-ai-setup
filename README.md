@@ -66,7 +66,7 @@ Native project slash commands are available in Claude Code and compatible client
 | `/spec-work-all` | Sonnet | Execute all draft specs in parallel via Git worktrees |
 | `/spec-review 001` | Opus | Review spec changes against acceptance criteria |
 | `/spec-board` | Sonnet | Kanban-style overview of all specs |
-| `/bug "description"` | Sonnet | Reproduce → root cause → fix → verify → code review |
+| `/debug "description"` | Sonnet | Reproduce → Hypothesis → Root Cause → Fix → Regression Test → Verify → Review |
 | `/commit` | Sonnet | Stage changes + create descriptive commit |
 | `/pr` | Sonnet | Draft PR title/body, run build validation |
 | `/review` | Opus | Review uncommitted changes — bugs, security, performance |

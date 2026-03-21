@@ -61,7 +61,7 @@ Completed specs move to `specs/completed/`.
 | `/commit` | Stage changes and write a conventional commit message | `/commit` |
 | `/pr` | Build validation + staff review + PR draft | `/pr` |
 | `/grill` | Adversarial review — blocks until all issues resolved | `/grill` |
-| `/bug` | Investigate and fix a bug with root-cause analysis | `/bug "cart count wrong after variant change"` |
+| `/debug` | Investigate and fix a bug with hypothesis-first methodology | `/debug "cart count wrong after variant change"` |
 | `/test` | Run project test suite and fix failures | `/test` |
 | `/release` | Bump version, update CHANGELOG, tag release | `/release` |
 | `/reflect` | Save session learnings as permanent rules | `/reflect` |
@@ -98,7 +98,7 @@ All `.agents/context/*.md` files are committed and shared across the team.
 Regenerate with: `claude "regenerate context files"` or re-run `npx @onedot/ai-setup`.
 
 ### Subagents
-Claude spawns specialized agents automatically during `/spec-work`, `/pr`, and `/bug`. You can also invoke them directly:
+Claude spawns specialized agents automatically during `/spec-work`, `/pr`, and `/debug`. You can also invoke them directly:
 
 | Agent | When it helps |
 |---|---|
