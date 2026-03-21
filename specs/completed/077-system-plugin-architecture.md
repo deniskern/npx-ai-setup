@@ -1,8 +1,8 @@
 # Spec: Base/System Split — Two-Mode Setup Architecture
 
-> **Spec ID**: 077 | **Created**: 2026-03-10 | **Status**: backlog | **Branch**: —
+> **Spec ID**: 077 | **Created**: 2026-03-10 | **Status**: superseded | **Branch**: —
 
-<!-- Backlog: Großes Architektur-Vorhaben. Erst diskutieren/brainstormen bevor implementiert wird. Voraussetzung: 080 als Vorstufe. -->
+<!-- Superseded: Spec 080 löste die Code-Organisation. Der Two-Mode-Split wurde nach Challenge-Session (2026-03-21) als Over-Engineering eingestuft. Stattdessen: System-Config soll langfristig in Boilerplate-Repos leben, nicht im ai-setup Package. Offene Frage: Update-/Merge-Strategie → siehe Spec 115. -->
 
 ## Goal
 Split the setup script into two distinct modes: **Base** (always runs, system-agnostic) and **System** (runs on demand, system-specific). Extract all system-specific logic into `lib/systems/<system>.sh` plugins. Result: `npx @onedot/ai-setup` = generic foundation; `npx @onedot/ai-setup shopware` = Shopware addon on top.
