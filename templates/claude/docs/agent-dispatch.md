@@ -17,6 +17,7 @@ Use agents for focused, isolated work. Call them directly — do not ask the use
 | test-generator | After adding new functions or modules that lack test coverage | sonnet |
 | verify-app | After spec completion to validate tests, build, and functionality | sonnet |
 | liquid-linter | After editing Liquid templates in Shopify projects | haiku |
+| security-reviewer | Before merging auth changes, user input handling, or after dependency updates | sonnet |
 
 ## When NOT to Delegate
 
