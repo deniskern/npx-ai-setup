@@ -41,60 +41,26 @@ For structured acceptance criteria (Truths / Artifacts / Key Links), verify each
 #### 5b — Definition of Done
 If `.agents/context/CONVENTIONS.md` contains a `## Definition of Done` section, verify the code changes satisfy those global quality gates. Report unmet gates as blocking issues.
 
-#### 5c — Code quality
-Spawn `code-reviewer` agent via Agent tool. Pass the full spec content and branch name. Use the agent's verdict (PASS / CONCERNS / FAIL) and issue list as code quality input. Do NOT duplicate its analysis inline.
-
-#### 5d — Quality scoring
-
-Based on evidence from 5a–5c, score 10 metrics (0–100 each):
-
-| # | Metric | What to check |
-|---|--------|---------------|
-| 1 | **Spec Compliance** | All steps implemented exactly as described? |
-| 2 | **Acceptance Criteria** | Every criterion genuinely met (verified, not assumed)? |
-| 3 | **Test Coverage** | New functionality has tests; existing tests still pass? |
-| 4 | **Requirements Fidelity** | Implementation matches the spec goal — no drift, no gold-plating? |
-| 5 | **Code Clarity** | Code is readable, named well, no magic numbers or unexplained logic? |
-| 6 | **Error Handling** | Failure paths handled; no silent failures, no unguarded throws? |
-| 7 | **Security** | No credentials in code, no unsafe patterns, no exposed internals? |
-| 8 | **Scope Adherence** | Nothing built outside the spec; no accidental scope creep? |
-| 9 | **No Regressions** | Existing functionality unaffected; no broken imports or side effects? |
-| 10 | **Completeness** | No TODOs, no stubs, no placeholder comments left in the diff? |
-
-Display the score table:
-
-```
-Quality Score — Spec NNN
-─────────────────────────────────────────
- 1. Spec Compliance ........... XX
- 2. Acceptance Criteria ........ XX
- 3. Test Coverage .............. XX
- 4. Requirements Fidelity ....... XX
- 5. Code Clarity ............... XX
- 6. Error Handling .............. XX
- 7. Security .................... XX
- 8. Scope Adherence ............. XX
- 9. No Regressions .............. XX
-10. Completeness ................. XX
-─────────────────────────────────────────
-   Average: XX.X    Minimum: XX
-   Threshold: 85 avg / 70 min
-```
+#### 5c — Code quality (complexity-gated)
+Read the `**Complexity**` field from the spec header.
+- **Low / Medium / unset**: Spawn `code-reviewer` agent only via Agent tool.
+- **High**: Spawn `code-reviewer` AND `staff-reviewer` agents in parallel via Agent tool. Both must return PASS or CONCERNS.
+Pass the full spec content and branch name. Use each agent's verdict (PASS / CONCERNS / FAIL) and issue list as code quality input. Do NOT duplicate their analysis inline.
 
 ### 6. Verdict
 
-Present the review findings + quality score, then choose exactly one:
+Present the review findings, then choose exactly one:
 
-**APPROVED** — All criteria met AND avg ≥ 85 AND no metric < 70 AND code-reviewer PASS or CONCERNS.
+**APPROVED** — All acceptance criteria met AND all review agents returned PASS or CONCERNS.
 1. Status → `completed`, move to `specs/completed/NNN-*.md`
-2. Report: "Spec NNN approved. Score: XX.X avg / XX min."
+2. Report: "Spec NNN approved."
 
-**CHANGES REQUESTED** — code-reviewer FAIL, spec failures, avg < 85, or any metric < 70.
-1. Add `## Review Feedback` with failing metrics and concrete fix instructions
+**CHANGES REQUESTED** — Any review agent returned FAIL, or acceptance criteria not met.
+1. Add `## Review Feedback` with concrete issues and fix instructions
 2. Status → `in-progress`
 3. Report: "Run `/spec-work NNN` to address feedback, then `/spec-review NNN` again."
 
-**REJECTED** — Score < 60 avg or critical security/regression issue.
+**REJECTED** — Critical security or regression issue found.
 1. Status → `blocked`, add `## Review Feedback` with rejection reason
 2. Report why and suggest next steps.
 
