@@ -75,6 +75,7 @@ SYSTEM_BOILERPLATES=(
 - [ ] Step 7: Modify update flow in `bin/ai-setup.sh` — when `.ai-setup.json` version < current, run migrations instead of full template copy.
 - [ ] Step 8: Clean up remaining system refs in `core.sh`, `setup-skills.sh`, `detect.sh`.
 - [ ] Step 9: Syntax-check + E2E test: fresh install with system pull + update in boilerplate project.
+- [ ] Step 10: Audit all `lib/*.sh` files — review each module for dead code, unused functions, and redundant logic left over from system removal. Reduce to minimum viable size.
 
 ## Acceptance Criteria
 - [ ] Fresh install offers interactive system selection and pulls from boilerplate
