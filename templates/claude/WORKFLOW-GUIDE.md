@@ -51,25 +51,26 @@ Completed specs move to `specs/completed/`.
 | Command | What it does | Example |
 |---|---|---|
 | `/spec` | Create a structured spec with challenge-first analysis | `/spec "add product filter to collection page"` |
-| `/spec-validate` | Validate spec quality before executing (10-metric score) | `/spec-validate 043` |
+| `/spec-validate` | Validate spec quality before executing | `/spec-validate 043` |
 | `/spec-work` | Execute a spec step by step with auto-verification | `/spec-work 043` |
 | `/spec-work-all` | Execute all draft specs in parallel (isolated worktrees) | `/spec-work-all` |
 | `/spec-review` | Review completed spec against acceptance criteria | `/spec-review 043` |
 | `/spec-board` | Kanban board of all specs with status | `/spec-board` |
 | `/analyze` | Codebase overview via 3 parallel agents | `/analyze` |
-| `/review` | Review uncommitted changes for bugs and security issues | `/review` |
+| `/review` | Review uncommitted changes (Quick Scan / Standard / Adversarial Grill) | `/review` |
 | `/commit` | Stage changes and write a conventional commit message | `/commit` |
 | `/pr` | Build validation + staff review + PR draft | `/pr` |
-| `/grill` | Adversarial review — blocks until all issues resolved | `/grill` |
 | `/debug` | Investigate and fix a bug with hypothesis-first methodology | `/debug "cart count wrong after variant change"` |
 | `/test` | Run project test suite and fix failures | `/test` |
 | `/release` | Bump version, update CHANGELOG, tag release | `/release` |
+| `/scan` | Security vulnerability scan (snyk/npm audit/pip-audit/bundler-audit) | `/scan` |
 | `/reflect` | Save session learnings as permanent rules | `/reflect` |
 | `/techdebt` | Scan recently changed files for tech debt | `/techdebt` |
-| `/context` | Show context usage, identify bloat, get optimization tips | `/context` |
 | `/context-full` | Generate full codebase snapshot via repomix | `/context-full` |
 | `/evaluate` | Evaluate external idea/tool/pattern against project | `/evaluate "use Zustand instead of Pinia"` |
 | `/challenge` | Critically evaluate a feature idea before building | `/challenge "add live chat widget"` |
+| `/discover` | Reverse-engineer draft specs from existing code | `/discover` |
+| `/doctor` | AI setup health check (hooks, settings, context, MCP) | `/doctor` |
 | `/update` | Check for ai-setup updates and install from Claude Code | `/update` |
 
 ---
@@ -102,17 +103,31 @@ Claude spawns specialized agents automatically during `/spec-work`, `/pr`, and `
 
 | Agent | When it helps |
 |---|---|
-| `build-validator` | After code changes, before committing |
-| `code-reviewer` | After a feature or spec branch |
-| `staff-reviewer` | Final review before merging |
 | `verify-app` | Runs tests + build to confirm everything works |
-| `liquid-linter` | After editing Shopify Liquid templates |
+| `build-validator` | Quick build check before committing |
+| `code-reviewer` | Review code changes for bugs and security |
+| `code-architect` | Architectural assessment before implementation |
+| `staff-reviewer` | Final skeptical review before merging |
+| `perf-reviewer` | Performance analysis of changes |
+| `test-generator` | Generate missing tests for changed files |
+| `context-refresher` | Regenerate `.agents/context/` files |
+| `frontend-developer` | React, Vue, Nuxt, Next.js specialist |
+| `project-auditor` | Analyze codebase, produce PATTERNS.md and AUDIT.md |
+| `liquid-linter` | Validate Shopify Liquid templates |
 
 ### Hooks (run automatically)
 - `circuit-breaker.sh` — prevents infinite edit loops on the same file
 - `protect-files.sh` — blocks edits to build output and lock files
 - `cross-repo-context.sh` — loads sibling repo context on session start
-- `post-edit-lint.sh` — runs linter on save (when available)
+- `post-edit-lint.sh` — runs linter after edits (when available)
+- `context-freshness.sh` — warns when context files are stale
+- `context-monitor.sh` — tracks context usage after tool calls
+- `config-change-audit.sh` — audits changes to settings files
+- `task-completed-gate.sh` — verification gate before marking tasks done
+- `update-check.sh` — checks for ai-setup updates on session start
+- `mcp-health.sh` — validates MCP server health on session start
+- `notify.sh` — cross-platform notifications on completion
+- `post-tool-failure-log.sh` — logs tool failures for debugging
 
 ---
 
