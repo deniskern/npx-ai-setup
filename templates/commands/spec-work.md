@@ -108,9 +108,12 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
 
 17. **Update status**: Set spec status to `in-review` now — before spawning code-reviewer. This ensures status is saved even if the agent call fails.
 
-18. **Auto-review**: Spawn the `code-reviewer` agent via Agent tool to review the changes. Pass the spec content and the current branch name so the agent can run the correct diff.
-    - If verdict is **FAIL**: leave status as `in-review`. Report the issues. Suggest: `Run /spec-review NNN to review manually.`
-    - If verdict is **PASS** or **CONCERNS**: set status to `completed`, move spec file `specs/NNN-*.md` → `specs/completed/NNN-*.md`. Report: "Auto-review passed. Spec NNN completed."
+18. **Auto-review** (complexity-gated): Read the `**Complexity**` field from the spec header.
+    - **Low / Medium / unset**: Spawn `code-reviewer` agent only via Agent tool.
+    - **High**: Spawn `code-reviewer` AND `staff-reviewer` agents in parallel via Agent tool. Both must return PASS or CONCERNS to proceed.
+    Pass the spec content and current branch name to each agent so they can run the correct diff.
+    - If any agent returns **FAIL**: leave status as `in-review`. Report the issues. Suggest: `Run /spec-work NNN to address feedback.`
+    - If all agents return **PASS** or **CONCERNS**: set status to `completed`, move spec file `specs/NNN-*.md` → `specs/completed/NNN-*.md`. Report: "Auto-review passed. Spec NNN completed."
 
 ## Rules
 - **ALWAYS update status and move the file when done — this is the single most important step.** Status update (step 17) happens before the review agent — never skip it.
