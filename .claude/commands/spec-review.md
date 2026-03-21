@@ -28,7 +28,8 @@ For each changed file, read the full file to understand context around the chang
 
 ### 5. Review against spec
 
-#### 5a — Spec compliance & acceptance criteria
+#### 5a — Goal achievement (not just checkbox checking)
+**"Task done ≠ Goal achieved."** First verify the spec's Goal is actually achieved — not just that steps were executed. Then check details:
 - Are ALL steps checked off and matching what was described?
 - Are acceptance criteria genuinely met (verify against diff, not checkboxes)?
 - Was anything built that's listed in "Out of Scope"? Flag scope creep.
@@ -49,6 +50,7 @@ Present the review findings, then choose exactly one:
 **APPROVED** — All acceptance criteria met AND all review agents returned PASS or CONCERNS.
 1. Status → `completed`, move to `specs/completed/NNN-*.md`
 2. Report: "Spec NNN approved."
+3. Proceed to Phase 7: Finishing Gate.
 
 **CHANGES REQUESTED** — Any review agent returned FAIL, or acceptance criteria not met.
 1. Add `## Review Feedback` with concrete issues and fix instructions
@@ -59,9 +61,52 @@ Present the review findings, then choose exactly one:
 1. Status → `blocked`, add `## Review Feedback` with rejection reason
 2. Report why and suggest next steps.
 
+### 7. Finishing Gate (APPROVED only)
+
+Only execute this phase if the verdict was APPROVED. Skip entirely for CHANGES REQUESTED or REJECTED.
+
+Detect the branch name from the spec header (`**Branch**` field). If no branch exists (value is `—`), skip git operations but still offer the Keep option.
+
+Use `AskUserQuestion` with these options:
+
+1. **Merge to main locally** — merge branch into main and delete it
+2. **Push and create PR** — push branch to remote and open a PR
+3. **Keep branch as-is** — do nothing, report branch name for reference
+4. **Discard branch and changes** — permanently delete the branch (requires confirmation)
+
+Execute based on the chosen option:
+
+**Option 1 — Merge:**
+```
+git checkout main
+git merge BRANCH
+git branch -d BRANCH
+```
+Then clean up worktree if one exists: `git worktree list` → if BRANCH has a worktree, run `git worktree remove PATH --force`.
+
+**Option 2 — Push and create PR:**
+```
+git push -u origin BRANCH
+gh pr create
+```
+Then clean up worktree if one exists (same as above).
+
+**Option 3 — Keep:**
+Report: "Branch BRANCH is ready. No changes made." Do not run any git commands.
+
+**Option 4 — Discard:**
+First use `AskUserQuestion` to confirm: "This permanently deletes branch BRANCH and all its changes. Are you sure?" with options Yes / No.
+- If No: abort, report "Discard cancelled."
+- If Yes:
+```
+git checkout main
+git branch -D BRANCH
+```
+Then clean up worktree if one exists (same as above).
+
 ## Rules
 - Do NOT make code changes. Only review and update spec status/feedback.
 - Read the actual code before commenting — never speculate.
 - Focus on what matters: spec compliance and bugs over style.
 - If the diff is empty (no changes found), report this and ask the user to verify.
-- Never push to remote or create PRs automatically.
+- Never push to remote or create PRs automatically — only on explicit user choice in Phase 7.
