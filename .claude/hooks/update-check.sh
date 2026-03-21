@@ -8,6 +8,9 @@ PROJ_HASH=$(echo "$PROJECT_ROOT" | shasum | cut -c1-8)
 CB_LOG="/tmp/claude-cb-${PROJ_HASH}.log"
 [ -f "$CB_LOG" ] && rm -f "$CB_LOG"
 
+# Skip update check in the source repo itself
+[ -f "$PROJECT_ROOT/bin/ai-setup.sh" ] && exit 0
+
 SETUP_JSON="$PROJECT_ROOT/.ai-setup.json"
 [ ! -f "$SETUP_JSON" ] && exit 0
 
