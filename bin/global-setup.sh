@@ -8,7 +8,7 @@
 # Usage: npx @onedot/ai-setup-global [--check]
 # ==============================================================================
 
-set -e
+set -euo pipefail
 
 # Package root (one level above bin/)
 # Resolve symlinks so npx installs work correctly (macOS-compatible, no readlink -f)

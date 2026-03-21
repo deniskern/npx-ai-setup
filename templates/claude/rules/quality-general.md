@@ -14,5 +14,5 @@
 
 ## Code Quality
 - No dead code (unreachable branches, unused variables, commented-out blocks)
-- No hardcoded secrets, tokens, or credentials in source
+- No hardcoded magic values without named constants
 - Logic is self-explanatory or has a comment explaining *why*

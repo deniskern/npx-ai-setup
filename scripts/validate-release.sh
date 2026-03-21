@@ -69,8 +69,16 @@ AGENT_COUNT=0
 if [ -d "${TEMPLATES_DIR}/agents" ]; then
     AGENT_COUNT="$(find "${TEMPLATES_DIR}/agents" -maxdepth 1 -name '*.md' | wc -l | tr -d ' ')"
 fi
-_pass "templates/commands/ contains ${CMD_COUNT} command(s)"
-_pass "templates/agents/  contains ${AGENT_COUNT} agent(s)"
+if [ "$CMD_COUNT" -lt 1 ]; then
+    _fail "templates/commands/ is empty (expected at least 1 command)"
+else
+    _pass "templates/commands/ contains ${CMD_COUNT} command(s)"
+fi
+if [ "$AGENT_COUNT" -lt 1 ]; then
+    _fail "templates/agents/ is empty (expected at least 1 agent)"
+else
+    _pass "templates/agents/  contains ${AGENT_COUNT} agent(s)"
+fi
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 echo ""

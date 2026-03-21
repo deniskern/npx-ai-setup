@@ -75,7 +75,10 @@ EOF
 const fs = require('fs');
 const path = process.argv[2];
 let cfg = {};
-try { cfg = JSON.parse(fs.readFileSync(path, 'utf8')); } catch(e) {}
+try { cfg = JSON.parse(fs.readFileSync(path, 'utf8')); } catch(e) {
+  process.stderr.write('ERROR: ' + path + ' is not valid JSON: ' + e.message + '\\n');
+  process.exit(1);
+}
 cfg.permissions = cfg.permissions || {};
 cfg.permissions.allow = cfg.permissions.allow || [];
 cfg.permissions.deny  = cfg.permissions.deny  || [];
@@ -151,7 +154,10 @@ _install_statusline_config() {
 const fs = require('fs');
 const path = process.argv[2];
 let cfg = {};
-try { cfg = JSON.parse(fs.readFileSync(path, 'utf8')); } catch(e) {}
+try { cfg = JSON.parse(fs.readFileSync(path, 'utf8')); } catch(e) {
+  process.stderr.write('ERROR: ' + path + ' is not valid JSON: ' + e.message + '\\n');
+  process.exit(1);
+}
 if (!cfg.statusLine) {
   cfg.statusLine = "{cwd} | {gitBranch} | claude";
 }

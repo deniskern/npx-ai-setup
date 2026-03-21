@@ -44,7 +44,7 @@ if "vulnerabilities" in data:
     for name, info in data["vulnerabilities"].items():
         sev = info.get("severity", "unknown").upper()
         vulns.setdefault(sev, []).append(
-            f"{name}@{info.get("range","?")} — fix: {info.get("fixAvailable", False)}"
+            f"{name}@{info.get('range','?')} — fix: {info.get('fixAvailable', False)}"
         )
 elif "advisories" in data:
     for adv_id, info in data["advisories"].items():
@@ -183,14 +183,28 @@ run_bundler() {
     exit 1
   fi
 
-  bundle-audit check --update 2>/dev/null | awk '
+  local raw
+  raw=$(bundle-audit check --update 2>/dev/null || true)
+
+  local summary
+  summary=$(echo "$raw" | awk '
     /Name:/ { pkg = $2 }
     /CVE:/ { cve = $2 }
     /Criticality:/ { sev = toupper($2); findings[sev] = findings[sev] pkg " (" cve "); " }
     END {
-      for (s in findings) print "=== " s " ===\n  " findings[s]
+      found = 0
+      for (s in findings) { print "=== " s " ===\n  " findings[s]; found++ }
+      if (found == 0) print "NO_VULNERABILITIES_FOUND"
     }
-  ' || echo "NO_VULNERABILITIES_FOUND"
+  ')
+
+  echo "$summary"
+
+  if echo "$summary" | grep -q "NO_VULNERABILITIES_FOUND"; then
+    exit 0
+  else
+    exit 2
+  fi
 }
 
 # ---------------------------------------------------------------------------

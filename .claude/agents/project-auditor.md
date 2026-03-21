@@ -73,7 +73,7 @@ Ask the user (via AskUserQuestion if available, otherwise plain text):
 - "I found [N] improvement opportunities. Should I create specs for the top findings?"
 - Options: "Yes, create specs for top 3", "Yes, create specs for all High priority", "No, just the files"
 
-If the user confirms spec creation, create `specs/NNN-title.md` files following the spec template in `specs/TEMPLATE.md`.
+If the user confirms spec creation, create `specs/NNN-title.md` files following the spec template in `specs/TEMPLATE.md`. If `specs/TEMPLATE.md` does not exist, use the standard spec format from the spec examples above (Goal, Context, Steps, Acceptance Criteria, Files to Modify, Out of Scope).
 
 ## Rules
 - Keep PATTERNS.md under 60 lines — only patterns that are actually reusable

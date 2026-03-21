@@ -7,6 +7,7 @@
 # Format: name:pm:package:tier:description
 #   pm    = npm | cargo | brew
 #   tier  = required | optional
+# NOTE: descriptions must NOT contain colons — IFS=: parsing will truncate them
 # ==============================================================================
 CLI_TOOL_REGISTRY=(
   "rtk:npm:@onedot/rtk:required:Rust Token Killer — token-optimized Claude Code proxy"
@@ -62,10 +63,12 @@ _install_tool() {
 
   case "$pm" in
     npm)
-      npm install -g "$package" --quiet 2>/dev/null && return 0 || return 1
+      npm install -g "$package" --quiet 2>&1 | tail -5 >&2
+      [ "${PIPESTATUS[0]}" -eq 0 ] && return 0 || return 1
       ;;
     cargo)
-      cargo install "$package" 2>/dev/null && return 0 || return 1
+      cargo install "$package" 2>&1 | tail -5 >&2
+      [ "${PIPESTATUS[0]}" -eq 0 ] && return 0 || return 1
       ;;
     brew)
       if command -v brew &>/dev/null; then

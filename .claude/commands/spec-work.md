@@ -68,7 +68,7 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     - Implement the change
     - After completing a step, edit the spec file to check it off: `- [ ]` -> `- [x]`
     - Update the printed progress checklist to reflect the completed step
-    - Commit the completed step: `git add -A && git commit -m "spec(NNN): step N — <title>"`
+    - Commit the completed step: `git add -u && git ls-files --others --exclude-standard | xargs -r git add && git commit -m "spec(NNN): step N — <title>"`
     - If a step is blocked or unclear, stop and ask the user
     - If you made an architectural, pattern, library, or convention decision during this step that downstream work should know about, append it to `decisions.md` in the project root. Not every step produces decisions — only append when a meaningful choice was made.
     - **Context budget:** If you've been working for many steps and context is growing large, prioritize completing the current step fully (including its commit) over starting the next step. If compaction seems imminent, update the spec with progress markers (`[x]` for completed steps) before continuing — this ensures the next session can resume cleanly.
