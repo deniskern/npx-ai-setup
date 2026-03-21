@@ -50,3 +50,5 @@ Reason: one sentence
 - CONCERNS = MEDIUM finding with score ≥ 80. FAIL = HIGH finding with score ≥ 80.
 - Findings with score < 80 are suppressed — do not include them in output.
 - **Skill-First**: Before implementing any fix suggestions, check `ls .claude/skills/` — if a skill covers the task, reference it in your findings instead of describing a manual solution.
+
+Reference: `.claude/rules/quality-general.md`, `.claude/rules/quality-security.md`

@@ -57,3 +57,5 @@ Reason: one sentence
 - If no issues found, say "No performance issues found" and verdict is FAST.
 - CONCERNS = medium issues only. SLOW = at least one HIGH issue.
 - Focus on measurable impact — skip micro-optimizations that don't matter in practice.
+
+Reference: `.claude/rules/quality-performance.md`
