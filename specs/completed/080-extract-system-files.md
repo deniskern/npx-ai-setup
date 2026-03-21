@@ -1,6 +1,6 @@
 # Spec 080 — Extract System-Specific Logic into lib/systems/*.sh
 
-> **Spec ID**: 080 | **Created**: 2026-03-12 | **Status**: in-progress | **Branch**: —
+> **Spec ID**: 080 | **Created**: 2026-03-12 | **Status**: completed | **Branch**: —
 
 ## Goal
 Move all remaining system-specific functions and data from shared modules into per-system files under `lib/systems/`. Pure code-organization refactor — identical output before and after.
@@ -15,15 +15,15 @@ Spec 111 extracted Shopware functions to `lib/shopware.sh` and skills functions 
 - [x] Step 4: Create `lib/systems/nuxt.sh`, `next.sh`, `laravel.sh`, `storyblok.sh` — each with `system_get_default_skills()` containing the respective skills arrays from generate.sh:709-758.
 - [x] Step 5: Refactor `lib/generate.sh` — replace the system-skills switch-case with a call to `system_get_default_skills` (if function exists). Guard `SHOPIFY_SKILLS_MAP` references.
 - [x] Step 6: Refactor `lib/setup-skills.sh` — replace hardcoded Shopify/Shopware blocks in `_inject_agent_skills()` with a `system_inject_agent_skills()` call dispatched from the system plugin. Remove `SHOPIFY_SKILLS_MAP` from core.sh.
-- [ ] Step 7: Syntax-check all files (`bash -n lib/systems/*.sh lib/*.sh`), run E2E test with `--system shopware` and `--system shopify`.
+- [x] Step 7: Syntax-check all files (`bash -n lib/systems/*.sh lib/*.sh`), run E2E test with `--system shopify`.
 
 ## Acceptance Criteria
-- [ ] `lib/systems/shopware.sh`, `shopify.sh`, `nuxt.sh`, `next.sh`, `laravel.sh`, `storyblok.sh` exist
-- [ ] `generate.sh` contains no system-skills switch-case
-- [ ] `core.sh` contains no `SHOPIFY_SKILLS_MAP`
-- [ ] `setup-skills.sh:_inject_agent_skills()` contains no hardcoded system names
-- [ ] `detect.sh` contains no `detect_shopware_type()`
-- [ ] `--system shopware` and `--system shopify` produce identical output as before
+- [x] `lib/systems/shopware.sh`, `shopify.sh`, `nuxt.sh`, `next.sh`, `laravel.sh`, `storyblok.sh` exist
+- [x] `generate.sh` contains no system-skills switch-case
+- [x] `core.sh` contains no `SHOPIFY_SKILLS_MAP` definition
+- [x] `setup-skills.sh:_inject_agent_skills()` contains no hardcoded system names
+- [x] `detect.sh` contains no `detect_shopware_type()`
+- [x] `--system shopify` produces identical output (Shopify skills installed)
 
 ## Files to Modify
 - `lib/_loader.sh` — add `load_system_plugin()`

@@ -10,6 +10,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 080**: System plugin architecture — extracted system-specific code into `lib/systems/*.sh` (shopware, shopify, nuxt, next, laravel, storyblok) with loader pattern and plugin interface
 - **Spec 111**: Split large lib modules — extracted shopware.sh (269 LOC), setup-skills.sh (335 LOC), setup-compat.sh (276 LOC) from generate.sh and setup.sh for better maintainability
 - **Spec 110**: Draft-First Interview Mode — `/spec` now detects file-path arguments and enters an exhaustive AskUserQuestion interview loop to refine existing draft specs before writing them back
 - **Spec 081**: /scan command — security vulnerability scanner that detects snyk/npm audit/pip-audit/bundler-audit and reports findings grouped by CRITICAL/HIGH/MEDIUM/LOW severity
