@@ -14,11 +14,28 @@ Delegates to the release skill. Use `/release` to ship a new version.
 
 ## Fallback (when skill is not installed)
 
-1. **Pre-flight**: Run `bash scripts/validate-release.sh` (if exists). Check clean working tree.
-2. **Read state**: `git log --oneline <last-tag>..HEAD`, read CHANGELOG.md [Unreleased], read package.json version
-3. **Version bump**: Ask user (patch/minor/major), update package.json
-4. **CHANGELOG**: Replace [Unreleased] with [vX.Y.Z] — YYYY-MM-DD, add new [Unreleased]
-5. **Commit + tag**: `release: vX.Y.Z`, tag, report (no auto-push)
+### 0. Gather Changelog Data
+
+Run `! bash .claude/scripts/changelog-prep.sh` to collect and group commits since last tag.
+
+- If output contains `NO_NEW_COMMITS`: report "No changes since last tag." and stop.
+- Use the `=== FEATURES ===`, `=== BUG FIXES ===`, `=== BREAKING CHANGES ===` sections to pre-fill CHANGELOG entries.
+
+### 1. Pre-flight
+
+Run `bash scripts/validate-release.sh` (if exists). Check clean working tree. Read CHANGELOG.md [Unreleased] and package.json version.
+
+### 2. Version Bump
+
+Ask user (patch/minor/major), update package.json.
+
+### 3. CHANGELOG
+
+Replace [Unreleased] with [vX.Y.Z] — YYYY-MM-DD using grouped output from changelog-prep.sh, add new [Unreleased].
+
+### 4. Commit + Tag
+
+`release: vX.Y.Z`, tag, report (no auto-push).
 
 ## Rules
 - Never push automatically
