@@ -50,9 +50,9 @@ The core scaffolding (hooks, settings, commands) is template-based, not generate
 
 Generation is reserved for the parts that *must* be project-specific: CLAUDE.md Commands section, ARCHITECTURE.md, STACK.md, CONVENTIONS.md. These require understanding the actual codebase.
 
-## AI Curation, Not AI Generation (for Skills)
+## Curated Skills, Not AI Discovery
 
-Skills are not generated — they are installed from the skills.sh marketplace. The AI (Claude Haiku) is used only to *select* the best ones: it reads the install counts, tech keywords, and dependency list, and picks the top 5. This keeps the curation fast (one Haiku turn), cheap, and grounded in real community signal (install counts).
+Skills are installed from a maintained keyword map — not discovered at runtime. The setup detects technologies from `package.json` and installs matching skills directly (e.g. vue → vue-best-practices, typescript → typescript-advanced-types). No network search, no LLM ranking call, no popularity scraping. For on-demand discovery, users run `/find-skills` inside Claude Code.
 
 ## Hook-Based Safety
 
