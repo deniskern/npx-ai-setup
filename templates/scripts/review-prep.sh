@@ -14,6 +14,19 @@ section() { printf "\n## %s\n\n" "$1"; }
 hr()      { printf '%s\n' "---"; }
 
 # ---------------------------------------------------------------------------
+# Green-path: nothing to review
+# ---------------------------------------------------------------------------
+git_guard
+MAIN="$(main_branch)"
+WORKTREE_CHANGES="$(git status -s 2>/dev/null || true)"
+BRANCH_DIFF="$(git diff "$MAIN"...HEAD --name-only 2>/dev/null || true)"
+
+if [[ -z "$WORKTREE_CHANGES" ]] && [[ -z "$BRANCH_DIFF" ]]; then
+  echo "NO_CHANGES_TO_REVIEW"
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
 # 1. Header
 # ---------------------------------------------------------------------------
 BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")"

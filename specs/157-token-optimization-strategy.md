@@ -35,7 +35,7 @@ Spec 156 covers 4 new prep scripts (build, lint, pr, changelog) — this spec co
 - [x] Step 7: Verify defuddle is `required` in `lib/cli-tools.sh` — already there, confirm and document.
 
 ### Phase 4: Green-Path Hardening (P1)
-- [ ] Step 8: Add clean-worktree early-exit to `templates/scripts/review-prep.sh` — if `git status -s` is empty AND no branch diff vs main, emit `NO_CHANGES_TO_REVIEW` and exit 0.
+- [x] Step 8: Add clean-worktree early-exit to `templates/scripts/review-prep.sh` — if `git status -s` is empty AND no branch diff vs main, emit `NO_CHANGES_TO_REVIEW` and exit 0.
 - [ ] Step 9: Verify `commit-prep.sh` NO_STAGED_CHANGES guard works correctly (already exists).
 - [ ] Step 10: Document green-path convention for Spec 156 prep-scripts: every prep-script MUST have an early-exit when there's nothing to do.
 
