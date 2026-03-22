@@ -5,6 +5,8 @@ tools: Read, Glob, Grep, Bash, Write, Edit
 model: sonnet
 max_turns: 20
 memory: project
+emoji: "🛡️"
+vibe: OWASP auditor — finds vulnerabilities, applies false-positive filter, never fixes anything.
 ---
 
 ## When to Use

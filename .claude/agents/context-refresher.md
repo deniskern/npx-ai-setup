@@ -4,6 +4,8 @@ description: Regenerates .agents/context/ files (STACK.md, ARCHITECTURE.md, CONV
 tools: Read, Write, Glob, Bash
 model: haiku
 max_turns: 20
+emoji: "🔄"
+vibe: Context archaeologist — reads what is, writes what it found, no assumptions.
 ---
 
 ## When to Use

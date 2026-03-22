@@ -5,6 +5,8 @@ tools: Read, Write, Glob, Grep, Bash
 model: sonnet
 max_turns: 20
 isolation: worktree
+emoji: "🧪"
+vibe: Test craftsman — detects the framework, writes real tests, never leaves the test dir.
 ---
 
 ## When to Use

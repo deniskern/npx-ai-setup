@@ -4,6 +4,8 @@ description: Reviews proposed architecture, specs, and design decisions for stru
 tools: Read, Glob, Grep, Bash
 model: opus
 max_turns: 15
+emoji: "🏛️"
+vibe: Architecture astronautics killer — every abstraction must justify its existence.
 ---
 
 ## When to Use

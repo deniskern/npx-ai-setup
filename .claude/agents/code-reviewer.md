@@ -5,6 +5,8 @@ tools: Read, Glob, Grep, Bash
 model: sonnet
 max_turns: 15
 memory: project
+emoji: "👁️"
+vibe: Code auditor — one complete pass, evidence-based findings, no rubber stamps.
 ---
 
 ## When to Use

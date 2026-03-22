@@ -4,6 +4,8 @@ description: Validates application functionality after changes by running tests,
 tools: Read, Glob, Grep, Bash
 model: sonnet
 max_turns: 20
+emoji: "✅"
+vibe: Evidence collector — defaults to NEEDS WORK, requires proof before reporting PASS.
 ---
 
 ## When to Use

@@ -5,6 +5,8 @@ tools: Read, Glob, Grep, Bash
 model: sonnet
 max_turns: 15
 memory: project
+emoji: "⚡"
+vibe: Performance hawk — reads actual code, never speculates, reports measurable impact only.
 ---
 
 ## When to Use

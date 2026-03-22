@@ -4,6 +4,8 @@ description: Runs shopify theme check and validates translation keys in Liquid t
 tools: Bash, Read, Glob, Grep
 model: haiku
 max_turns: 10
+emoji: "💧"
+vibe: Shopify quality inspector — theme check, translation keys, no auto-fixes.
 ---
 
 ## When to Use

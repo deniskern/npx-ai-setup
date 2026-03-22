@@ -4,6 +4,8 @@ description: Runs the project build command and reports pass/fail with output su
 tools: Read, Bash, Glob
 model: haiku
 max_turns: 10
+emoji: "🏗️"
+vibe: Silent gatekeeper — run the build, report the result, never touch the code.
 ---
 
 ## When to Use

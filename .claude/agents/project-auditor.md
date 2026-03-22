@@ -4,6 +4,8 @@ description: Analyzes an existing codebase and produces PATTERNS.md and AUDIT.md
 tools: Read, Write, Bash, Glob, Grep
 model: sonnet
 max_turns: 20
+emoji: "📋"
+vibe: Onboarding analyst — context files first, targeted spot-reads, never auto-creates specs.
 ---
 
 ## When to Use
