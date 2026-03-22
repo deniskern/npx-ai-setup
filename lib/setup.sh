@@ -51,6 +51,42 @@ _install_or_update_file() {
   echo "  ✅ $target (updated)"
   return 0
 }
+# Install all files from a template directory into a target directory.
+# Usage: _install_template_dir <src_dir> <target_dir> [glob] [executable]
+#   src_dir    — source template directory (must exist)
+#   target_dir — destination directory (created with mkdir -p)
+#   glob       — optional find -name pattern, e.g. "*.sh" (default: all files)
+#   executable — pass "executable" to chmod +x each installed file
+# Returns: count of processed files via stdout (last line "COUNT:<n>")
+_install_template_dir() {
+  local src_dir="$1"
+  local target_dir="$2"
+  local glob="${3:-}"
+  local executable="${4:-}"
+
+  [ -d "$src_dir" ] || return 0
+  mkdir -p "$target_dir"
+
+  local _count=0
+  local _find_args
+  if [ -n "$glob" ]; then
+    while IFS= read -r -d '' _f; do
+      local _name="${_f##*/}"
+      _install_or_update_file "$_f" "$target_dir/$_name"
+      [ "$executable" = "executable" ] && chmod +x "$target_dir/$_name" 2>/dev/null || true
+      _count=$((_count + 1))
+    done < <(find "$src_dir" -maxdepth 1 -name "$glob" -type f -print0 | sort -z)
+  else
+    while IFS= read -r -d '' _f; do
+      local _name="${_f##*/}"
+      _install_or_update_file "$_f" "$target_dir/$_name"
+      [ "$executable" = "executable" ] && chmod +x "$target_dir/$_name" 2>/dev/null || true
+      _count=$((_count + 1))
+    done < <(find "$src_dir" -maxdepth 1 -type f -print0 | sort -z)
+  fi
+
+  echo "COUNT:${_count}"
+}
 
 # Check requirements: node >= 18, npm, jq, AI CLI detection
 # Sets: $AI_CLI
@@ -390,4 +426,3 @@ update_gitignore() {
     echo "  Removed AGENTS.md from .gitignore (must be committed)."
   fi
 }
-
