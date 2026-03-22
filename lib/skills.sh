@@ -18,7 +18,7 @@ get_keyword_skills() {
     react)      echo "0xbigboss/claude-code@react-best-practices wshobson/agents@react-state-management" ;;
     typescript) echo "wshobson/agents@typescript-advanced-types sickn33/antigravity-awesome-skills@typescript-expert" ;;
     shadcn)     echo "google-labs-code/stitch-skills@shadcn-ui" ;;
-    playwright) echo "microsoft/playwright-cli@playwright-cli" ;;
+    playwright) echo "" ;;  # universal skill, installed for all projects
     prisma)     echo "sickn33/antigravity-awesome-skills@prisma-expert" ;;
     supabase)   echo "supabase/agent-skills@supabase-postgres-best-practices" ;;
     nestjs)     echo "kadajett/agent-nestjs-skills@nestjs-best-practices" ;;
