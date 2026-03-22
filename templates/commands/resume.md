@@ -59,3 +59,7 @@ Options:
 - Never modify source files — read-only except for cleanup action.
 - If multiple specs are `in-progress`, list all and let the user choose via AskUserQuestion.
 - If `.continue-here.md` is malformed or unreadable, fall back to git log reconstruction.
+
+## Next Step
+
+After reviewing state, run `/spec-work NNN` to continue an active spec, or describe a new task to start fresh work.

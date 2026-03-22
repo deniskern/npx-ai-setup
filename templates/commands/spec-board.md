@@ -42,3 +42,7 @@ C) Skip — leave as is
 ## Rules
 - Only write or move files during step 2 and only after user confirms.
 - If `specs/` does not exist or has no spec files, report "No specs found" and stop.
+
+## Next Step
+
+To work on a spec, run `/spec-work NNN`. To validate a draft spec before starting, run `/spec-validate NNN`.

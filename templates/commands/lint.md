@@ -70,3 +70,7 @@ If issues remain, list top 5 with file path, line, rule name, and suggested fix.
 - Never add eslint-disable / biome-ignore comments without explaining why in a code comment
 - Commit nothing — leave staging to the user
 - If `$ARGUMENTS` specifies a path (e.g., `src/`), scope the linter to that path only
+
+## Next Step
+
+If lint is clean, run `/review` for a full code review, or `/commit` to stage and commit changes.

@@ -64,3 +64,7 @@ Spawn `code-reviewer` via Agent tool. Pass the changed files and a one-line desc
 - Fix only what is broken. No scope creep.
 - If the bug is unclear or cannot be reproduced, ask the user before writing any code.
 - If the root cause requires architectural changes, stop and recommend `/spec` instead.
+
+## Next Step
+
+After a successful fix, run `/commit` to stage and commit the bug fix with a conventional commit message.

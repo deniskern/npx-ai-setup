@@ -28,3 +28,7 @@ Scans recently changed files for tech debt and fixes safe wins. Use at end of se
 - Fix only clear, safe wins. Do not refactor working code.
 - Do not change public APIs or behavior.
 - Report but do not fix anything you're unsure about.
+
+## Next Step
+
+After cleaning up tech debt, run `/commit` to checkpoint the changes, or `/reflect` to capture any architectural discoveries from the sweep.

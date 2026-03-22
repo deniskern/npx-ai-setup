@@ -91,3 +91,7 @@ After all waves complete:
 - If a step in a spec is blocked or unclear, mark it unchecked and continue remaining steps
 - If `specs/` has no draft specs, report "No draft specs found" and stop
 - If an Agent subagent fails, mark the spec as `blocked` and report the error
+
+## Next Step
+
+After all specs complete, run `/spec-review NNN` for each completed spec to validate against acceptance criteria, then `/pr` to open a pull request.

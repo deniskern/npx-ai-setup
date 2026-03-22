@@ -73,3 +73,9 @@ Choose exactly one. Incorporate concerns raised in Phase 6b into the rationale.
 - Do NOT modify any files.
 - Cite specific lines from `.agents/context/CONCEPT.md` when evaluating concept fit (only if file exists).
 - The verdict must be unambiguous — no "it depends" conclusions.
+
+## Next Step
+
+- **GO verdict**: run `/spec "task description"` to create a structured implementation plan.
+- **SIMPLIFY verdict**: run `/spec "reduced scope"` with the agreed-upon smaller scope.
+- **REJECT verdict**: no action needed — idea is shelved.

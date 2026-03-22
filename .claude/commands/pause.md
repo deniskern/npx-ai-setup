@@ -56,3 +56,7 @@ Generated: <ISO date and time>
 - Never stage files other than `.continue-here.md` in the WIP commit.
 - If `.continue-here.md` already exists, overwrite it — only the latest handoff is kept.
 - If `git commit` fails (nothing to commit), still write the file but skip the commit step.
+
+## Next Step
+
+State saved. Start a new Claude Code session and run `/resume` to restore context and continue from where you left off.

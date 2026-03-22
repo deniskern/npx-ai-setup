@@ -1,6 +1,6 @@
 # Spec: Workflow Flow Hints and Documentation Restructuring
 
-> **Spec ID**: 156 | **Created**: 2026-03-22 | **Status**: draft | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 156 | **Created**: 2026-03-22 | **Status**: in-review | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Add next-step suggestions to all commands and restructure documentation to separate onboarding from the development cycle.
@@ -14,17 +14,17 @@ Commands work in isolation — users must know the cycle order themselves. 5 of 
 - Local .claude/commands/ are synced from templates/ at the end — Evidence: current repo practice | Confidence: High | If Wrong: would need separate edits
 
 ## Steps
-- [ ] Step 1: Define the next-step mapping (which command suggests which) as a reference table in this spec's PR description, then add `## Next Step` sections to the 19 commands that lack them in `templates/commands/`
-- [ ] Step 2: Restructure `templates/WORKFLOW-GUIDE.md` — rename categories to Onboarding (discover, evaluate, analyze), Cycle (spec → spec-work → test → review → commit → pr → release), Session (pause, resume, reflect, doctor, update) and add a "Hotfix Flow" section
-- [ ] Step 3: Mirror the same restructuring to `.claude/WORKFLOW-GUIDE.md`
-- [ ] Step 4: Copy all modified `templates/commands/*.md` to `.claude/commands/` to sync local state
+- [x] Step 1: Define the next-step mapping (which command suggests which) as a reference table in this spec's PR description, then add `## Next Step` sections to the 19 commands that lack them in `templates/commands/`
+- [x] Step 2: Restructure `templates/WORKFLOW-GUIDE.md` — rename categories to Onboarding (discover, evaluate, analyze), Cycle (spec → spec-work → test → review → commit → pr → release), Session (pause, resume, reflect, doctor, update) and add a "Hotfix Flow" section
+- [x] Step 3: Mirror the same restructuring to `.claude/WORKFLOW-GUIDE.md`
+- [x] Step 4: Copy all modified `templates/commands/*.md` to `.claude/commands/` to sync local state
 
 ## Acceptance Criteria
 
 ### Truths
-- [ ] "Every command in templates/commands/ has a `## Next Step` or `## Post-*` section"
-- [ ] "WORKFLOW-GUIDE.md contains sections: Onboarding, Development Cycle, Session & Maintenance, and Hotfix Flow"
-- [ ] "`diff templates/commands/ .claude/commands/` shows no differences"
+- [x] "Every command in templates/commands/ has a `## Next Step` or `## Post-*` section"
+- [x] "WORKFLOW-GUIDE.md contains sections: Onboarding, Development Cycle, Session & Maintenance, and Hotfix Flow"
+- [x] "`diff templates/commands/ .claude/commands/` shows no differences"
 
 ## Files to Modify
 - `templates/commands/*.md` (19 files) — add Next Step sections

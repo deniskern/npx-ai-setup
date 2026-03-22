@@ -196,3 +196,7 @@ Critical wiring between artifacts that must actually connect:
 - Steps must come from the Phase 1e implementation sketch — be specific, include file paths.
 - Use today's date. Filename: lowercase with hyphens.
 - Always create `specs/` and `specs/completed/` if they don't exist.
+
+## Next Step
+
+After the spec file is written, run `/spec-validate NNN` to score it before execution, or jump straight to `/spec-work NNN` to start implementation.

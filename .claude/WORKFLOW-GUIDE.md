@@ -14,43 +14,39 @@ claude                # open Claude Code in your project
 
 ---
 
-## Daily Workflow
+## Onboarding
 
-### Small tasks (single file, config, typo)
-Describe it directly. Claude handles it.
+Run once when joining a new codebase or before starting a major initiative.
 
-### Larger tasks (3+ files, new feature, architecture)
-Use spec-driven development:
-
-```
-/spec "task description"       # challenge idea, then create structured spec
-/spec-validate NNN             # validate quality before executing
-/spec-work NNN                 # execute step by step, commit after each step
-/spec-review NNN               # review against acceptance criteria, finish gate
-/spec-board                    # Kanban overview of all specs
-```
-
-**Lifecycle:** `draft` → `in-progress` → `in-review` → `completed`
-
-Parallel execution: `/spec-work-all` runs all draft specs in isolated Git worktrees.
-
-### Session management
-```
-/pause                         # save state to .continue-here.md, commit WIP
-/resume                        # restore state, route to next action
-```
-
-### After a task
-```
-/commit                        # conventional commit message
-/reflect                       # capture learnings as permanent rules
-```
+| Command | Description |
+|---------|-------------|
+| `/analyze` | Codebase overview via 3 parallel agents — produces PATTERNS.md and AUDIT.md |
+| `/discover` | Reverse-engineer draft specs from existing code |
+| `/evaluate "tool"` | Deep-evaluate an external tool or pattern against the project |
 
 ---
 
-## Commands (24)
+## Development Cycle
 
-### Spec Workflow
+The standard cycle for any task larger than a single-file fix.
+
+```
+/spec "task description"       # challenge idea, create structured spec
+/spec-validate NNN             # score spec quality before executing
+/spec-work NNN                 # execute step by step, commit after each step
+/test                          # run tests + fix failures (up to 3 attempts)
+/review                        # review uncommitted changes
+/commit                        # stage + conventional commit message
+/pr                            # build validation + staff review + PR draft
+/release                       # bump version, update CHANGELOG, tag
+```
+
+**Spec lifecycle:** `draft` → `in-progress` → `in-review` → `completed`
+
+Parallel execution: `/spec-work-all` runs all draft specs in isolated Git worktrees.
+
+### All Development Commands
+
 | Command | Description |
 |---------|-------------|
 | `/spec "task"` | Challenge idea first, then create structured spec |
@@ -59,37 +55,37 @@ Parallel execution: `/spec-work-all` runs all draft specs in isolated Git worktr
 | `/spec-review NNN` | Review against acceptance criteria + finishing gate |
 | `/spec-validate NNN` | Score spec quality before executing |
 | `/spec-board` | Kanban board of all specs |
-
-### Development
-| Command | Description |
-|---------|-------------|
 | `/debug "description"` | Hypothesis-first bug investigation |
-| `/build-fix` | Incremental build-error fixer (max 10 iterations, max 5% change) |
+| `/build-fix` | Incremental build-error fixer (max 10 iterations) |
 | `/test` | Run tests + fix failures (up to 3 attempts) |
-| `/analyze` | Codebase overview via 3 parallel agents |
-| `/discover` | Reverse-engineer draft specs from existing code |
-
-### Review & Quality
-| Command | Description |
-|---------|-------------|
-| `/review` | Review uncommitted changes (Quick Scan / Standard / Adversarial Grill) |
-| `/scan` | Security vulnerability scan (snyk/npm audit/pip-audit/bundler-audit) |
+| `/lint` | Run linter, auto-fix safe violations |
+| `/review` | Review uncommitted changes (Quick Scan / Standard / Adversarial) |
+| `/scan` | Security vulnerability scan (snyk/npm audit/pip-audit) |
 | `/techdebt` | End-of-session sweep — dead code, unused imports |
-
-### Strategic
-| Command | Description |
-|---------|-------------|
-| `/evaluate "tool"` | Deep-evaluate external tool/pattern against project |
 | `/challenge "idea"` | Critically evaluate a feature idea before building |
-
-### Git & Release
-| Command | Description |
-|---------|-------------|
 | `/commit` | Stage changes + conventional commit message |
 | `/pr` | Build validation + staff review + PR draft |
 | `/release` | Bump version, update CHANGELOG, tag release |
 
-### Session & Maintenance
+---
+
+## Hotfix Flow
+
+For production bugs that bypass the normal spec cycle.
+
+```
+/debug "symptom"               # isolate root cause with hypothesis-first approach
+/test                          # verify fix with tests
+/commit                        # conventional commit: fix(scope): description
+/pr                            # fast-track PR with minimal review
+```
+
+No spec required for hotfixes — `/debug` output serves as the investigation record.
+
+---
+
+## Session & Maintenance
+
 | Command | Description |
 |---------|-------------|
 | `/pause` | Capture session state, commit WIP checkpoint |
@@ -97,6 +93,12 @@ Parallel execution: `/spec-work-all` runs all draft specs in isolated Git worktr
 | `/reflect` | Save session learnings as permanent rules |
 | `/doctor` | AI setup health check (hooks, settings, context, MCP) |
 | `/update` | Check for ai-setup updates and install |
+
+```
+/pause                         # save state to .continue-here.md, commit WIP
+/resume                        # restore state, route to next action
+/reflect                       # capture learnings as permanent rules
+```
 
 ---
 
@@ -201,26 +203,6 @@ Run `/build-fix` — it parses the first error, applies a minimal fix, rebuilds,
 
 **Can't find a command?**
 Type `/` in Claude Code for autocomplete, or check `.claude/commands/`.
-
-## Multi-Agent Delegation
-
-Delegate tasks to Gemini or Codex CLI without leaving Claude Code:
-
-```
-"use gemini to summarize the API documentation at docs/api.md"
-"use codex to write unit tests for lib/setup.sh"
-"ask gemini what security best practices we should follow"
-```
-
-**Requirements:** The respective CLI must be installed (`gemini` or `codex`) and the API key set (`GEMINI_API_KEY` or `OPENAI_API_KEY`).
-
-**How it works:** Claude sends your prompt to the external engine via `.claude/scripts/delegate-*.sh`. The engine receives AGENTS.md as project context plus your task prompt. The result is displayed in Claude Code.
-
-**Constraints:**
-- Delegation is always explicit — say "use gemini" or "use codex"
-- The delegated engine has no access to your Claude conversation history
-- File edits suggested by the delegated engine are NOT applied automatically
-- Token usage of the delegated engine is not tracked in Claude Code
 
 **Update ai-setup:**
 ```

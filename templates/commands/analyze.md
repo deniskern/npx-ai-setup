@@ -174,3 +174,7 @@ Combine all agent outputs into a single structured report:
 - Keep each section dense and factual; omit padding and filler phrases.
 - If a command fails (e.g. git not available), note it and continue with available data.
 - In batch mode: if a batch agent fails, continue with remaining batches and note the gap.
+
+## Next Step
+
+After reviewing the analysis report, run `/spec "task description"` to create a spec for any identified improvement or architectural change.

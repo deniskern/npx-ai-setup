@@ -157,3 +157,7 @@ Every finding must appear in this table. If a claim cannot be verified against a
 - Read the actual code before commenting — never speculate.
 - Focus on what matters: bugs and security over style.
 - If no issues found, say so clearly.
+
+## Next Step
+
+After addressing any review findings, run `/commit` to stage and commit changes, or `/pr` if the branch is ready for a pull request.

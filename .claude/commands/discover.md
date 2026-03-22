@@ -146,3 +146,7 @@ After writing all specs, report:
 - Never overwrite an existing spec file — skip and warn if `specs/NNN-*.md` already exists with that number.
 - Keep generated specs concise: max 60 lines per file.
 - If a command fails (e.g. git not available), note it and continue with available data.
+
+## Next Step
+
+After generating draft specs, run `/spec-validate NNN` to score each spec, then `/spec-work NNN` to implement the highest-priority one.

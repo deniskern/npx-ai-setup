@@ -41,3 +41,7 @@ Replace [Unreleased] with [vX.Y.Z] — YYYY-MM-DD using grouped output from chan
 - Never push automatically
 - Never skip CHANGELOG update
 - Do NOT bump with uncommitted changes
+
+## Next Step
+
+After the release commit and tag are created, push manually: `git push && git push --tags`. Then run `/pr` if a release PR is needed, or announce the release.

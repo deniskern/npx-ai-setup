@@ -135,3 +135,7 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
 - If a step fails or is blocked, leave it unchecked, set status to `blocked`, and ask the user.
 - If called with `--complete` flag, skip steps 14–16: set status directly to `completed` and move to `specs/completed/` (legacy behavior).
 - If called with `--skip-validate` flag, skip step 3 (validation gate). Use only for specs already validated or when resuming in-progress specs.
+
+## Next Step
+
+After implementation, run `/spec-review NNN` to validate against acceptance criteria. Then `/pr` to open a pull request, or `/spec-board` to pick the next spec.

@@ -115,3 +115,7 @@ Then clean up worktree if one exists (same as above).
 - Focus on what matters: spec compliance and bugs over style.
 - If the diff is empty (no changes found), report this and ask the user to verify.
 - Never push to remote or create PRs automatically — only on explicit user choice in Phase 7.
+
+## Next Step
+
+After spec review passes, run `/pr` to create a pull request, or `/spec-board` to pick the next spec to work on.

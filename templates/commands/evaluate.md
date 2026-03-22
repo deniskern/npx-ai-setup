@@ -158,3 +158,7 @@ Each spec should reference the brainstorm document for context.
 - **Strategic**: Always include token economics and maintenance cost analysis
 - If WebFetch/defuddle fails for a URL, ask user to paste content or try raw GitHub URLs
 - The brainstorm document is the primary deliverable — it persists across sessions
+
+## Next Step
+
+After the brainstorm document is saved to `specs/`, run `/spec NNN` on any selected adoption candidate to create an implementation spec, or run `/spec-board` to see the full pipeline.

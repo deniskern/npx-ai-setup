@@ -34,3 +34,7 @@ Runs the project test suite and fixes failures in source code. Uses `test-prep.s
 - Do not delete or skip failing tests.
 - Do not install new dependencies without asking.
 - If no test framework is detected, tell the user and stop.
+
+## Next Step
+
+After tests pass, run `/review` to check uncommitted changes, or `/commit` to stage and commit the fixes.

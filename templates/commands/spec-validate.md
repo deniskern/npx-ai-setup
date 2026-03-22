@@ -109,3 +109,7 @@ Assign letter grade based on total weighted score:
 - Score honestly. A spec that passes with weak scores wastes execution compute.
 - Only report metrics that actually fail. Don't pad passing specs with warnings.
 - This command does NOT block `/spec-work` — it's advisory. But weak specs ship weak code.
+
+## Next Step
+
+If the spec scores well (≥7 average), run `/spec-work NNN` to start implementation. If it scores low, revise the spec and re-run `/spec-validate NNN`.

@@ -30,3 +30,7 @@ Scans project dependencies for security vulnerabilities. Uses `scan-prep.sh` to 
 - Do NOT install any tools — only use what is already available.
 - Do NOT re-run the scanner if prep script already ran.
 - Run in the project root.
+
+## Next Step
+
+After reviewing vulnerabilities, apply the suggested fix commands, then run `/test` to verify nothing broke, and `/commit` to checkpoint the fixes.

@@ -118,3 +118,7 @@ If `mcp__plugin_claude-mem_mcp-search__save_memory` is not available (plugin not
 - If a signal is ambiguous, skip it rather than guess.
 - If no signals were found, say so and stop — do not invent rules.
 - Changes must be explicit and git-trackable — no silent mutations.
+
+## Next Step
+
+After saving learnings, run `/commit` to checkpoint the updated context files, or `/pause` to end the session cleanly.
