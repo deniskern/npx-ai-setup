@@ -193,12 +193,7 @@ install_settings() {
 # Install hook scripts
 install_hooks() {
   echo "🛡️  Creating hooks..."
-  mkdir -p .claude/hooks
-
-  while IFS= read -r -d '' _hook_path; do
-    _hook_name="${_hook_path##*/}"
-    _install_or_update_file "$_hook_path" ".claude/hooks/$_hook_name"
-  done < <(find "$TPL/claude/hooks" -maxdepth 1 -type f -print0 | sort -z)
+  _install_template_dir "$TPL/claude/hooks" ".claude/hooks" "" "executable" >/dev/null
 }
 
 # Install rule templates
