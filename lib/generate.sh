@@ -471,6 +471,7 @@ EOF
   SYSTEM_SKILLS=()
   # Universal skills installed for every project regardless of stack
   SYSTEM_SKILLS+=("vercel-labs/agent-browser@agent-browser")
+  SYSTEM_SKILLS+=("vercel-labs/skills@find-skills")
 
   # Add curated keyword-based skills (from detected package.json dependencies)
   if [ ${#KEYWORDS[@]} -gt 0 ]; then
