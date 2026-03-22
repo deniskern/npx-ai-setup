@@ -288,8 +288,8 @@ EOF
 
     # Wait for background processes
     WAIT_ARGS=()
-    [ -n "$PID_CM" ] && WAIT_ARGS+=("$PID_CM:CLAUDE.md:30:120")
-    [ -n "$PID_AM" ] && WAIT_ARGS+=("$PID_AM:AGENTS.md:30:120")
+    [ -n "$PID_CM" ] && WAIT_ARGS+=("$PID_CM:CLAUDE.md:30:180")
+    [ -n "$PID_AM" ] && WAIT_ARGS+=("$PID_AM:AGENTS.md:30:180")
     [ -n "$PID_CTX" ] && WAIT_ARGS+=("$PID_CTX:Project context:45:180")
     echo ""
     [ ${#WAIT_ARGS[@]} -gt 0 ] && wait_parallel "${WAIT_ARGS[@]}"
@@ -311,11 +311,16 @@ EOF
     if [ "$EXIT_CM" -ne 0 ] || [ "$CLAUDE_MD_BEFORE" = "$CLAUDE_MD_AFTER" ]; then
       regen_failed=1
       echo ""
-      tui_warn "CLAUDE.md was not updated (exit code $EXIT_CM)"
-      if [ -s "$ERR_CM" ]; then
-        echo "  Output: $(tail -5 "$ERR_CM")"
+      if [ "$EXIT_CM" -eq 143 ]; then
+        tui_warn "CLAUDE.md generation timed out (>180s)"
+        tui_info "Fix: re-run: npx @onedot/ai-setup --regenerate"
+      else
+        tui_warn "CLAUDE.md was not updated (exit code $EXIT_CM)"
+        if [ -s "$ERR_CM" ]; then
+          echo "  Output: $(tail -5 "$ERR_CM")"
+        fi
+        tui_info "Fix: run 'claude' in your terminal to check authentication, then re-run"
       fi
-      tui_info "Fix: run 'claude' in your terminal to check authentication, then re-run"
     fi
     fi
 
@@ -336,11 +341,16 @@ EOF
     if [ "$EXIT_AM" -ne 0 ] || [ "$AGENTS_MD_BEFORE" = "$AGENTS_MD_AFTER" ]; then
       regen_failed=1
       echo ""
-      tui_warn "AGENTS.md was not updated (exit code $EXIT_AM)"
-      if [ -s "$ERR_AM" ]; then
-        echo "  Output: $(tail -5 "$ERR_AM")"
+      if [ "$EXIT_AM" -eq 143 ]; then
+        tui_warn "AGENTS.md generation timed out (>180s)"
+        tui_info "Fix: re-run: npx @onedot/ai-setup --regenerate"
+      else
+        tui_warn "AGENTS.md was not updated (exit code $EXIT_AM)"
+        if [ -s "$ERR_AM" ]; then
+          echo "  Output: $(tail -5 "$ERR_AM")"
+        fi
+        tui_info "Fix: run 'claude' in your terminal to check authentication, then re-run"
       fi
-      tui_info "Fix: run 'claude' in your terminal to check authentication, then re-run"
     fi
     fi
 
