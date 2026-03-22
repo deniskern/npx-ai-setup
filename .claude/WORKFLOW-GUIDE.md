@@ -20,6 +20,7 @@ Run once when joining a new codebase or before starting a major initiative.
 
 | Command | Description |
 |---------|-------------|
+| `/explore "topic"` | Read-only thinking partner — map codebase, surface tradeoffs, draw ASCII diagrams; never writes files (contrast: `/challenge` evaluates a specific idea with GO/SIMPLIFY/REJECT verdict) |
 | `/analyze` | Codebase overview via 3 parallel agents — produces PATTERNS.md and AUDIT.md |
 | `/discover` | Reverse-engineer draft specs from existing code |
 | `/evaluate "tool"` | Deep-evaluate an external tool or pattern against the project |
@@ -62,7 +63,8 @@ Parallel execution: `/spec-work-all` runs all draft specs in isolated Git worktr
 | `/review` | Review uncommitted changes (Quick Scan / Standard / Adversarial) |
 | `/scan` | Security vulnerability scan (snyk/npm audit/pip-audit) |
 | `/techdebt` | End-of-session sweep — dead code, unused imports |
-| `/challenge "idea"` | Critically evaluate a feature idea before building |
+| `/explore "topic"` | Read-only thinking partner — explore tradeoffs, map codebase, surface surprises (no file writes) |
+| `/challenge "idea"` | Critically evaluate a feature idea before building (GO/SIMPLIFY/REJECT verdict) |
 | `/commit` | Stage changes + conventional commit message |
 | `/pr` | Build validation + staff review + PR draft |
 | `/release` | Bump version, update CHANGELOG, tag release |
