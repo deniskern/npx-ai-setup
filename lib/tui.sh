@@ -11,7 +11,7 @@
 ask_regen_parts() {
   # Arrow keys + Space to toggle + Enter to confirm
   local options=("CLAUDE.md" "AGENTS.md" "Context" "Commands" "Agents" "Skills")
-  local descriptions=("Main instructions + project guardrails" "Agent workflow + role guidelines" ".agents/context/{STACK,ARCHITECTURE,CONVENTIONS}" ".claude/commands/ slash commands" ".claude/agents/ subagent templates" "External + bundled skills (.claude/skills)")
+  local descriptions=("Main instructions + project guardrails" "Agent workflow + role guidelines" ".agents/context/{STACK,ARCHITECTURE,CONVENTIONS}" ".claude/commands/ slash commands" ".claude/agents/ subagent templates" "Global skills (agent-browser, find-skills, gh-cli)")
   local count=6
   local selected=0
   local checked=(1 1 1 1 1 1)  # all pre-selected
