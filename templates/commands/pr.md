@@ -6,32 +6,54 @@ allowed-tools: Read, Bash, Glob, Grep, Agent
 
 Drafts a pull request with staff review and PR body. Use when a feature branch is ready to be submitted for review.
 
-## Context
-
-- Current status: `!git status`
-- Unstaged changes: `!git diff`
-- Commits ahead of main: `!git log --oneline main..HEAD`
-- Current branch: `!git branch --show-current`
-
 ## Process
 
-1. **Build validation**: Spawn `build-validator` via Agent tool.
-   - If build-validator returns **FAIL**: stop immediately and tell the user: "Fix the build before creating a PR." Show the build output. Do not proceed.
-   - If build-validator returns **PASS**: continue.
-2. Analyze the changes shown in Context above to understand all modifications on this branch.
-3. Stage and commit any remaining uncommitted changes (descriptive message, no `git add .`).
-4. **Staff review**: Spawn `staff-reviewer` via Agent tool with the prompt:
-   > "Review this branch for production readiness before PR creation. Branch: <branch-name>. Recent commits: <commits from git log --oneline main..HEAD>."
-   - If staff-reviewer returns **APPROVE**: continue drafting PR normally; note "Staff review: APPROVED" in the output.
-   - If staff-reviewer returns **APPROVE WITH CONCERNS**: continue drafting PR; include the concerns under `## Staff Review Concerns` in the PR body.
-   - If staff-reviewer returns **REQUEST CHANGES**: stop, show the reviewer's concerns, and tell the user: "Fix the reported issues before creating the PR."
-5. Draft the PR title (short, under 70 chars) and body (`## Summary` with 2-3 bullets + `## Test plan` checklist).
-6. Show the user the PR details and the commands to run:
-   ```
-   git push -u origin <branch>
-   gh pr create --title "..." --body "..."
-   ```
-7. Do NOT push or create the PR — the user does this manually.
+### 0. Collect PR Context
+
+Run `! bash .claude/scripts/pr-prep.sh` to gather branch diff, commit history, CI status, and linked issues.
+
+- Use the `=== COMMITS AHEAD OF main ===` section to understand what changed.
+- Use `=== DIFF STAT vs main ===` for the PR summary.
+- Use `=== LINKED ISSUES ===` to populate "Closes #NNN" in the PR body.
+- Use `=== CI STATUS ===` to verify CI is passing before proceeding.
+
+### 1. Build Validation
+
+Run `! bash .claude/scripts/build-prep.sh`.
+
+- If output contains `BUILD_PASSED`: continue.
+- If exit 2: stop immediately and tell the user: "Fix the build before creating a PR." Show the error section. Do not proceed.
+
+### 2. Analyze Changes
+
+Use the diff and commits from the pr-prep.sh output to understand all modifications on this branch.
+
+### 3. Stage Uncommitted Changes
+
+Stage and commit any remaining uncommitted changes (descriptive message, no `git add .`).
+
+### 4. Staff Review
+
+Spawn `staff-reviewer` via Agent tool with the prompt:
+> "Review this branch for production readiness before PR creation. Branch: <branch-name>. Recent commits: <commits from pr-prep output>."
+
+- If staff-reviewer returns **APPROVE**: continue drafting PR normally; note "Staff review: APPROVED" in the output.
+- If staff-reviewer returns **APPROVE WITH CONCERNS**: continue drafting PR; include the concerns under `## Staff Review Concerns` in the PR body.
+- If staff-reviewer returns **REQUEST CHANGES**: stop, show the reviewer's concerns, and tell the user: "Fix the reported issues before creating the PR."
+
+### 5. Draft PR
+
+Draft the PR title (short, under 70 chars) and body (`## Summary` with 2-3 bullets + `## Test plan` checklist). Include any linked issues from the prep output.
+
+### 6. Show Commands
+
+Show the user the PR details and the commands to run:
+```
+git push -u origin <branch>
+gh pr create --title "..." --body "..."
+```
+
+Do NOT push or create the PR — the user does this manually.
 
 ## Post-PR
 
