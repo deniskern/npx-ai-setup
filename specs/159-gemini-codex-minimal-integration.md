@@ -39,8 +39,8 @@ Gemini CLI und Codex CLI als optionale, gleichwertige Coding-Agents neben Claude
 - [x] In `bin/ai-setup.sh` aufrufen
 
 ### Step 4: Gitignore & Cleanup
-- [ ] `.gemini/` Einträge in `update_gitignore()` hinzufügen (`.gemini/settings.json` soll tracked werden, `.gemini/agents` ist Symlink → ignore)
-- [ ] Verify: `.codex/skills` ist bereits in .gitignore
+- [x] `.gemini/` Einträge in `update_gitignore()` hinzufügen (`.gemini/settings.json` soll tracked werden, `.gemini/agents` ist Symlink → ignore)
+- [x] Verify: `.codex/skills` ist bereits in .gitignore
 
 ### Step 5: AGENTS.md als Workflow-Router
 - [ ] Commands-Sektion in `templates/AGENTS.md` komplett überarbeiten als Tool-Router:

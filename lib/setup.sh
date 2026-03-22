@@ -388,6 +388,7 @@ update_gitignore() {
       echo "scripts/storyblok-dump.json" >> .gitignore
       echo "CLAUDE.local.md" >> .gitignore
       echo ".codex/skills" >> .gitignore
+      echo ".gemini/agents" >> .gitignore
       echo ".opencode/skills" >> .gitignore
     else
       # Add new entries if missing from existing block
@@ -399,6 +400,7 @@ update_gitignore() {
       grep -q "storyblok-dump\.json" .gitignore 2>/dev/null || echo "scripts/storyblok-dump.json" >> .gitignore
       grep -q "CLAUDE\.local\.md" .gitignore 2>/dev/null || echo "CLAUDE.local.md" >> .gitignore
       grep -q "\.codex/skills" .gitignore 2>/dev/null || echo ".codex/skills" >> .gitignore
+      grep -q "\.gemini/agents" .gitignore 2>/dev/null || echo ".gemini/agents" >> .gitignore
       grep -q "\.opencode/skills" .gitignore 2>/dev/null || echo ".opencode/skills" >> .gitignore
     fi
   else
@@ -411,6 +413,7 @@ update_gitignore() {
     echo "scripts/storyblok-dump.json" >> .gitignore
     echo "CLAUDE.local.md" >> .gitignore
     echo ".codex/skills" >> .gitignore
+    echo ".gemini/agents" >> .gitignore
     echo ".opencode/skills" >> .gitignore
   fi
 
