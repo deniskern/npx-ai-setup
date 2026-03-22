@@ -1,6 +1,6 @@
 # Spec: Comprehensive Token Optimization — Close All 6-Layer Gaps
 
-> **Spec ID**: 157 | **Created**: 2026-03-22 | **Status**: draft | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 157 | **Created**: 2026-03-22 | **Status**: in-progress | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Close all identified token-saving gaps across the 6-layer architecture: transparent RTK activation, defuddle auto-invoke, RTK-enhanced prep-scripts, green-path hardening, and CLI-tool health checks — targeting 40-60% total token reduction for typical dev sessions.
@@ -22,7 +22,7 @@ Spec 156 covers 4 new prep scripts (build, lint, pr, changelog) — this spec co
 ## Steps
 
 ### Phase 1: RTK Activation in Setup (P0 — highest impact)
-- [ ] Step 1: Add `rtk init --global` call to `bin/ai-setup.sh` after CLI tool installation step. Guard with `command -v rtk` check. This activates RTK's built-in Claude Code hooks automatically.
+- [x] Step 1: Add `rtk init --global` call to `bin/ai-setup.sh` after CLI tool installation step. Guard with `command -v rtk` check. This activates RTK's built-in Claude Code hooks automatically.
 - [ ] Step 2: Add "## Token Optimization" section to `templates/CLAUDE.md` (max 5 lines): mention RTK auto-compression is active, prep-scripts handle structured analysis, and defuddle replaces WebFetch for web content.
 - [ ] Step 3: Update README "Optional Extensions" section — RTK is no longer optional (it's `required` in cli-tools.sh), move to main features or correct the registry.
 
