@@ -1,6 +1,6 @@
 # Spec 148: Heuristische Layer-Erkennung fuer ARCHITECTURE.md
 
-> **Status**: Draft
+> **Status**: completed
 > **Source**: specs/145-evaluate-understand-anything.md (Kandidat #8)
 > **Goal**: Automatische Architektur-Layer-Erkennung via Directory-Patterns in context-refresher einbauen
 > **Depends on**: None. **Must run before**: Spec 149 (both modify context-refresher.md)
@@ -11,13 +11,13 @@ Understand-Anything erkennt Architektur-Layer zweistufig: erst heuristische Patt
 
 ## Steps
 
-- [ ] 1. Read `.claude/agents/context-refresher.md` and template version to understand current ARCHITECTURE.md generation
-- [ ] 2. Define 12 heuristic directory-pattern categories: API (routes/, api/, endpoints/), Service (services/, providers/), Data (models/, entities/, db/, prisma/), UI (components/, pages/, views/, layouts/), Middleware (middleware/), Utility (utils/, helpers/, lib/), Config (config/, .env*), Test (test/, __tests__, *.test.*, *.spec.*), Types (types/, interfaces/), Hooks (hooks/, composables/), State (store/, stores/, state/), Assets (assets/, public/, static/)
-- [ ] 3. Add pre-processing step to context-refresher: scan directory structure, classify files into layers, compute file counts per layer
-- [ ] 4. Pass heuristic layer classification as structured input to LLM step for ARCHITECTURE.md generation
-- [ ] 5. LLM refines/adjusts layers based on actual code content (may merge or split heuristic layers)
-- [ ] 6. Mirror changes to template version
-- [ ] 7. Test: run context-refresher on npx-ai-setup and verify ARCHITECTURE.md includes layer information
+- [x] 1. Read `.claude/agents/context-refresher.md` and template version to understand current ARCHITECTURE.md generation
+- [x] 2. Define 12 heuristic directory-pattern categories: API (routes/, api/, endpoints/), Service (services/, providers/), Data (models/, entities/, db/, prisma/), UI (components/, pages/, views/, layouts/), Middleware (middleware/), Utility (utils/, helpers/, lib/), Config (config/, .env*), Test (test/, __tests__, *.test.*, *.spec.*), Types (types/, interfaces/), Hooks (hooks/, composables/), State (store/, stores/, state/), Assets (assets/, public/, static/)
+- [x] 3. Add pre-processing step to context-refresher: scan directory structure, classify files into layers, compute file counts per layer
+- [x] 4. Pass heuristic layer classification as structured input to LLM step for ARCHITECTURE.md generation
+- [x] 5. LLM refines/adjusts layers based on actual code content (may merge or split heuristic layers)
+- [x] 6. Mirror changes to template version
+- [x] 7. Test: run context-refresher on npx-ai-setup — layer detection script works, detects lib/ (Utility), tests/ (Test), lib/migrations/ (Data) and verify ARCHITECTURE.md includes layer information
 
 ## Acceptance Criteria
 
