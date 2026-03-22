@@ -1,6 +1,6 @@
 # Spec: Read-Only Explore Skill
 
-> **Spec ID**: 162 | **Created**: 2026-03-22 | **Status**: in-review | **Complexity**: low | **Branch**: —
+> **Spec ID**: 162 | **Created**: 2026-03-22 | **Status**: completed | **Complexity**: low | **Branch**: —
 
 ## Goal
 Add a `/explore` skill as a read-only thinking partner that can read code but never write files, helping users explore solution spaces before committing to a spec.

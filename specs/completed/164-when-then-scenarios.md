@@ -1,6 +1,6 @@
 # Spec: WHEN/THEN Scenarios as Optional Acceptance Criteria Format
 
-> **Spec ID**: 164 | **Created**: 2026-03-22 | **Status**: complete | **Complexity**: low | **Branch**: —
+> **Spec ID**: 164 | **Created**: 2026-03-22 | **Status**: completed | **Complexity**: low | **Branch**: —
 
 ## Goal
 Add WHEN/THEN scenario format as an optional acceptance criteria category alongside Truths/Artifacts/Key Links.

@@ -1,6 +1,6 @@
 # Spec: Agent YAML Frontmatter Standard
 
-> **Spec ID**: 159 | **Created**: 2026-03-22 | **Status**: in-review | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 159 | **Created**: 2026-03-22 | **Status**: completed | **Complexity**: medium | **Branch**: —
 > Referenz: specs/158-evaluate-agency-agents.md (Prio 1, Item 1 + Prio 2, Item 6)
 
 ## Goal

@@ -1,6 +1,6 @@
 # Spec: Workflow Flow Hints and Documentation Restructuring
 
-> **Spec ID**: 156 | **Created**: 2026-03-22 | **Status**: in-review | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 156 | **Created**: 2026-03-22 | **Status**: completed | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Add next-step suggestions to all commands and restructure documentation to separate onboarding from the development cycle.

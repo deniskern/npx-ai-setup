@@ -1,6 +1,6 @@
 # Spec: Add /lint and /ci Commands
 
-> **Spec ID**: 157 | **Created**: 2026-03-22 | **Status**: in-review | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 157 | **Created**: 2026-03-22 | **Status**: completed | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Add two new commands — /lint for lightweight code formatting and /ci for post-PR CI monitoring — to close the remaining gaps in the development cycle.

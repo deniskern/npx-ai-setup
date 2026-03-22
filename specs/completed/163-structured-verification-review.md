@@ -1,6 +1,6 @@
 # Spec: Structured 3-Check Verification in Spec Review
 
-> **Spec ID**: 163 | **Created**: 2026-03-22 | **Status**: in-review | **Complexity**: low | **Branch**: —
+> **Spec ID**: 163 | **Created**: 2026-03-22 | **Status**: completed | **Complexity**: low | **Branch**: —
 
 ## Goal
 Add explicit Completeness/Correctness/Coherence checks to the spec-review skill for systematic verification.
