@@ -10,12 +10,59 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v2.0.0] — 2026-03-22
+
+### Highlights
+
+🚀 **Pure Generic Base Layer** — System-spezifischer Code entfernt. ai-setup ist jetzt ein reiner generischer Base Layer. Shopify, Nuxt, Shopware etc. kommen via [Boilerplate Pull](https://github.com/onedot-digital-crew/npx-ai-setup#installation-flags).
+
+🔧 **Neue Tools**
+- `/ci` — CI-Status checken via `gh pr checks` / `gh run list`
+- `/explore` — Read-only Denkpartner: Ideen durchspielen, Tradeoffs aufzeigen, Codebase erkunden
+- `/lint` — Linter ausfuehren, Findings gruppiert, Auto-Fix mit `--fix`
+- `/orchestrate` — Tasks an [Gemini CLI](https://github.com/google-gemini/gemini-cli) oder [Codex CLI](https://github.com/openai/codex) delegieren
+
+🧠 **Agents & Skills**
+- Alle 12 Agents mit [YAML-Frontmatter](https://docs.anthropic.com/en/docs/claude-code/sub-agents) — maschinenlesbares Routing
+- `project-auditor` Agent — analysiert Codebase, erstellt PATTERNS.md + AUDIT.md
+- `agent-browser`, `gh-cli` Skills jetzt Standard bei jeder Installation
+- Skill-Installation vereinfacht: 3 globale Skills statt keyword-basiertes Mapping
+
+⚡ **Token-Optimierung**
+- 4 Prep-Scripts (build, lint, pr, changelog) — null Tokens auf Green Paths
+- [RTK](https://github.com/rtk-ai/rtk) wird automatisch bei Setup aktiviert (60-90% CLI-Output-Ersparnis)
+- CLI-Health Hook prueft Tool-Verfuegbarkeit beim Session-Start
+
+🛡️ **Quality & Verification**
+- 4 Quality Rules ([general](templates/claude/rules/quality-general.md), [security](templates/claude/rules/quality-security.md), [performance](templates/claude/rules/quality-performance.md), [maintainability](templates/claude/rules/quality-maintainability.md))
+- Strukturierte 3-Check Verification in `/spec-review`
+- WHEN/THEN Szenarien in Spec Acceptance Criteria
+
+📦 **Zahlen:** 27 Commands | 12 Agents | 14 Hooks | 12 Skills | 9 Rules
+
+📖 **Workflow-Guide:** `.claude/WORKFLOW-GUIDE.md` — Komplette Referenz
+
+**Update:** `npx github:onedot-digital-crew/npx-ai-setup`
+
+---
+
+### New Features (post-initial)
 - **Spec 156**: Prep-script expansion — 4 new prep scripts (build, lint, pr, changelog) with zero-token green paths, wired into build-fix/lint/pr/release skills
 - **Spec 157**: Token optimization strategy — RTK activation in setup, shared prep-lib.sh, green-path hardening, CLI health check hook, developer guide
 - **Spec 159**: Gemini & Codex minimal integration — optional config templates, skills symlinks, and AGENTS.md as multi-tool workflow router
 - **Spec 160**: Smart skill installation — reduced to 3 global skills (agent-browser, find-skills, gh-cli), removed keyword-based mapping, extracted skills into own setup step, cleaned up dead code
-
-## [v2.0.0] — 2026-03-22
+- **Spec 162**: Read-only `/explore` skill — thinking partner for exploring problem spaces before committing to specs
+- **Spec 163**: Structured verification in `/spec-review` — 3-check mechanical verification
+- **Spec 164**: WHEN/THEN scenarios in spec acceptance criteria
+- `/ci` command — check CI status via `gh pr checks` / `gh run list`
+- `/orchestrate` skill — delegate tasks to Gemini CLI or Codex CLI
+- `/project-audit` skill — analyze codebase, produce PATTERNS.md and AUDIT.md
+- Agent-browser, gh-cli skills promoted to standard installation
+- 4 quality rules added (`quality-general`, `quality-security`, `quality-performance`, `quality-maintainability`)
+- Major TUI library expansion with interactive prompts
+- All 12 agent templates updated with YAML frontmatter
+- 14 hooks (added `cli-health` for CLI tool availability checks)
+- Context docs refreshed (STACK.md, ARCHITECTURE.md, CONVENTIONS.md)
 
 ### Breaking Changes
 - **Spec 115**: Remove all system-specific code — ai-setup is now a pure generic base layer (system config via boilerplate pull)

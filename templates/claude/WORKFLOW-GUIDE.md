@@ -126,25 +126,26 @@ Spawned automatically during `/spec-work`, `/pr`, `/debug`. Also invocable direc
 
 ---
 
-## Hooks (13)
+## Hooks (14)
 
 Run automatically — no manual invocation needed.
 
 | Hook | Trigger | What it does |
 |------|---------|-------------|
-| `circuit-breaker` | PostToolUse | Stops infinite edit loops (3 edits same file) |
+| `circuit-breaker` | PreToolUse | Stops infinite edit loops (3 edits same file) |
 | `protect-files` | PreToolUse | Blocks edits to build output and lock files |
 | `post-edit-lint` | PostToolUse | Runs linter after edits (when available) |
 | `context-monitor` | PostToolUse | Warns at ≤35% context (WARNING) and ≤25% (CRITICAL) |
-| `context-freshness` | SessionStart | Warns when context files are >7 days old |
+| `context-freshness` | UserPromptSubmit | Warns when context files are >7 days old |
 | `context-reinforcement` | SessionStart | Re-injects critical rules after compaction |
 | `cross-repo-context` | SessionStart | Loads sibling repo context from repo-group.json |
-| `update-check` | SessionStart | Checks for ai-setup updates |
+| `update-check` | UserPromptSubmit | Checks for ai-setup updates |
 | `mcp-health` | SessionStart | Validates MCP server health |
-| `config-change-audit` | PostToolUse | Audits changes to settings files |
-| `task-completed-gate` | PostToolUse | Verification gate before marking tasks done |
+| `config-change-audit` | ConfigChange | Audits changes to settings files |
+| `task-completed-gate` | TaskCompleted | Verification gate before marking tasks done |
 | `notify` | Stop | Cross-platform notification on completion |
-| `post-tool-failure-log` | PostToolUse | Logs tool failures for debugging |
+| `cli-health` | SessionStart | Validates CLI tool availability (rtk, gh, jq) |
+| `post-tool-failure-log` | PostToolUseFailure | Logs tool failures for debugging |
 
 ---
 
