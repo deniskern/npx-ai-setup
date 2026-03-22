@@ -27,7 +27,7 @@ Spec 156 covers 4 new prep scripts (build, lint, pr, changelog) — this spec co
 - [x] Step 3: Update README "Optional Extensions" section — RTK is no longer optional (it's `required` in cli-tools.sh), move to main features or correct the registry.
 
 ### Phase 2: RTK-Enhanced Prep-Scripts (P0)
-- [ ] Step 4: Create `templates/scripts/prep-lib.sh` — shared helper library sourced by all prep-scripts. Contains: `has()` function, `rtk_or_raw()` function that returns `rtk <cmd>` if rtk available, else `<cmd>` raw. Standardizes the RTK fallback pattern.
+- [x] Step 4: Create `templates/scripts/prep-lib.sh` — shared helper library sourced by all prep-scripts. Contains: `has()` function, `rtk_or_raw()` function that returns `rtk <cmd>` if rtk available, else `<cmd>` raw. Standardizes the RTK fallback pattern.
 - [ ] Step 5: Update existing prep-scripts (test-prep.sh, scan-prep.sh, review-prep.sh, commit-prep.sh) to source `prep-lib.sh` and use `rtk_or_raw` for git/test/lint commands. Backward-compatible: works without RTK installed.
 
 ### Phase 3: Defuddle Auto-Invoke (P0)
