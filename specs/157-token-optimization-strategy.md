@@ -23,7 +23,7 @@ Spec 156 covers 4 new prep scripts (build, lint, pr, changelog) — this spec co
 
 ### Phase 1: RTK Activation in Setup (P0 — highest impact)
 - [x] Step 1: Add `rtk init --global` call to `bin/ai-setup.sh` after CLI tool installation step. Guard with `command -v rtk` check. This activates RTK's built-in Claude Code hooks automatically.
-- [ ] Step 2: Add "## Token Optimization" section to `templates/CLAUDE.md` (max 5 lines): mention RTK auto-compression is active, prep-scripts handle structured analysis, and defuddle replaces WebFetch for web content.
+- [x] Step 2: Add "## Token Optimization" section to `templates/CLAUDE.md` (max 5 lines): mention RTK auto-compression is active, prep-scripts handle structured analysis, and defuddle replaces WebFetch for web content.
 - [ ] Step 3: Update README "Optional Extensions" section — RTK is no longer optional (it's `required` in cli-tools.sh), move to main features or correct the registry.
 
 ### Phase 2: RTK-Enhanced Prep-Scripts (P0)
