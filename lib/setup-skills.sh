@@ -279,6 +279,27 @@ ensure_codex_skills_alias() {
   fi
 }
 
+# Create .gemini/agents -> .claude/skills symlink if gemini is installed.
+ensure_gemini_skills_alias() {
+  command -v gemini >/dev/null 2>&1 || return 0
+  local alias=".gemini/agents"
+  local canonical_abs
+  canonical_abs=$(cd .claude/skills 2>/dev/null && pwd -P)
+  mkdir -p .gemini
+  if [ -L "$alias" ]; then
+    local alias_abs
+    alias_abs=$(cd "$(dirname "$alias")" 2>/dev/null && cd "$(readlink "$alias")" 2>/dev/null && pwd -P)
+    [ -n "$alias_abs" ] && [ "$alias_abs" = "$canonical_abs" ] && return 0
+    rm -f "$alias" 2>/dev/null || echo "  ⚠️  Could not remove stale symlink $alias"
+  elif [ -e "$alias" ]; then
+    echo "  ⏭️  $alias already exists as a non-symlink — skipping (Gemini)"
+    return 0
+  fi
+  if ln -s ../.claude/skills "$alias" 2>/dev/null; then
+    echo "  🔗 Linked $alias -> ../.claude/skills (Gemini)"
+  fi
+}
+
 # Create .opencode/skills -> .claude/skills symlink if opencode is installed.
 ensure_opencode_skills_alias() {
   command -v opencode >/dev/null 2>&1 || return 0

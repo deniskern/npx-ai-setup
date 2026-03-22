@@ -229,15 +229,18 @@ Team sharing: marketplace plugins via `extraKnownMarketplaces` in `.claude/setti
 
 ---
 
-## Optional Extensions
+## Token Optimization
 
-### rtk (Reduce Token Cost)
+### rtk (Rust Token Killer)
 
-CLI proxy that compresses command outputs before they hit the context window. 60-90% token reduction on git, grep, test outputs.
+Installed automatically during setup. Compresses CLI output (git, grep, test, build) by 60-90% before it reaches Claude's context window. Hooks activate transparently via `rtk init --global` (runs during setup).
 
 ```bash
-brew install rtk && rtk init --global
+rtk gain              # Check current token savings
+rtk gain --history    # Command usage history with savings
 ```
+
+If rtk is not installed, everything works normally — prep-scripts and skills still save 40-60% tokens on their own.
 
 More info: [rtk-ai/rtk](https://github.com/rtk-ai/rtk)
 

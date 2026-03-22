@@ -190,6 +190,22 @@ install_settings() {
   _install_or_update_file "$TPL/claude/settings.json" .claude/settings.json
 }
 
+# Install .gemini/settings.json if gemini CLI is available
+install_gemini_config() {
+  command -v gemini >/dev/null 2>&1 || return 0
+  echo "⚙️  Writing .gemini/settings.json..."
+  mkdir -p .gemini
+  _install_or_update_file "$TPL/gemini/settings.json" .gemini/settings.json
+}
+
+# Install .codex/config.toml if codex CLI is available
+install_codex_config() {
+  command -v codex >/dev/null 2>&1 || return 0
+  echo "⚙️  Writing .codex/config.toml..."
+  mkdir -p .codex
+  _install_or_update_file "$TPL/codex/config.toml" .codex/config.toml
+}
+
 # Install hook scripts
 install_hooks() {
   echo "🛡️  Creating hooks..."
@@ -372,6 +388,7 @@ update_gitignore() {
       echo "scripts/storyblok-dump.json" >> .gitignore
       echo "CLAUDE.local.md" >> .gitignore
       echo ".codex/skills" >> .gitignore
+      echo ".gemini/agents" >> .gitignore
       echo ".opencode/skills" >> .gitignore
     else
       # Add new entries if missing from existing block
@@ -383,6 +400,7 @@ update_gitignore() {
       grep -q "storyblok-dump\.json" .gitignore 2>/dev/null || echo "scripts/storyblok-dump.json" >> .gitignore
       grep -q "CLAUDE\.local\.md" .gitignore 2>/dev/null || echo "CLAUDE.local.md" >> .gitignore
       grep -q "\.codex/skills" .gitignore 2>/dev/null || echo ".codex/skills" >> .gitignore
+      grep -q "\.gemini/agents" .gitignore 2>/dev/null || echo ".gemini/agents" >> .gitignore
       grep -q "\.opencode/skills" .gitignore 2>/dev/null || echo ".opencode/skills" >> .gitignore
     fi
   else
@@ -395,6 +413,7 @@ update_gitignore() {
     echo "scripts/storyblok-dump.json" >> .gitignore
     echo "CLAUDE.local.md" >> .gitignore
     echo ".codex/skills" >> .gitignore
+    echo ".gemini/agents" >> .gitignore
     echo ".opencode/skills" >> .gitignore
   fi
 

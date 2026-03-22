@@ -209,8 +209,7 @@ Write 4-6 concise bullet points covering entry points, directory layout, data fl
 
 ## Commands
 Based on package.json scripts, list the most important commands (dev, build, lint, test, etc.) with a short description.
-If the project includes spec workflow commands or skills, also include /spec, /spec-board, /spec-review, /spec-validate, /spec-work, and /spec-work-all.
-For Codex-compatible projects, do not claim custom /spec* client commands. Instead add one bullet noting that Codex uses the corresponding skills via .codex/skills with \$spec* or natural language, while /spec* remains client-dependent.
+Do NOT modify the "Spec Workflow" and "How to invoke per tool" subsections — they are maintained by the template and must stay unchanged.
 
 ## Critical Rules
 Based on eslint/prettier and detected framework, write actionable engineering rules.

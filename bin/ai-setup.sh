@@ -87,12 +87,15 @@ cleanup_legacy
 install_claude_md
 install_agents_md
 install_settings
+install_gemini_config
+install_codex_config
 install_hooks
 install_rules
 install_copilot
 mkdir -p .agents
 ensure_skills_alias
 ensure_codex_skills_alias
+ensure_gemini_skills_alias
 ensure_opencode_skills_alias
 install_specs
 install_workflow_guide

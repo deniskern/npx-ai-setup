@@ -79,6 +79,7 @@ Do NOT flag these as issues:
 ## Rules
 - Do NOT make any changes. Only report.
 - Read the actual code — never speculate.
+- **One review, complete feedback** — deliver all findings in a single pass. Do not drip-feed comments across multiple rounds.
 - If no issues found, say "No issues found" and verdict is PASS.
 - CONCERNS = MEDIUM finding with score ≥ 80. FAIL = HIGH finding with score ≥ 80.
 - Findings with score < 80 are suppressed — do not include them in output.

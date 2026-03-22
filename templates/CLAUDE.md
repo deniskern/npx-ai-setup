@@ -58,6 +58,12 @@ Before multi-file changes or new features, read `.agents/context/`:
 
 Never read or search inside build output directories (dist/, .output/, .nuxt/, .next/, build/, coverage/). These directories contain generated artifacts that waste tokens and pollute context.
 
+## Token Optimization
+- **RTK** auto-compresses CLI output (git, grep, test) by 60-90%. If installed, hooks are active transparently.
+- **Prep-scripts** (`.claude/scripts/*-prep.sh`) gather data in shell before Claude analyzes — zero tokens on green paths.
+- **Defuddle** (`defuddle parse <url> --md`) replaces WebFetch for web pages — strips noise, saves ~80% tokens.
+- Run `rtk gain` to check current token savings. See `.claude/docs/token-optimization.md` for the full guide.
+
 ## Task Complexity Routing
 Before starting, classify and state the task tier:
 

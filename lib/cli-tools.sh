@@ -143,6 +143,15 @@ install_cli_tools() {
     if _install_tool "$name" "$pm" "$package"; then
       echo -e "${_CT_GREEN}done${_CT_RESET}"
       installed=$((installed + 1))
+      # Post-install: rtk needs hook initialization for transparent proxy
+      if [ "$name" = "rtk" ] && command -v rtk &>/dev/null; then
+        echo -n "   Activating RTK hooks (rtk init --global) ... "
+        if rtk init --global &>/dev/null; then
+          echo -e "${_CT_GREEN}done${_CT_RESET}"
+        else
+          echo -e "${_CT_YELLOW}skipped (non-fatal)${_CT_RESET}"
+        fi
+      fi
       # Post-install: agent-browser needs Chrome for Testing downloaded once
       if [ "$name" = "agent-browser" ] && command -v agent-browser &>/dev/null; then
         echo -n "   Downloading Chrome for Testing (agent-browser install) ... "
@@ -165,6 +174,18 @@ install_cli_tools() {
 
   echo ""
   echo "   Installed: $installed | Skipped: $skipped | Failed: $failed"
+
+  # Ensure RTK hooks are active (idempotent — safe to re-run)
+  if command -v rtk &>/dev/null; then
+    if ! rtk gain &>/dev/null 2>&1; then
+      echo -n "   Activating RTK hooks ... "
+      if rtk init --global &>/dev/null; then
+        echo -e "${_CT_GREEN}done${_CT_RESET}"
+      else
+        echo -e "${_CT_YELLOW}skipped (non-fatal)${_CT_RESET}"
+      fi
+    fi
+  fi
 
   if [ "$failed" -gt 0 ]; then
     echo ""

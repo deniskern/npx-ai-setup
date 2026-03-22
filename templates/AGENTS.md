@@ -20,9 +20,26 @@ If these files are missing or stale, regenerate with:
 <!-- Auto-Init populates this -->
 
 ## Commands
-- Primary project commands still come from `package.json` scripts and `.claude/commands/`.
-- In Claude Code or other clients with project command support, the spec workflow may be exposed as `/spec`, `/spec-board`, `/spec-review`, `/spec-validate`, `/spec-work`, and `/spec-work-all`.
-- In Codex, these are not native client `/` commands. Use the matching skills via `.codex/skills` with `$spec`, `$spec-board`, `$spec-review`, `$spec-validate`, `$spec-work`, and `$spec-work-all`, or invoke them in natural language.
+
+Primary project commands come from `package.json` scripts. Spec workflow skills are shared across tools via `.claude/skills/` (symlinked to `.codex/skills`, `.gemini/agents`, `.opencode/skills`).
+
+### Spec Workflow
+
+| Skill | Purpose |
+|-------|---------|
+| spec-create | Create a structured implementation plan |
+| spec-work | Execute a spec step by step |
+| spec-board | Show Kanban overview of all specs |
+| spec-review | Review completed spec against acceptance criteria |
+| spec-validate | Validate draft spec before execution |
+| spec-work-all | Execute all draft specs in parallel waves |
+
+### How to invoke per tool
+
+- **Claude Code**: `/spec`, `/spec-work NNN`, `/spec-board` (native slash commands)
+- **Codex**: `$spec`, `$spec-work NNN`, `$spec-board` (dollar-prefix skills)
+- **Gemini**: Natural language — "create a spec for X", "work on spec NNN", "show spec board"
+- **Other tools** (Cursor, Windsurf, Cline): Read the SKILL.md files in `.claude/skills/` and follow their instructions
 
 ## Code Style Guidelines
 - Follow existing lint and formatter config; do not introduce conflicting style rules.
