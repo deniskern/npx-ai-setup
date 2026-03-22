@@ -59,6 +59,7 @@ source_lib "setup.sh"
 source_lib "setup-skills.sh"
 source_lib "setup-compat.sh"
 source_lib "plugins.sh"
+source_lib "boilerplate.sh"
 
 # Fast patch mode — copy specific template files without full update flow
 if [ -n "$PATCH_PATTERN" ]; then
@@ -99,6 +100,7 @@ install_commands
 install_claude_scripts
 install_spec_skills
 install_agents
+select_boilerplate_system
 detect_workspaces
 generate_workspace_repo_group
 echo "📋 Writing installation metadata..."

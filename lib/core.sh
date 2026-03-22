@@ -67,6 +67,15 @@ SPEC_SKILLS_MAP=(
   "templates/skills/project-audit/SKILL.md:.claude/skills/project-audit/SKILL.md"
 )
 
+# System-to-boilerplate-repo mapping (org: onedot-digital-crew)
+declare -A SYSTEM_BOILERPLATES=(
+  ["shopify"]="sp-shopify-boilerplate"
+  ["shopware"]="sw-shopware-boilerplate"
+  ["nuxt"]="sb-nuxt-boilerplate"
+  ["next"]="sb-next-boilerplate"
+  ["storyblok"]="sb-storyblok-boilerplate"
+)
+
 # TypeScript-specific rules (only added when *.ts or *.tsx files are detected)
 TS_RULES_MAP=(
   "templates/claude/rules/typescript.md:.claude/rules/typescript.md"
