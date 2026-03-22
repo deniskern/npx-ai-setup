@@ -1,0 +1,5 @@
+# Codex CLI project configuration
+# Only active when codex CLI is installed and OPENAI_API_KEY is set.
+
+# Read AGENTS.md as project context (shared with Claude Code and Gemini)
+project_doc_fallback_filenames = ["AGENTS.md"]

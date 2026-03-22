@@ -32,11 +32,11 @@ Gemini CLI und Codex CLI als optionale, gleichwertige Coding-Agents neben Claude
 - [x] In `bin/ai-setup.sh` aufrufen
 
 ### Step 3: Codex Config-Template (`templates/codex/config.toml`)
-- [ ] Minimale `.codex/config.toml` mit:
+- [x] Minimale `.codex/config.toml` mit:
   - `project_doc_fallback_filenames = ["AGENTS.md"]` — AGENTS.md als Kontext
   - Kein Model-Override
-- [ ] `install_codex_config()` in `lib/setup.sh` — kopiert Template nur wenn `codex` CLI vorhanden
-- [ ] In `bin/ai-setup.sh` aufrufen
+- [x] `install_codex_config()` in `lib/setup.sh` — kopiert Template nur wenn `codex` CLI vorhanden
+- [x] In `bin/ai-setup.sh` aufrufen
 
 ### Step 4: Gitignore & Cleanup
 - [ ] `.gemini/` Einträge in `update_gitignore()` hinzufügen (`.gemini/settings.json` soll tracked werden, `.gemini/agents` ist Symlink → ignore)
