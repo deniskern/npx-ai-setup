@@ -201,6 +201,7 @@ install_rules() {
   echo "📐 Installing rules..."
   mkdir -p .claude/rules
 
+  # Install all rules except typescript.md (handled conditionally below)
   while IFS= read -r -d '' _rule_path; do
     _rule_name="${_rule_path##*/}"
     # Skip typescript.md — handled conditionally below via TS_RULES_MAP
@@ -241,11 +242,7 @@ install_workflow_guide() {
 # Install slash commands
 install_commands() {
   echo "⚡ Installing slash commands..."
-  mkdir -p .claude/commands
-  while IFS= read -r -d '' _cmd_path; do
-    _cmd_name="${_cmd_path##*/}"
-    _install_or_update_file "$_cmd_path" ".claude/commands/$_cmd_name"
-  done < <(find "$TPL/commands" -maxdepth 1 -type f -print0 | sort -z)
+  _install_template_dir "$TPL/commands" ".claude/commands" "" "" >/dev/null
 }
 
 # Install Claude scripts (pure Bash, zero-token alternatives to Claude-driven commands)
