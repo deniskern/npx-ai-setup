@@ -37,6 +37,7 @@ You are a context generation agent. Your job is to analyze the project and write
 ```bash
 echo "PKG_HASH=$(cksum package.json 2>/dev/null | cut -d' ' -f1,2)" > .agents/context/.state
 echo "TSCONFIG_HASH=$(cksum tsconfig.json 2>/dev/null | cut -d' ' -f1,2)" >> .agents/context/.state
+echo "GIT_HASH=$(git rev-parse HEAD 2>/dev/null)" >> .agents/context/.state
 ```
 
 5. **Generate repomix snapshot** (optional, best-effort): Run:

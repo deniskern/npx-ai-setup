@@ -13,11 +13,11 @@ Aktuell prueft `context-freshness.sh` nur das Alter der Context-Dateien in Tagen
 ## Steps
 
 - [x] 1. Read `hooks/context-freshness.sh` (both .claude/ and templates/) to understand current `.state` format and performance constraints
-- [ ] 2. Add `GIT_HASH=<hash>` line to existing `.agents/context/.state` file format (neben PKG_HASH, TSCONFIG_HASH)
-- [ ] 3. In Hook: read stored GIT_HASH, compare with `git rev-parse HEAD` (single fast command, ~5ms). If different → stale. Skip `git diff` — zu teuer fuer Hook-Budget
-- [ ] 4. In context-refresher agent: write updated GIT_HASH to `.state` after successful refresh (context-refresher.md muss angepasst werden)
-- [ ] 5. Keep existing age-based and checksum checks as additional signals (hash mismatch OR age > threshold = stale)
-- [ ] 6. Mirror changes to both template versions
+- [x] 2. Add `GIT_HASH=<hash>` line to existing `.agents/context/.state` file format (neben PKG_HASH, TSCONFIG_HASH)
+- [x] 3. In Hook: read stored GIT_HASH, compare with `git rev-parse HEAD` (single fast command, ~5ms). If different → stale. Skip `git diff` — zu teuer fuer Hook-Budget
+- [x] 4. In context-refresher agent: write updated GIT_HASH to `.state` after successful refresh (context-refresher.md muss angepasst werden)
+- [x] 5. Keep existing age-based and checksum checks as additional signals (hash mismatch OR age > threshold = stale)
+- [x] 6. Mirror changes to both template versions
 - [ ] 7. Test: verify hash is written to `.state` after context-refresher runs, verify stale detection triggers on commit
 
 ## Acceptance Criteria
