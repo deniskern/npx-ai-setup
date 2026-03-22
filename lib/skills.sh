@@ -56,34 +56,17 @@ install_local_skill_template() {
   return 0
 }
 
-# Install a single skill with duplicate detection and registry verification
+# Install a single skill with duplicate detection and local fallback
 # Uses $TIMEOUT_CMD if available
 install_skill() {
   local sid=$1
-  local skill_name="${sid##*@}"  # Extract skill name after @
-  local owner_repo="${sid%@*}"
-  local owner="${owner_repo%/*}"
-  local repo="${owner_repo#*/}"
+  local skill_name="${sid##*@}"
 
   # Check if already installed (local or global)
   if [ -d ".claude/skills/$skill_name" ] || [ -d "${HOME}/.claude/skills/$skill_name" ]; then
     printf "     ⏭️  %s (already installed)\n" "$sid"
     SKIPPED=$((SKIPPED + 1))
     return 0
-  fi
-
-  # Verify skill exists on skills.sh registry before attempting install
-  if command -v curl >/dev/null 2>&1; then
-    local status
-    status=$(curl -s -o /dev/null -w "%{http_code}" \
-      "https://skills.sh/$owner/$repo/$skill_name" 2>/dev/null)
-    if [ "$status" != "200" ]; then
-      if install_local_skill_template "$sid"; then
-        return 0
-      fi
-      printf "     ⚠️  %s (not in registry, skipping)\n" "$sid"
-      return 0
-    fi
   fi
 
   printf "     ⏳ %s ..." "$sid"
