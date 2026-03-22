@@ -22,7 +22,7 @@ run_migrations() {
     local fname
     fname=$(basename "$mfile" .sh)
     # Only include migrations with version > installed_version
-    if _semver_gt "$fname" "$installed_version"; then
+    if _semver_gt "$fname" "$installed_version" && ! _semver_gt "$fname" "$target_version"; then
       pending+=("$mfile")
     fi
   done < <(find "$migrations_dir" -maxdepth 1 -name "*.sh" -print0 | sort -z)
@@ -38,7 +38,7 @@ run_migrations() {
     local mver
     mver=$(basename "$mfile" .sh)
     echo "   → $mver"
-    if bash "$mfile"; then
+    if source "$mfile"; then
       applied=$((applied + 1))
     else
       echo "   ❌ Migration $mver failed"

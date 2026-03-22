@@ -43,7 +43,7 @@ _gh_fetch_file() {
 _gh_list_dir() {
   local repo="$1"
   local remote_path="$2"
-  gh api "repos/${repo}/contents/${remote_path}" --jq '.[].path' 2>/dev/null || true
+  gh api "repos/${repo}/contents/${remote_path}" --jq '.[] | select(.type=="dir") | .path' 2>/dev/null || true
 }
 
 # Merge a remote .mcp.json into the local .mcp.json.
@@ -65,7 +65,14 @@ _merge_mcp_json() {
         echo "  📦 .mcp.json copied from boilerplate"
         return 0
       fi
+    else
+      echo "  ⚠️  .mcp.json from boilerplate is invalid JSON, skipping" >&2
+      rm -f "$tmp_mcp"
+      return 1
     fi
+  else
+    rm -f "$tmp_mcp"
+    return 1
   fi
 
   rm -f "$tmp_mcp"
