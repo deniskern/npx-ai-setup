@@ -65,6 +65,7 @@ SPEC_SKILLS_MAP=(
   "templates/skills/spec-work/SKILL.md:.claude/skills/spec-work/SKILL.md"
   "templates/skills/spec-work-all/SKILL.md:.claude/skills/spec-work-all/SKILL.md"
   "templates/skills/project-audit/SKILL.md:.claude/skills/project-audit/SKILL.md"
+  "templates/skills/orchestrate/SKILL.md:.claude/skills/orchestrate/SKILL.md"
 )
 
 # System-to-boilerplate-repo mapping (org: onedot-digital-crew)

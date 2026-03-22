@@ -71,14 +71,14 @@ Claude Code als zentralen Orchestrator einrichten, der Tasks gezielt an Gemini C
 - [x] Beide Skripte idempotent via `install_claude_scripts` deployen
 
 ### Step 2: Orchestrator-Skill (`templates/skills/orchestrate/`)
-- [ ] SKILL.md mit Trigger-Description: "use gemini for X", "use codex for X", "delegate to gemini/codex"
-- [ ] Skill-Logik (nur explizite Delegation, kein Auto-Routing):
+- [x] SKILL.md mit Trigger-Description: "use gemini for X", "use codex for X", "delegate to gemini/codex"
+- [x] Skill-Logik (nur explizite Delegation, kein Auto-Routing):
   1. User sagt explizit welche Engine ("use gemini to...", "use codex to...")
   2. Engine-Verfügbarkeit prüfen via Bash
   3. Prompt an gewählte Engine senden via `scripts/delegate-*.sh`
   4. Output einsammeln und dem User präsentieren
-- [ ] Fallback: Engine nicht verfügbar → User informieren, nicht silent fallback
-- [ ] Hinweis an User: Delegierte Engine hat keinen Zugriff auf Konversationshistorie
+- [x] Fallback: Engine nicht verfügbar → User informieren, nicht silent fallback
+- [x] Hinweis an User: Delegierte Engine hat keinen Zugriff auf Konversationshistorie
 
 ### Step 3: Dokumentation
 - [ ] AGENTS.md: Delegation-Hinweis in Commands-Sektion (1-2 Zeilen)
