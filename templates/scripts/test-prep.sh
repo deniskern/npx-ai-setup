@@ -3,7 +3,8 @@
 # Exits 0 with "ALL_TESTS_PASSED" on success; exits 2 with filtered failure on red
 set -euo pipefail
 
-has() { command -v "$1" >/dev/null 2>&1; }
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/prep-lib.sh"
 
 # ---------------------------------------------------------------------------
 # Auto-detect test command
@@ -92,7 +93,12 @@ echo ""
 
 # Run tests, capture output, do not let set -e abort us here
 set +e
-TEST_OUTPUT=$(eval "$TEST_CMD" 2>&1)
+# rtk test compresses test output (failures only, -90% tokens)
+if has rtk; then
+  TEST_OUTPUT=$(eval "rtk test $TEST_CMD" 2>&1)
+else
+  TEST_OUTPUT=$(eval "$TEST_CMD" 2>&1)
+fi
 TEST_EXIT=$?
 set -e
 

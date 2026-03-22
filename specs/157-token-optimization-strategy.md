@@ -28,7 +28,7 @@ Spec 156 covers 4 new prep scripts (build, lint, pr, changelog) — this spec co
 
 ### Phase 2: RTK-Enhanced Prep-Scripts (P0)
 - [x] Step 4: Create `templates/scripts/prep-lib.sh` — shared helper library sourced by all prep-scripts. Contains: `has()` function, `rtk_or_raw()` function that returns `rtk <cmd>` if rtk available, else `<cmd>` raw. Standardizes the RTK fallback pattern.
-- [ ] Step 5: Update existing prep-scripts (test-prep.sh, scan-prep.sh, review-prep.sh, commit-prep.sh) to source `prep-lib.sh` and use `rtk_or_raw` for git/test/lint commands. Backward-compatible: works without RTK installed.
+- [x] Step 5: Update existing prep-scripts (test-prep.sh, scan-prep.sh, review-prep.sh, commit-prep.sh) to source `prep-lib.sh` and use `rtk_or_raw` for git/test/lint commands. Backward-compatible: works without RTK installed.
 
 ### Phase 3: Defuddle Auto-Invoke (P0)
 - [ ] Step 6: Add defuddle instruction to `templates/CLAUDE.md` rules: "Prefer `defuddle parse <url> --md` over WebFetch for reading web pages — strips noise, saves ~80% tokens."

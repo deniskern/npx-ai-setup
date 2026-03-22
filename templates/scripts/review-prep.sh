@@ -4,6 +4,9 @@
 # Requires: bash 3.2+, git
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/prep-lib.sh"
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -25,8 +28,8 @@ hr
 # ---------------------------------------------------------------------------
 section "Changed Files"
 
-STAGED_FILES="$(git diff --cached --name-only 2>/dev/null || true)"
-UNSTAGED_FILES="$(git diff --name-only 2>/dev/null || true)"
+STAGED_FILES="$(rtk_or_raw git diff --cached --name-only 2>/dev/null || true)"
+UNSTAGED_FILES="$(rtk_or_raw git diff --name-only 2>/dev/null || true)"
 
 # Combine and deduplicate
 ALL_CHANGED="$(printf '%s\n%s\n' "$STAGED_FILES" "$UNSTAGED_FILES" \
@@ -52,9 +55,9 @@ fi
 # ---------------------------------------------------------------------------
 section "Diff Statistics"
 
-STAGED_STAT="$(git diff --cached --stat 2>/dev/null || true)"
-UNSTAGED_STAT="$(git diff --stat 2>/dev/null || true)"
-BRANCH_STAT="$(git diff main...HEAD --stat 2>/dev/null || git diff origin/main...HEAD --stat 2>/dev/null || true)"
+STAGED_STAT="$(rtk_or_raw git diff --cached --stat 2>/dev/null || true)"
+UNSTAGED_STAT="$(rtk_or_raw git diff --stat 2>/dev/null || true)"
+BRANCH_STAT="$(rtk_or_raw git diff main...HEAD --stat 2>/dev/null || rtk_or_raw git diff origin/main...HEAD --stat 2>/dev/null || true)"
 
 if [ -n "$STAGED_STAT" ]; then
   printf "### Staged\n\`\`\`\n%s\n\`\`\`\n\n" "$STAGED_STAT"
@@ -78,7 +81,7 @@ fi
 # 4. Full diffs (staged + unstaged)
 # ---------------------------------------------------------------------------
 section "Full Diff (Staged)"
-STAGED_DIFF="$(git diff --cached 2>/dev/null || true)"
+STAGED_DIFF="$(rtk_or_raw git diff --cached 2>/dev/null || true)"
 if [ -n "$STAGED_DIFF" ]; then
   printf "\`\`\`diff\n%s\n\`\`\`\n" "$STAGED_DIFF"
 else
@@ -86,7 +89,7 @@ else
 fi
 
 section "Full Diff (Unstaged)"
-UNSTAGED_DIFF="$(git diff 2>/dev/null || true)"
+UNSTAGED_DIFF="$(rtk_or_raw git diff 2>/dev/null || true)"
 if [ -n "$UNSTAGED_DIFF" ]; then
   printf "\`\`\`diff\n%s\n\`\`\`\n" "$UNSTAGED_DIFF"
 else

@@ -3,22 +3,19 @@
 # Outputs structured context block to stdout; exits 0 on success
 set -euo pipefail
 
-# ---------------------------------------------------------------------------
-# Guard: must be inside a git repo
-# ---------------------------------------------------------------------------
-if ! git rev-parse --git-dir >/dev/null 2>&1; then
-  echo "ERROR: Not inside a git repository" >&2
-  exit 1
-fi
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/prep-lib.sh"
+
+git_guard
 
 # ---------------------------------------------------------------------------
-# Collect context
+# Collect context (rtk compresses git output when available)
 # ---------------------------------------------------------------------------
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
-STAGED_DIFF=$(git diff --staged 2>/dev/null || true)
-RECENT_LOG=$(git log --oneline -5 2>/dev/null || echo "(no commits yet)")
-UNSTAGED_SUMMARY=$(git diff --stat 2>/dev/null || true)
-STAGED_STAT=$(git diff --staged --stat 2>/dev/null || true)
+STAGED_DIFF=$(rtk_or_raw git diff --staged 2>/dev/null || true)
+RECENT_LOG=$(rtk_or_raw git log --oneline -5 2>/dev/null || echo "(no commits yet)")
+UNSTAGED_SUMMARY=$(rtk_or_raw git diff --stat 2>/dev/null || true)
+STAGED_STAT=$(rtk_or_raw git diff --staged --stat 2>/dev/null || true)
 
 # ---------------------------------------------------------------------------
 # Guard: nothing staged

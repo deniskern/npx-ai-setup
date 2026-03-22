@@ -3,10 +3,8 @@
 # Outputs structured severity summary to stdout; exits 0 (clean) or 2 (vulns found)
 set -euo pipefail
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-has() { command -v "$1" >/dev/null 2>&1; }
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/prep-lib.sh"
 
 emit_section() {
   local label="$1"; shift
