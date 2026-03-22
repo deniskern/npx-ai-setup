@@ -1,6 +1,6 @@
 # Spec 160: Claude Code als Multi-Agent Orchestrator
 
-**Status:** Draft
+**Status:** completed
 **Complexity:** Medium
 **Branch:** `feat/160-multi-agent-orchestrator`
 **Depends on:** Spec 159 (Gemini/Codex Infrastruktur)
@@ -61,37 +61,37 @@ Claude Code als zentralen Orchestrator einrichten, der Tasks gezielt an Gemini C
 ## Steps
 
 ### Step 1: CLI-Wrapper-Skripte (`templates/scripts/`)
-- [ ] `templates/scripts/delegate-gemini.sh` — Wrapper für `gemini -p` mit:
+- [x] `templates/scripts/delegate-gemini.sh` — Wrapper für `gemini -p` mit:
   - CLI-Verfügbarkeit prüfen (`command -v gemini`)
   - Timeout (default 120s, konfigurierbar via Argument)
   - Error Handling (non-zero exit → stderr message)
   - Kontext-Injection: AGENTS.md Inhalt als Prefix in den Prompt
   - Output auf stdout (für Claude Code Bash-Tool consumption)
-- [ ] `templates/scripts/delegate-codex.sh` — Wrapper für `codex -q` mit gleichem Pattern
-- [ ] Beide Skripte idempotent via `install_claude_scripts` deployen
+- [x] `templates/scripts/delegate-codex.sh` — Wrapper für `codex -q` mit gleichem Pattern
+- [x] Beide Skripte idempotent via `install_claude_scripts` deployen
 
 ### Step 2: Orchestrator-Skill (`templates/skills/orchestrate/`)
-- [ ] SKILL.md mit Trigger-Description: "use gemini for X", "use codex for X", "delegate to gemini/codex"
-- [ ] Skill-Logik (nur explizite Delegation, kein Auto-Routing):
+- [x] SKILL.md mit Trigger-Description: "use gemini for X", "use codex for X", "delegate to gemini/codex"
+- [x] Skill-Logik (nur explizite Delegation, kein Auto-Routing):
   1. User sagt explizit welche Engine ("use gemini to...", "use codex to...")
   2. Engine-Verfügbarkeit prüfen via Bash
   3. Prompt an gewählte Engine senden via `scripts/delegate-*.sh`
   4. Output einsammeln und dem User präsentieren
-- [ ] Fallback: Engine nicht verfügbar → User informieren, nicht silent fallback
-- [ ] Hinweis an User: Delegierte Engine hat keinen Zugriff auf Konversationshistorie
+- [x] Fallback: Engine nicht verfügbar → User informieren, nicht silent fallback
+- [x] Hinweis an User: Delegierte Engine hat keinen Zugriff auf Konversationshistorie
 
 ### Step 3: Dokumentation
-- [ ] AGENTS.md: Delegation-Hinweis in Commands-Sektion (1-2 Zeilen)
-- [ ] WORKFLOW-GUIDE: "Multi-Agent Delegation" Absatz mit Beispielen
+- [x] AGENTS.md: Delegation-Hinweis in Commands-Sektion (1-2 Zeilen)
+- [x] WORKFLOW-GUIDE: "Multi-Agent Delegation" Absatz mit Beispielen
 
 ## Acceptance Criteria
 
-- [ ] `"use gemini to research X"` in Claude Code → delegiert an Gemini CLI, zeigt Ergebnis
-- [ ] `"use codex to write tests for X"` → delegiert an Codex CLI, zeigt Ergebnis
-- [ ] Graceful Error: Wenn Engine nicht installiert → klare Fehlermeldung, kein Crash
-- [ ] Kein Datenverlust: Delegierter Output wird vollständig in Claude Code angezeigt
-- [ ] Funktioniert auch wenn nur Claude installiert ist (Skill ist no-op)
-- [ ] Delegation ist immer explizit — niemals Auto-Routing
+- [x] `"use gemini to research X"` in Claude Code → delegiert an Gemini CLI, zeigt Ergebnis
+- [x] `"use codex to write tests for X"` → delegiert an Codex CLI, zeigt Ergebnis
+- [x] Graceful Error: Wenn Engine nicht installiert → klare Fehlermeldung, kein Crash
+- [x] Kein Datenverlust: Delegierter Output wird vollständig in Claude Code angezeigt
+- [x] Funktioniert auch wenn nur Claude installiert ist (Skill ist no-op)
+- [x] Delegation ist immer explizit — niemals Auto-Routing
 
 ## Risks & Constraints
 

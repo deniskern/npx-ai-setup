@@ -41,6 +41,14 @@ Primary project commands come from `package.json` scripts. Spec workflow skills 
 - **Gemini**: Natural language — "create a spec for X", "work on spec NNN", "show spec board"
 - **Other tools** (Cursor, Windsurf, Cline): Read the SKILL.md files in `.claude/skills/` and follow their instructions
 
+### Multi-Agent Delegation (Claude Code only)
+
+Delegate tasks to Gemini or Codex CLI from within Claude Code:
+- `"use gemini to research X"` — sends prompt to Gemini CLI, returns result
+- `"use codex to write tests for X"` — sends prompt to Codex CLI, returns result
+
+Requires the respective CLI installed and API key set. Delegation is explicit only — Claude never auto-routes to other engines.
+
 ## Code Style Guidelines
 - Follow existing lint and formatter config; do not introduce conflicting style rules.
 - Prefer small, focused changes with clear intent and minimal side effects.

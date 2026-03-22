@@ -18,10 +18,11 @@ hr()      { printf '%s\n' "---"; }
 # ---------------------------------------------------------------------------
 git_guard
 MAIN="$(main_branch)"
-WORKTREE_CHANGES="$(git status -s 2>/dev/null || true)"
+STAGED_CHANGES="$(git diff --cached --name-only 2>/dev/null || true)"
+UNSTAGED_CHANGES="$(git diff --name-only 2>/dev/null || true)"
 BRANCH_DIFF="$(git diff "$MAIN"...HEAD --name-only 2>/dev/null || true)"
 
-if [[ -z "$WORKTREE_CHANGES" ]] && [[ -z "$BRANCH_DIFF" ]]; then
+if [[ -z "$STAGED_CHANGES" ]] && [[ -z "$UNSTAGED_CHANGES" ]] && [[ -z "$BRANCH_DIFF" ]]; then
   echo "NO_CHANGES_TO_REVIEW"
   exit 0
 fi

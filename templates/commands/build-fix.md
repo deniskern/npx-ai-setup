@@ -23,12 +23,15 @@ Active build-fixer: runs the build, parses the first error, applies a minimal fi
 
 ## Process
 
-### 1. Initial Build
+### 0. Prep
 
-Spawn `build-validator` via Agent tool:
-> "Run the build and return: status (PASS/FAIL), first error message, file path, line number, and raw compiler output."
+Run `! bash .claude/scripts/build-prep.sh` to auto-detect the build command and get initial status.
 
-If **PASS**: report "Build already green — nothing to fix." and stop.
+- If output contains `BUILD_PASSED`: report "Build already green — nothing to fix." and stop.
+- If exit 2: parse the `=== BUILD ERRORS ===` section to identify the first error group and proceed to the fix loop.
+- If exit 1: build system not detected — ask user to specify the build command via `$ARGUMENTS`.
+
+### 1. Fix Loop (up to 10 iterations)
 
 ### 2. Fix Loop (up to 10 iterations)
 
@@ -53,9 +56,9 @@ Check guard rails:
 - Verify the change compiles in isolation where possible (e.g., `tsc --noEmit` on the single file)
 
 #### 2d. Rebuild
-Spawn `build-validator` again. Capture result.
+Run `! bash .claude/scripts/build-prep.sh` again. Capture result.
 
-If **PASS**: exit loop → go to Step 3.
+If output contains `BUILD_PASSED`: exit loop → go to Step 3.
 If **FAIL**: check for new errors vs same error:
   - New error: continue loop with next iteration
   - Same error after 2nd attempt: abort, report "Unfixable automatically — see error below."

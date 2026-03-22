@@ -12,6 +12,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 - **Spec 157**: Token optimization strategy — RTK activation in setup, shared prep-lib.sh, green-path hardening, CLI health check hook, developer guide
 - **Spec 159**: Gemini & Codex minimal integration — optional config templates, skills symlinks, and AGENTS.md as multi-tool workflow router
+- **Spec 160**: Multi-agent orchestrator — explicit delegation to Gemini/Codex CLI via wrapper scripts and orchestrate skill
 
 ## [v2.0.0] — 2026-03-22
 
