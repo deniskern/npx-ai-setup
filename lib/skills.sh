@@ -1,45 +1,11 @@
 #!/bin/bash
-# Skill curation and installation
-# Network discovery removed — use /find-skills for on-demand search
-
-SKILL_PATTERN='^[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+'
+# Skill installation: global skills + boilerplate-pulled skills
+# Stack-specific skills are handled by boilerplate repos or /find-skills on demand
 
 # Detect timeout command availability (used by install_skill)
 TIMEOUT_CMD=""
 command -v timeout &>/dev/null && TIMEOUT_CMD="timeout 30"
 command -v gtimeout &>/dev/null && TIMEOUT_CMD="gtimeout 30"
-
-# Returns space-separated skill IDs curated from the skills.sh directory.
-# Bash 3.2 safe (no declare -A). Update this list when new skills are published.
-get_keyword_skills() {
-  local kw="$1"
-  case "$kw" in
-    vue)        echo "vuejs-ai/skills@vue-best-practices antfu/skills@vue" ;;
-    react)      echo "0xbigboss/claude-code@react-best-practices wshobson/agents@react-state-management" ;;
-    typescript) echo "wshobson/agents@typescript-advanced-types sickn33/antigravity-awesome-skills@typescript-expert" ;;
-    shadcn)     echo "google-labs-code/stitch-skills@shadcn-ui" ;;
-    playwright) echo "" ;;  # universal skill, installed for all projects
-    prisma)     echo "sickn33/antigravity-awesome-skills@prisma-expert" ;;
-    supabase)   echo "supabase/agent-skills@supabase-postgres-best-practices" ;;
-    nestjs)     echo "kadajett/agent-nestjs-skills@nestjs-best-practices" ;;
-    svelte)     echo "ejirocodes/agent-skills@svelte5-best-practices" ;;
-    angular)    echo "analogjs/angular-skills@angular-component analogjs/angular-skills@angular-signals" ;;
-    nuxt-ui)    echo "" ;;  # handled conditionally in system skills (nuxt case)
-    vitest)     echo "antfu/skills@vitest" ;;
-    pinia)      echo "vuejs-ai/skills@vue-pinia-best-practices" ;;
-    tanstack)   echo "jezweb/claude-skills@tanstack-query" ;;
-    tailwind)   echo "wshobson/agents@tailwind-design-system" ;;
-    express)    echo "wshobson/agents@nodejs-backend-patterns" ;;
-    hono)       echo "elysiajs/skills@elysiajs" ;;
-    firebase)      echo "" ;;
-    reka-ui)       echo "" ;;
-    primevue)      echo "" ;;
-    vuetify)       echo "" ;;
-    element-plus)  echo "" ;;
-    quasar)        echo "" ;;
-    *)             echo "" ;;
-  esac
-}
 
 # Install bundled local skill template as fallback when registry/network install is unavailable.
 # Returns 0 when fallback was installed, 1 when no local template exists.
@@ -65,7 +31,6 @@ install_skill() {
   # Check if already installed (local or global)
   if [ -d ".claude/skills/$skill_name" ] || [ -d "${HOME}/.claude/skills/$skill_name" ]; then
     printf "     ⏭️  %s (already installed)\n" "$sid"
-    SKIPPED=$((SKIPPED + 1))
     return 0
   fi
 
@@ -80,4 +45,58 @@ install_skill() {
     printf "\r     ❌ %s (install failed)\n" "$sid"
     return 1
   fi
+}
+
+# Install global skills (universal, project-independent).
+# Stack-specific skills come from boilerplate repos (lib/boilerplate.sh).
+# Sets: $INSTALLED (number of skills installed)
+run_skill_installation() {
+  set +e
+  echo ""
+  echo "🔌 Installing global skills..."
+  INSTALLED=0
+
+  local GLOBAL_SKILLS=(
+    "vercel-labs/agent-browser@agent-browser"
+    "vercel-labs/skills@find-skills"
+    "github/awesome-copilot@gh-cli"
+  )
+
+  echo ""
+  echo "  📦 Installing skills..."
+
+  # Install in parallel; tally results after all complete
+  local tmpdir
+  tmpdir=$(mktemp -d)
+  local pids=()
+
+  for skill_id in "${GLOBAL_SKILLS[@]}"; do
+    (
+      install_skill "$skill_id"
+      echo $? > "$tmpdir/$(printf '%s' "$skill_id" | tr -cd 'a-zA-Z0-9_-').exit"
+    ) &
+    pids+=($!)
+  done
+
+  for pid in "${pids[@]}"; do
+    wait "$pid" 2>/dev/null || true
+  done
+
+  for skill_id in "${GLOBAL_SKILLS[@]}"; do
+    local safe_id
+    safe_id=$(printf '%s' "$skill_id" | tr -cd 'a-zA-Z0-9_-')
+    local exit_code
+    exit_code=$(cat "$tmpdir/${safe_id}.exit" 2>/dev/null || echo "1")
+    if [ "$exit_code" = "0" ]; then
+      INSTALLED=$((INSTALLED + 1))
+    fi
+  done
+  rm -rf "$tmpdir"
+
+  echo ""
+  echo "  💡 Run /find-skills in Claude Code to discover skills matched to your project."
+  echo "     Skills that understand your actual codebase are more effective than generic ones."
+
+  set -e
+  return 0
 }
