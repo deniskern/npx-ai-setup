@@ -1,6 +1,6 @@
 # Spec: Expand Prep-Script Architecture with build, lint, pr, changelog
 
-> **Spec ID**: 156 | **Created**: 2026-03-22 | **Status**: in-progress | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 156 | **Created**: 2026-03-22 | **Status**: completed | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Add 4 new prep scripts (build-prep.sh, lint-prep.sh, pr-prep.sh, changelog-prep.sh) following the established zero-token green path pattern, and wire them into their corresponding skills.
