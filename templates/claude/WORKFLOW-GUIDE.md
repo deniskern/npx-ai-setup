@@ -138,7 +138,6 @@ Run automatically — no manual invocation needed.
 | `context-monitor` | PostToolUse | Warns at ≤35% context (WARNING) and ≤25% (CRITICAL) |
 | `context-freshness` | UserPromptSubmit | Warns when context files are >7 days old |
 | `context-reinforcement` | SessionStart | Re-injects critical rules after compaction |
-| `cross-repo-context` | SessionStart | Loads sibling repo context from repo-group.json |
 | `update-check` | UserPromptSubmit | Checks for ai-setup updates |
 | `mcp-health` | SessionStart | Validates MCP server health |
 | `config-change-audit` | ConfigChange | Audits changes to settings files |
