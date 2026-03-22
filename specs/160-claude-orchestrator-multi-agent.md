@@ -81,8 +81,8 @@ Claude Code als zentralen Orchestrator einrichten, der Tasks gezielt an Gemini C
 - [x] Hinweis an User: Delegierte Engine hat keinen Zugriff auf Konversationshistorie
 
 ### Step 3: Dokumentation
-- [ ] AGENTS.md: Delegation-Hinweis in Commands-Sektion (1-2 Zeilen)
-- [ ] WORKFLOW-GUIDE: "Multi-Agent Delegation" Absatz mit Beispielen
+- [x] AGENTS.md: Delegation-Hinweis in Commands-Sektion (1-2 Zeilen)
+- [x] WORKFLOW-GUIDE: "Multi-Agent Delegation" Absatz mit Beispielen
 
 ## Acceptance Criteria
 

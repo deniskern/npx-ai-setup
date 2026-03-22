@@ -202,6 +202,26 @@ Run `/build-fix` — it parses the first error, applies a minimal fix, rebuilds,
 **Can't find a command?**
 Type `/` in Claude Code for autocomplete, or check `.claude/commands/`.
 
+## Multi-Agent Delegation
+
+Delegate tasks to Gemini or Codex CLI without leaving Claude Code:
+
+```
+"use gemini to summarize the API documentation at docs/api.md"
+"use codex to write unit tests for lib/setup.sh"
+"ask gemini what security best practices we should follow"
+```
+
+**Requirements:** The respective CLI must be installed (`gemini` or `codex`) and the API key set (`GEMINI_API_KEY` or `OPENAI_API_KEY`).
+
+**How it works:** Claude sends your prompt to the external engine via `.claude/scripts/delegate-*.sh`. The engine receives AGENTS.md as project context plus your task prompt. The result is displayed in Claude Code.
+
+**Constraints:**
+- Delegation is always explicit — say "use gemini" or "use codex"
+- The delegated engine has no access to your Claude conversation history
+- File edits suggested by the delegated engine are NOT applied automatically
+- Token usage of the delegated engine is not tracked in Claude Code
+
 **Update ai-setup:**
 ```
 /update
