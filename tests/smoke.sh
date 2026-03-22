@@ -254,6 +254,26 @@ else
   fail "templates/.claudeignore only has ${CLAUDEIGNORE_COUNT} patterns (expected >= 30)"
 fi
 
+echo "--- Spec status consistency ---"
+for spec_file in specs/completed/[0-9]*.md; do
+  [ -f "$spec_file" ] || continue
+  spec_name=$(basename "$spec_file" .md)
+  # Extract status from standard markdown header or YAML frontmatter
+  spec_status=""
+  # Match status from: **Status**: value OR **Status:** value OR ^status: value (YAML)
+  status_line=$(grep -E '(\*\*Status\*\*:|^\*\*Status:\*\*|^status:)' "$spec_file" 2>/dev/null | head -1)
+  if [ -n "$status_line" ]; then
+    spec_status=$(echo "$status_line" | grep -oE '(completed|draft|in-progress|blocked|superseded)' | head -1)
+  elif grep -q '^status:' "$spec_file" 2>/dev/null; then
+    spec_status=$(grep -m1 '^status:' "$spec_file" | sed 's/status: *//')
+  fi
+  case "$spec_status" in
+    completed|superseded) pass "$spec_name status=$spec_status" ;;
+    "") fail "$spec_name has no parseable status field" ;;
+    *) fail "$spec_name has status=$spec_status (expected completed or superseded)" ;;
+  esac
+done
+
 # Summary
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed"
