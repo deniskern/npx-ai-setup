@@ -36,8 +36,8 @@ Spec 156 covers 4 new prep scripts (build, lint, pr, changelog) — this spec co
 
 ### Phase 4: Green-Path Hardening (P1)
 - [x] Step 8: Add clean-worktree early-exit to `templates/scripts/review-prep.sh` — if `git status -s` is empty AND no branch diff vs main, emit `NO_CHANGES_TO_REVIEW` and exit 0.
-- [ ] Step 9: Verify `commit-prep.sh` NO_STAGED_CHANGES guard works correctly (already exists).
-- [ ] Step 10: Document green-path convention for Spec 156 prep-scripts: every prep-script MUST have an early-exit when there's nothing to do.
+- [x] Step 9: Verify `commit-prep.sh` NO_STAGED_CHANGES guard works correctly (already exists).
+- [x] Step 10: Document green-path convention for Spec 156 prep-scripts: every prep-script MUST have an early-exit when there's nothing to do.
 
 ### Phase 5: CLI Health Check at Session Start (P1)
 - [ ] Step 11: Create `templates/claude/hooks/cli-health.sh` — SessionStart hook that checks if required CLI tools (rtk, defuddle) are installed and RTK hooks are active (`rtk gain` returns 0). If missing, emit one-line warning to stderr. Silent when all OK. Max 100ms.

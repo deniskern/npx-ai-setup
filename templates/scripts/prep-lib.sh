@@ -3,6 +3,14 @@
 # Source this at the top of every *-prep.sh script:
 #   SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 #   source "$SCRIPT_DIR/prep-lib.sh"
+#
+# CONVENTIONS for prep-scripts:
+#   - Exit 0: success / green path (e.g. ALL_TESTS_PASSED, NO_STAGED_CHANGES)
+#   - Exit 1: error / missing prerequisites
+#   - Exit 2: found issues requiring Claude analysis
+#   - Every prep-script MUST have a green-path early-exit when there is nothing to do
+#   - Use rtk_or_raw for all git/test/lint commands (transparent RTK compression)
+#   - Use git_guard at the top if the script requires a git repo
 
 # ---------------------------------------------------------------------------
 # has — check if a command exists
