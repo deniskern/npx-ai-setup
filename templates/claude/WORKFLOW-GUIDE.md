@@ -121,7 +121,7 @@ Spawned automatically during `/spec-work`, `/pr`, `/debug`. Also invocable direc
 | `test-generator` | Generate missing tests for changed files | sonnet |
 | `context-refresher` | Regenerate `.agents/context/` files | haiku |
 | `frontend-developer` | React, Vue, Nuxt, Next.js specialist | sonnet |
-| `project-auditor` | Produce PATTERNS.md and AUDIT.md | sonnet |
+| `/analyze` | Produce PATTERNS.md and AUDIT.md | sonnet |
 | `liquid-linter` | Validate Shopify Liquid templates | haiku |
 
 ---

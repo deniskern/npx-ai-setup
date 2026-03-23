@@ -86,7 +86,7 @@ Native project slash commands are available in Claude Code and compatible client
 | `context-refresher` | Regenerate `.agents/context/` on `[CONTEXT STALE]` |
 | `frontend-developer` | React, Vue, Nuxt, Next.js specialist |
 | `security-reviewer` | OWASP Top 10 checks, secrets detection, pattern table |
-| `project-auditor` | Analyze codebase, produce PATTERNS.md and AUDIT.md |
+| `/analyze` | Analyze codebase, produce PATTERNS.md and AUDIT.md |
 | `liquid-linter` | Validate Shopify Liquid templates |
 
 ---
