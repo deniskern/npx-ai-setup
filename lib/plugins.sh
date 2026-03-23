@@ -227,24 +227,47 @@ show_installation_summary() {
   tui_success "Project structure is ready"
 }
 
-# Show next steps and cheat sheet
+# Full onboarding tips for fresh installs
 show_next_steps() {
-  tui_section "Next Steps" "How to start"
-  echo "Open Claude Code in this project and start working."
-  echo "The core project docs and workflow files are ready."
-  echo ""
-  echo "Spec-driven workflow:"
-  echo "  /spec \"task description\"    Create a structured spec before coding"
-  echo "  /spec-work 001              Execute a spec step by step"
-  echo ""
-  echo "To refresh context files later:"
-  echo "  npx @onedot/ai-setup"
+  tui_section "Next Steps" "Tips, workflows, and reference links"
 
+  printf '  %bQuick Start%b\n' "$TUI_BOLD" "$TUI_RESET"
+  echo "  Open Claude Code in this project and start working."
+  echo "  Full command reference:  .claude/WORKFLOW-GUIDE.md"
   echo ""
+
+  printf '  %bTop Tips%b\n' "$TUI_BOLD" "$TUI_RESET"
+  echo "  /spec \"task\"       Plan before coding (multi-file changes)"
+  echo "  /find-skills       Discover and install new skills from skills.sh"
+  if [ -f .mcp.json ] && grep -q '"context7"' .mcp.json 2>/dev/null; then
+    echo "  use context7       Add to any prompt for up-to-date library docs"
+  fi
+  echo ""
+
+  printf '  %bKey Commands%b\n' "$TUI_BOLD" "$TUI_RESET"
+  echo "  /spec-work NNN     Execute a spec step by step"
+  echo "  /review            Code review before committing"
+  echo "  /commit            Stage and commit with conventional message"
+  echo "  /pause + /resume   Save and restore session state"
+  echo ""
+
   printf '  %bLinks%b\n' "$TUI_BOLD" "$TUI_RESET"
-  echo "  Skills:   https://skills.sh/"
-  echo "  Memory:   https://claude-mem.ai"
-  echo "  Claude:   https://docs.anthropic.com/en/docs/claude-code"
-  echo "  Hooks:    https://docs.anthropic.com/en/docs/claude-code/hooks"
+  echo "  Skills:     https://skills.sh/"
+  echo "  Memory:     https://claude-mem.ai"
+  echo "  Claude:     https://docs.anthropic.com/en/docs/claude-code"
+  echo "  Hooks:      https://docs.anthropic.com/en/docs/claude-code/hooks"
+  echo ""
+
+  echo "  To refresh setup later:  npx @onedot/ai-setup"
+  echo ""
+}
+
+# Compact reference for updates (no onboarding tips)
+show_update_next_steps() {
+  echo ""
+  printf '  %bReference%b\n' "$TUI_BOLD" "$TUI_RESET"
+  echo "  Full command reference:  .claude/WORKFLOW-GUIDE.md"
+  echo "  Changelog:               CHANGELOG.md"
+  echo "  Refresh setup:           npx @onedot/ai-setup"
   echo ""
 }

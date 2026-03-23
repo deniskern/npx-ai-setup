@@ -1,2 +1,15 @@
 2026-03-22T14:51:30Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1
 2026-03-22T15:02:14Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
+2026-03-22T17:32:09Z TOOL_FAIL tool=WebFetch interrupt=false error=Request failed with status code 404
+2026-03-22T17:33:19Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 56 FAILED: curl
+2026-03-22T17:33:20Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 127 (eval):1: operation not permitted: /tmp/fetch_github_files.sh chmod: /tmp/fetch_github_files.sh: No such file or directory (eval):25: no such file or directory: /tmp/fetch_github_files.sh
+2026-03-22T17:33:58Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 (eval):4: operation not permitted: /tmp/tools.py (eval):7: operation not permitted: /tmp/graph.py (eval):10: operation not permitted: /tmp/parser.py (eval):13: operation not permitted: /tmp/incremental.py (eval):16: operation not permitted: /tmp/cli.py === File Sizes === (eval):20: no matches found: /tmp/*.py
+2026-03-22T17:36:10Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
+2026-03-22T17:36:17Z TOOL_FAIL tool=Read interrupt=false error=File content (34911 tokens) exceeds maximum allowed tokens (10000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.
+2026-03-23T02:15:46Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 Error: getaddrinfo ENOTFOUND onedot.getoutline.com
+2026-03-23T02:18:48Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 [31m✗[0m Auto-launch failed: Chrome exited before providing DevTools URL (no stderr output from Chrome)
+2026-03-23T02:19:02Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 [31mUnknown command: launch[0m [31m✗[0m Auto-launch failed: Chrome exited before providing DevTools URL (no stderr output from Chrome)
+2026-03-23T06:43:27Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 rm: /Users/deniskern/Sites/npx-ai-setup/.claude/skills/project-audit/SKILL.md: Operation not permitted
+2026-03-23T06:43:31Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 rm: /Users/deniskern/Sites/npx-ai-setup/templates/skills/project-audit/SKILL.md: No such file or directory
+2026-03-23T06:43:47Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 rm: /Users/deniskern/Sites/npx-ai-setup/.claude/agents/project-auditor.md: Operation not permitted
+2026-03-23T06:43:51Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 rm: /Users/deniskern/Sites/npx-ai-setup/templates/agents/project-auditor.md: No such file or directory

@@ -261,3 +261,4 @@ Repos and tools evaluated via `/evaluate` — patterns analyzed, best ideas adop
 - [Understand-Anything](https://github.com/Lum1104/Understand-Anything)
 - [superpowers](https://github.com/obra/superpowers)
 - [agency-agents](https://github.com/msitarzewski/agency-agents)
+- [code-review-graph](https://github.com/tirth8205/code-review-graph)

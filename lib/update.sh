@@ -94,6 +94,7 @@ handle_version_check() {
       1)
         update_rc=0
         run_smart_update --skip-regen || update_rc=$?
+        show_update_next_steps
         exit "$update_rc"
         ;;
       2)
@@ -116,6 +117,7 @@ handle_version_check() {
           echo "  Install: npm i -g @anthropic-ai/claude-code"
           regen_ok=1
         fi
+        show_update_next_steps
         exit "$regen_ok"
         ;;
       *)
@@ -157,6 +159,7 @@ handle_version_check() {
             tui_warn "Migration finished with errors - run again or choose Reinstall."
           fi
         fi
+        show_update_next_steps
         exit "$update_rc"
         ;;
       2)
@@ -439,9 +442,13 @@ run_smart_update() {
   [ "$INSTALLED_VERSION" != "$PACKAGE_VERSION" ] && _version_info="v${INSTALLED_VERSION} → v${PACKAGE_VERSION}"
   if [ "$regen_failed" -eq 0 ]; then
     tui_success "Update complete (${_version_info})"
-    return 0
+  else
+    tui_warn "Update complete with warnings (${_version_info})"
   fi
-  tui_warn "Update complete with warnings (${_version_info})"
+
+  show_update_next_steps
+
+  [ "$regen_failed" -eq 0 ] && return 0
   return 1
 }
 
