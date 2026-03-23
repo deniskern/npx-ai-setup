@@ -10,6 +10,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 169**: Slash command consolidation — `/evaluate` renamed to `/research`, `/spec` Phase 1 streamlined with Quick Triage gate that recommends `/challenge` for complex ideas, `/challenge` sharpened with When to Use/When NOT to Use sections, decision flowchart added to WORKFLOW-GUIDE
 - **feat:** `/reflect` now writes to dedicated `.agents/context/LEARNINGS.md` instead of shared context files. Smart merge (ADD/UPDATE/REMOVE) replaces append-only behavior. Session learnings persist across `ai-setup` updates since `generate.sh` never touches `LEARNINGS.md`.
 - **refactor:** Merge `project-audit` skill and `project-auditor` agent into `/analyze` command. `/analyze` now writes `PATTERNS.md` and `AUDIT.md` after analysis and asks before overwriting existing files. The `--audit` flag in `ai-setup.sh` is removed; a post-install hint recommends running `/analyze` manually.
 - **refactor:** Replace interactive framework selection menu with auto-detection. Detects Nuxt, Next.js, and Shopify from config files — no more manual selection during install.

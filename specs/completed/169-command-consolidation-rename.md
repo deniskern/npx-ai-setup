@@ -1,6 +1,6 @@
 # Spec: Slash Command Consolidation — /evaluate → /research + /spec Phase 1 Triage
 
-> **Spec ID**: 169 | **Created**: 2026-03-23 | **Status**: in-progress | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 169 | **Created**: 2026-03-23 | **Status**: completed | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Eliminate command confusion by renaming `/evaluate` to `/research`, streamlining `/spec` Phase 1 with a triage gate that recommends `/challenge` for complex ideas, and sharpening `/challenge` differentiation.
