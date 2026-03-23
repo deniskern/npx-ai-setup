@@ -24,10 +24,8 @@ TPL="$SCRIPT_DIR/templates"
 
 # Parse flags
 PATCH_PATTERN=""
-RUN_AUDIT=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --audit) RUN_AUDIT="yes"; shift ;;
     --patch)
       if [[ $# -lt 2 ]]; then
         echo "❌ --patch requires a pattern (e.g. --patch spec-work)"
@@ -190,15 +188,5 @@ if [ "$AI_CLI" = "claude" ]; then
   else
     tui_spinner_stop warn "Project context refresh skipped"
   fi
-fi
-
-# --audit flag: run project onboarding audit after setup
-if [ "${RUN_AUDIT:-}" = "yes" ] && [ "$AI_CLI" = "claude" ]; then
-  tui_section "Project Audit" "Optional onboarding audit for patterns and top findings"
-  tui_spinner_start "Running project onboarding audit"
-  if claude --agent project-auditor "Analyze this project and produce .agents/context/PATTERNS.md and .agents/context/AUDIT.md. Follow the efficient reading strategy in your instructions. When done, ask the user if specs should be created for the top findings." >/dev/null 2>&1; then
-    tui_spinner_stop ok "Project audit completed"
-  else
-    tui_spinner_stop warn "Project audit skipped"
-  fi
+  tui_info "Run /analyze to generate PATTERNS.md and AUDIT.md for this project."
 fi
