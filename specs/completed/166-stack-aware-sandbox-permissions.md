@@ -1,6 +1,6 @@
 # Spec 166 — Stack-Aware Sandbox Permissions
 
-**Status:** in-progress
+**Status:** completed
 
 ## Goal
 Make the `permissions.deny` list in `.claude/settings.json` framework-aware so that
