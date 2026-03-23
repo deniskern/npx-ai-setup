@@ -207,6 +207,10 @@ Run `/build-fix` — it parses the first error, applies a minimal fix, rebuilds,
 **Can't find a command?**
 Type `/` in Claude Code for autocomplete, or check `.claude/commands/`.
 
+**Pre-commit hook fails in sandbox (Nuxt/Next.js)?**
+Sandbox permissions are auto-adjusted per framework during setup. If hooks still fail
+(e.g. `.env` access needed), commit manually: `! git commit -m "msg"`
+
 **Update ai-setup:**
 ```
 /update

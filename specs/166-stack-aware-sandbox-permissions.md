@@ -35,7 +35,7 @@ Fallback: no customization (keep static deny list).
 Extend `tests/smoke.sh`: after a simulated nuxt setup, verify that `.claude/settings.json`
 does NOT contain `Read(.nuxt/**)` in the deny list.
 
-### Step 5 — Document in WORKFLOW-GUIDE
+### Step 5 — Document in WORKFLOW-GUIDE ✅
 Add a note that sandbox permissions are auto-adjusted per framework. If hooks still fail,
 users can commit with `! git commit -m "msg"`.
 
