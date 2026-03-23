@@ -1,3 +1,12 @@
+---
+abstract: "CLI tool automating Claude Code setup: detects stack, copies templates, generates context, installs hooks/skills"
+sections:
+  - "Directory Structure: bin/ (entry), lib/ (modules), templates/ (config), .claude/ (active config), specs/"
+  - "Entry Points: ai-setup.sh (project), global-setup.sh (workstation), --audit, --patch"
+  - "Data Flow: detect stack → copy templates → generate context → install skills → install hooks → verify"
+  - "Key Patterns: modular bash, hook-based safety, template versioning, spec-driven features, parallel agents"
+---
+
 # Architecture
 
 ## Project Type

@@ -109,7 +109,7 @@
           },
           {
             "type": "command",
-            "command": "bash -c 'for f in STACK.md CONVENTIONS.md; do [ -f \"${CLAUDE_PROJECT_DIR:-.}/.agents/context/$f\" ] && echo \"=== $f ==\" && head -20 \"${CLAUDE_PROJECT_DIR:-.}/.agents/context/$f\"; done'",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/context-loader.sh",
             "timeout": 5
           },
           {

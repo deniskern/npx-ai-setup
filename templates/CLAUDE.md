@@ -39,8 +39,9 @@ No small talk. Just do it.
 Confirmations one word (Done, Fixed). Show code changes as diff only.
 If you edit the same file 3+ times without progress, stop and ask for guidance.
 
-## Project Context (read before complex tasks)
-Before multi-file changes or new features, read `.agents/context/`:
+## Project Context (tiered loading)
+SessionStart automatically injects L0 abstracts from `.agents/context/` (~400 tokens).
+For complex tasks needing full details, use `/context-load STACK.md` (or ARCHITECTURE.md, CONVENTIONS.md, all).
 - `STACK.md` - Technology stack, versions, key dependencies, and what to avoid
 - `ARCHITECTURE.md` - System architecture, directory structure, and data flow
 - `CONVENTIONS.md` - Coding standards, naming patterns, error handling, and testing

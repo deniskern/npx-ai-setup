@@ -1,3 +1,13 @@
+---
+abstract: "POSIX sh style, snake_case, quoted expansions, local scoping, fail-fast, templates copied verbatim in English"
+sections:
+  - "Bash Style: POSIX sh compatible, snake_case vars/functions, UPPER constants, quoted expansions"
+  - "Function Structure: doc comments, local args, || return 1, explicit return"
+  - "Error Handling: set -e in scripts, no silent failures, descriptive error messages"
+  - "Template Conventions: copied verbatim, no generation, English only, idempotent"
+  - "Testing & Done: smoke tests, shellcheck, quoting verified, idempotency verified"
+---
+
 # Conventions
 
 ## Bash Style & Naming
