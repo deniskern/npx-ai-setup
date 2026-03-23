@@ -19,7 +19,7 @@ Eliminate command confusion by renaming `/evaluate` to `/research`, streamlining
 - [x] Step 1: Rename `templates/commands/evaluate.md` → `templates/commands/research.md` and `.claude/commands/evaluate.md` → `.claude/commands/research.md` — update internal text references from "evaluate" to "research"
 - [x] Step 2: Streamline `/spec` Phase 1 in both `templates/commands/spec.md` and `.claude/commands/spec.md` — remove phases 1c (Concept Fit), 1d (Necessity), 1f (Overhead & Risk), 1g (Simpler Alternatives), 1h (Verdict). Replace with a Quick Triage gate after 1b (Clarify): check complexity indicators (>5 files, new dependency/system, architectural keywords like "migrate", "rewrite", "new pattern"). If complex → AskUserQuestion recommending `/challenge` first. Keep Phase 1e (Think It Through) and 1e-bis (Surface Assumptions) — these are spec-specific. Triage must still catch obvious REJECTs (misaligned with CONCEPT.md, clearly out of scope) without doing the full multi-phase deep dive
 - [x] Step 3: Sharpen `/challenge` in both `templates/commands/challenge.md` and `.claude/commands/challenge.md` — add clear "When to Use" vs "When NOT to Use" section, add Next Step pointing to `/spec` after GO verdict
-- [ ] Step 4: Update `README.md` — rename evaluate→research in command table, improve descriptions for /challenge vs /spec distinction
+- [x] Step 4: Update `README.md` — rename evaluate→research in command table, improve descriptions for /challenge vs /spec distinction
 - [ ] Step 5: Update `WORKFLOW-GUIDE.md` in both `.claude/` and `templates/claude/` — rename evaluate→research, add decision flowchart for when to use /challenge vs /spec vs /research
 
 ## Acceptance Criteria

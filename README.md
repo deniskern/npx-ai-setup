@@ -45,7 +45,7 @@ Native project slash commands are available in Claude Code and compatible client
 
 | Command | Model | Description |
 |---------|-------|-------------|
-| `/spec "task"` | Opus | Challenge idea first, then create structured spec |
+| `/spec "task"` | Opus | Triage complexity, think through implementation, create structured spec |
 | `/spec-work 001` | Sonnet | Execute a spec step by step |
 | `/spec-work-all` | Sonnet | Execute all draft specs in parallel via Git worktrees |
 | `/spec-review 001` | Opus | Review spec changes against acceptance criteria |
@@ -64,8 +64,8 @@ Native project slash commands are available in Claude Code and compatible client
 | `/scan` | Sonnet | Security vulnerability scan (snyk/npm audit/pip-audit/bundler-audit) |
 | `/analyze` | Sonnet | 3 parallel agents — architecture, hotspots, risks — writes PATTERNS.md + AUDIT.md |
 | `/reflect` | Sonnet | Detect session corrections → write as permanent rules |
-| `/evaluate "tool"` | Opus | Evaluate external idea/tool/pattern against project |
-| `/challenge "idea"` | Opus | Critically evaluate a feature idea before building |
+| `/research "tool"` | Opus | Deep-research external repo/tool/pattern, produce brainstorm document |
+| `/challenge "idea"` | Sonnet | Quick critical gate — GO/SIMPLIFY/REJECT before investing in a spec |
 | `/discover` | Opus | Reverse-engineer draft specs from existing code |
 | `/pause` | Sonnet | Capture session state into `.continue-here.md` and commit WIP |
 | `/resume` | Sonnet | Restore session state and route to next action |
@@ -254,7 +254,7 @@ For additional skills on-demand: use `/find-skills` inside Claude Code.
 
 ### Evaluated
 
-Repos and tools evaluated via `/evaluate` — patterns analyzed, best ideas adopted.
+Repos and tools researched via `/research` — patterns analyzed, best ideas adopted.
 
 - [everything-claude-code](https://github.com/affaan-m/everything-claude-code)
 - [context-hub](https://github.com/andrewyng/context-hub)
