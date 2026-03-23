@@ -5,6 +5,18 @@ allowed-tools: Read, Glob, Grep
 
 Challenge and critically evaluate this feature idea before any implementation: **$ARGUMENTS**
 
+## When to Use
+- Big ideas that touch >5 files or introduce new systems/patterns
+- Before investing time in a spec for something you're unsure about
+- When `/spec` Quick Triage recommends it (high complexity detected)
+- When you want a GO/SIMPLIFY/REJECT verdict before planning
+
+## When NOT to Use
+- Simple tasks (typos, config, single-file fixes) → just do it or `/spec` directly
+- Evaluating external tools/repos → use `/research` instead
+- Open-ended exploration without a concrete proposal → use `/explore` instead
+- You already know this needs to be built → skip to `/spec`
+
 ## Process
 
 ### Phase 1 — Restate the Idea
