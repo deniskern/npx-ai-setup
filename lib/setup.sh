@@ -115,6 +115,15 @@ check_requirements() {
     exit 1
   fi
 
+  # npm cache permission check (root-owned files block npx)
+  local npm_cache
+  npm_cache="$(npm config get cache 2>/dev/null || echo "$HOME/.npm")"
+  if [ -d "$npm_cache" ] && find "$npm_cache" -maxdepth 1 -not -user "$(id -u)" -print -quit 2>/dev/null | grep -q .; then
+    tui_warn "npm cache contains root-owned files — this can break npx"
+    echo "   Fix:  sudo chown -R \$(id -u):\$(id -g) \"$npm_cache\""
+    echo ""
+  fi
+
   # Template directory validation
   if [ ! -d "$TPL" ]; then
     tui_error "Template directory not found: $TPL"
