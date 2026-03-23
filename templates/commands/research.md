@@ -5,7 +5,7 @@ argument-hint: "<github-url or article-url>"
 allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, AskUserQuestion, Agent, Bash
 ---
 
-Deep-evaluates an external repository, tool, or pattern against the existing project's Claude Code setup. Produces a comprehensive brainstorm document with prioritized adoption candidates. Input: $ARGUMENTS
+Deep-researches an external repository, tool, or pattern against the existing project's Claude Code setup. Produces a comprehensive brainstorm document with prioritized adoption candidates. Input: $ARGUMENTS
 
 ## Phase 1 — Acquire & Scrape Deep
 
@@ -98,14 +98,14 @@ Look beyond individual files for **systemic patterns**:
 
 ## Phase 4 — Create Brainstorm Document
 
-Write a comprehensive brainstorm document to `specs/NNN-evaluate-[source-name].md`:
+Write a comprehensive brainstorm document to `specs/NNN-research-[source-name].md`:
 
 ```markdown
 # Brainstorm: [Source Name] Adaptionen für [project]
 
 > **Source**: [URL]
 > **Erstellt**: [date]
-> **Zweck**: Evaluierung welche Patterns adaptierbar sind
+> **Zweck**: Research welche Patterns adaptierbar sind
 
 ## Bestandsvergleich: Was haben wir schon?
 [Table of covered items]
@@ -161,7 +161,7 @@ Each spec should reference the brainstorm document for context.
 
 ## Auto-Link in README
 
-After creating the brainstorm document, append the evaluated source to the `### Evaluated` subsection under `## Links` in `README.md`:
+After creating the brainstorm document, append the researched source to the `### Evaluated` subsection under `## Links` in `README.md`:
 - Format: `- [Source Name](URL)` — add below the existing evaluated links
 - Only add if the URL is not already listed anywhere in README.md
 - Source name: use the repo name, tool name, or article title (short, descriptive)
