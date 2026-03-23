@@ -7,9 +7,9 @@ allowed-tools: Read, Write, Glob, Grep, Bash, AskUserQuestion
 
 Creates a structured spec for the task: $ARGUMENTS. Use before implementing any multi-file or architectural change.
 
-## Phase 1 — Challenge & Think Through
+## Phase 1 — Triage & Think Through
 
-Before writing anything: challenge the idea hard, then think it completely through. Present findings in the chat.
+Before writing anything: triage the idea, then think the implementation completely through. Present findings in the chat.
 
 ### 1a — Load Skills
 If `.claude/skills/` exists, glob all skill directories and read each `SKILL.md` (first 5 lines only). Apply their guidance throughout the entire process.
@@ -28,25 +28,29 @@ If `.claude/skills/` exists, glob all skill directories and read each `SKILL.md`
    - **UI/UX** (if applicable): interaction flow, accessibility, mobile behavior
    Questions must be **non-obvious** — do not ask about things already answered in the draft. Ask about gaps, assumptions, and implicit decisions. Continue for minimum 3 rounds of questions until all areas are fully covered.
 3. After all questions are answered: update the draft file with the refined spec incorporating all interview insights
-4. Continue with Phase 1c (Concept Fit)
+4. Continue with Phase 1c (Quick Triage)
 
 **If `$ARGUMENTS` is plain text** → standard clarify flow:
 If the request is ambiguous or underspecified, ask 1-3 focused questions before proceeding. Wait for answers. Skip if the task is clear.
 
-### 1c — Concept Fit
-Read `.agents/context/CONCEPT.md` if it exists. Answer:
-- Does this align with the project's core principles?
-- Is it in scope for this codebase/tool?
-- Would this belong in the core, or is it a plugin/workaround?
+### 1c — Quick Triage
 
-Rate: **ALIGNED / BORDERLINE / MISALIGNED**. If MISALIGNED → **REJECT** immediately.
+**Concept check**: Read `.agents/context/CONCEPT.md` if it exists. If the idea is clearly misaligned with the project's core principles → **REJECT** immediately with reason. Otherwise continue.
 
-### 1d — Necessity
-- What specific problem does this solve? Is it real or hypothetical?
-- What breaks or stays painful if we don't build it?
-- Who reported this problem — users, or us?
+**Complexity scan**: Estimate the scope by checking:
+- How many files/systems are likely touched?
+- Does this introduce a new dependency, pattern, or architectural layer?
+- Does the task contain high-complexity keywords (migrate, rewrite, new system, redesign)?
 
-### 1e — Think It Through
+If **any** of these are true: >5 files touched, new dependency/system introduced, or architectural change detected → use `AskUserQuestion`:
+> "Dieses Feature hat hohe Komplexitaet ([reason]). Empfehlung: `/challenge` zuerst ausfuehren fuer eine tiefe Analyse, bevor die Spec geschrieben wird."
+> Options: "Weiter mit Spec — ich kenne die Risiken", "Erst /challenge ausfuehren", "Scope reduzieren"
+
+If user chooses `/challenge`: stop here and suggest the user runs `/challenge "task"`.
+If user chooses scope reduction: ask clarifying questions to narrow scope, then continue.
+Otherwise: proceed to 1d.
+
+### 1d — Think It Through
 Sketch the full implementation mentally before writing the spec.
 **Use `AskUserQuestion` at any decision point** — don't assume, ask. Multiple rounds are fine.
 Checklist:
@@ -59,7 +63,7 @@ Checklist:
 
 **Scope guardrail**: The spec boundary is FIXED once defined. Discussion clarifies HOW to implement, not WHETHER to add more. If user suggests new capabilities: "That belongs in its own spec. I'll note it for later." Capture deferred ideas — don't lose them, don't act on them.
 
-### 1e-bis — Surface Assumptions
+### 1e — Surface Assumptions
 
 After thinking it through, scan 3-5 of the most relevant source files. Form a list of implicit assumptions underlying the implementation sketch.
 
@@ -77,40 +81,22 @@ Present assumptions via `AskUserQuestion`:
 Wait for confirmation. Incorporate corrected or added assumptions before proceeding.
 Confirmed assumptions are added to the spec's Context section as a "Verified Assumptions" subsection.
 
-### 1f — Overhead & Risk
-- Maintenance burden added?
-- Does it increase surface area (more config, more flags, more docs)?
-- What's the risk if the implementation is wrong?
-
-### 1g — Simpler Alternatives
-List 1-3 alternatives:
-- A smaller scope version
-- A workaround that avoids building anything
-- **"Don't build it"** — explicitly if it applies
-Scan with Glob and Grep for similar existing functionality. Check installed skills for overlap.
-
-### 1h — Verdict
-Present a clear summary of the thinking above, then choose exactly one:
-**GO** — Needed, fits, complexity is understood. The implementation sketch from 1e becomes the basis for the spec steps.
-**SIMPLIFY** — Merits exist but scope is too large. State the reduced scope. Ask user to confirm before proceeding.
-**REJECT** — Misaligned, unnecessary, or risk outweighs benefit. State reason. Stop here.
-
 ---
 
 ## Phase 2 — Write the Spec
 
-Only proceed if verdict is GO or user confirmed a SIMPLIFY scope.
+Only proceed if Phase 1c did not REJECT and user confirmed to continue.
 
 ### Step 1 — Determine spec number
 Scan `specs/` (including `specs/completed/`) for existing `NNN-*.md` files, find the highest number, increment by 1. Use 3-digit zero-padded numbers.
 
 ### Step 2 — Analyze the task
-Read the 2-3 most relevant source files. Use the implementation sketch from Phase 1e — do not re-analyze from scratch.
+Read the 2-3 most relevant source files. Use the implementation sketch from Phase 1d — do not re-analyze from scratch.
 
 List any relevant installed skills in the spec Context section.
 
 ### Step 3 — Create the spec file (with auto-split check)
-Translate the Phase 1e implementation sketch into spec steps. Steps should reflect actual implementation path, not generic placeholders.
+Translate the Phase 1d implementation sketch into spec steps. Steps should reflect actual implementation path, not generic placeholders.
 
 **After drafting**, check two auto-split triggers before writing the file:
 
@@ -154,7 +140,7 @@ Use `AskUserQuestion` to ask: "Branch fuer diese Spec erstellen?"
 [2-3 sentences. Why needed, what approach was chosen, relevant skills if any.]
 
 ### Verified Assumptions
-<!-- Remove this section if no assumptions were confirmed in Phase 1e-bis -->
+<!-- Remove this section if no assumptions were confirmed in Phase 1e -->
 - [Statement] — Evidence: `path/to/file` | Confidence: High | If Wrong: [consequence]
 
 ## Steps
@@ -193,7 +179,7 @@ Critical wiring between artifacts that must actually connect:
 - **Goal**: 1 sentence. **Context**: 2-3 sentences.
 - **Steps**: Flat checkbox list, max 8 items. No nested sub-steps.
 - **Acceptance Criteria**: max 5 items. **Out of Scope**: max 3 items.
-- Steps must come from the Phase 1e implementation sketch — be specific, include file paths.
+- Steps must come from the Phase 1d implementation sketch — be specific, include file paths.
 - Use today's date. Filename: lowercase with hyphens.
 - Always create `specs/` and `specs/completed/` if they don't exist.
 
