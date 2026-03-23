@@ -262,3 +262,4 @@ Repos and tools researched via `/research` — patterns analyzed, best ideas ado
 - [superpowers](https://github.com/obra/superpowers)
 - [agency-agents](https://github.com/msitarzewski/agency-agents)
 - [code-review-graph](https://github.com/tirth8205/code-review-graph)
+- [OpenViking](https://github.com/volcengine/OpenViking)
