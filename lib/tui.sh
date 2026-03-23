@@ -312,16 +312,35 @@ tui_key_value() {
 }
 
 # Print a clickable OSC 8 terminal hyperlink.
-# Usage: tui_file_link <relative_path>  — renders as underlined path, clickable in supported terminals
-# Falls back to plain text when color/unicode is off.
+# Tries GitHub URL first (Cmd+Click opens browser), falls back to file://.
+# Usage: tui_file_link <relative_path> [label]
 tui_file_link() {
   _tui_init
   local path="$1"
   local label="${2:-$path}"
   if [ "$TUI_HAS_COLOR" = "yes" ]; then
-    local abs_path
-    abs_path="$(cd "$(dirname "$path")" 2>/dev/null && printf '%s/%s' "$(pwd)" "$(basename "$path")")"
-    printf '\033]8;;file://%s\033\\%b%s%b\033]8;;\033\\' "$abs_path" '\033[4m' "$label" "$TUI_RESET"
+    local url=""
+    # Try to build a GitHub URL from git remote (cached after first call)
+    if [ -z "${_TUI_GH_BASE_URL+x}" ]; then
+      _TUI_GH_BASE_URL=""
+      local remote_url="" branch="main"
+      remote_url="$(git remote get-url origin 2>/dev/null || echo "")"
+      branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")"
+      case "$remote_url" in
+        *github.com*)
+          # Normalize git@github.com:org/repo.git and https://github.com/org/repo.git
+          _TUI_GH_BASE_URL="$(printf '%s' "$remote_url" \
+            | sed -E 's#^git@github\.com:#https://github.com/#; s#\.git$##')"
+          _TUI_GH_BASE_URL="${_TUI_GH_BASE_URL}/blob/${branch}"
+          ;;
+      esac
+    fi
+    if [ -n "$_TUI_GH_BASE_URL" ]; then
+      url="${_TUI_GH_BASE_URL}/${path}"
+    else
+      url="file://$(cd "$(dirname "$path")" 2>/dev/null && printf '%s/%s' "$(pwd)" "$(basename "$path")")"
+    fi
+    printf '\033]8;;%s\033\\%b%s%b\033]8;;\033\\' "$url" '\033[4m' "$label" "$TUI_RESET"
   else
     printf '%s' "$label"
   fi
