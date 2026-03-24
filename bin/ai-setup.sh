@@ -4,7 +4,7 @@
 # @onedot/ai-setup - AI infrastructure for projects
 # ==============================================================================
 # Installs Claude Code hooks, project context, and AI-curated skills
-# Usage: npx @onedot/ai-setup [--reset] [--patch <pattern>]
+# Usage: npx @onedot/ai-setup [--patch <pattern>]
 # Auto-detects updates: if .ai-setup.json exists with older version, offers update/reinstall
 # ==============================================================================
 
@@ -24,7 +24,6 @@ TPL="$SCRIPT_DIR/templates"
 
 # Parse flags
 PATCH_PATTERN=""
-RESET_MODE=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --patch)
@@ -33,10 +32,8 @@ while [[ $# -gt 0 ]]; do
         exit 1
       fi
       PATCH_PATTERN="$2"; shift 2 ;;
-    --reset)
-      RESET_MODE=1; shift ;;
-    --system|--regenerate)
-      echo "❌ Flag '$1' has been removed. ai-setup is now a generic base layer."
+    --reset|--system|--regenerate)
+      echo "❌ Flag '$1' has been removed. Use the Reset option in the interactive menu instead."
       exit 1
       ;;
     *) shift ;;
@@ -89,7 +86,6 @@ tui_brand_banner_once "Install project rules, workflow files, and helper tools"
 tui_section "Set Up Project" "Create core instructions, settings, workflow files, and helper tools"
 
 check_requirements
-if [ "$RESET_MODE" -eq 1 ]; then run_reset; fi
 cleanup_legacy
 install_claude_md
 install_agents_md
