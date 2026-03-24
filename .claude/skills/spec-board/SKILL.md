@@ -1,6 +1,6 @@
 ---
 name: spec-board
-description: Use when the user wants to see an overview of all specs and their current status — as a Kanban board, dashboard, or status list. Triggers for: viewing which specs are draft, in-progress, in-review, or completed; getting a bird's-eye view of spec work; checking what's open or in review. Also triggers for `/spec-board`, "show specs", "what specs do we have", "spec overview", "show me what's in progress", "spec status". Does NOT trigger for working on a single specific spec, creating specs, or implementing spec steps.
+description: Overview of all specs as Kanban board. Triggers: /spec-board, 'show specs', 'spec overview', 'what specs do we have', 'show me whats in progress'.
 ---
 
 # Spec Board — Kanban Overview of All Specs

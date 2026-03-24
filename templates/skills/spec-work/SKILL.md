@@ -1,6 +1,6 @@
 ---
 name: spec-work
-description: Execute a single spec step by step. Use when the user says `/spec-work NNN`, "work on spec NNN", "execute spec NNN", "implement spec NNN", "run spec NNN", or "do spec NNN". NNN is a 3-digit spec number. Also triggers for "implement spec 042", "work through spec 157", "let's do spec 003". Does NOT trigger for running ALL specs at once (use spec-work-all), validating/reviewing a spec, or implementing something without a spec number reference.
+description: Execute a single spec step by step. Triggers: /spec-work NNN, 'work on spec NNN', 'implement spec NNN', 'run spec NNN'. NNN is a 3-digit spec number.
 ---
 
 # Spec Work — Execute a Spec Step by Step

@@ -1,6 +1,6 @@
 ---
 name: spec-review
-description: Review a completed spec against its acceptance criteria — use AFTER implementation is done. Triggers on: `/spec-review NNN`, "review spec NNN", "did we complete spec NNN", "check if spec 042 is done", "verify spec implementation", "was spec NNN fully implemented". Key distinction: spec-review is for AFTER coding is complete. Does NOT trigger for validating a spec BEFORE implementation (use spec-validate), creating a spec, or working on/executing a spec.
+description: Review a completed spec after implementation. Triggers: /spec-review NNN, 'review spec NNN', 'did we complete spec NNN', 'verify spec implementation'.
 ---
 
 # Spec Review — Validate and Close a Spec

@@ -1,3 +1,6 @@
+---
+globs: ["**/*.ts", "**/*.tsx", "tsconfig.json", "tsconfig.*.json"]
+---
 # TypeScript Rules
 
 ## Strict Types

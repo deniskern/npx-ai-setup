@@ -1,6 +1,6 @@
 ---
 name: explore
-description: Read-only thinking partner for exploring a problem space, codebase, or design decision before committing to a spec. Invoke for `/explore` and any time the user is in thinking-mode rather than doing-mode — they want to map options, weigh tradeoffs, or understand a design space without jumping to implementation. Triggers on "explore", "help me think through", "what are the tradeoffs", "brainstorm", "pros and cons", "should I use X or Y", "I'm not sure how to approach", "think through the options". Does NOT trigger when the user wants to implement, fix a bug, create a spec, or read existing code.
+description: Read-only thinking partner before committing to a spec. Triggers: /explore, 'help me think through', 'brainstorm', 'what are the tradeoffs', 'should I use X or Y'.
 ---
 
 # Explore — Read-Only Thinking Partner

@@ -1,6 +1,6 @@
 ---
 name: release
-description: Use when the user wants to execute a complete software release as a single coordinated workflow — combining any of: version bump, CHANGELOG update, documentation sync, and Slack announcement. Triggers on explicit release intent like "release", "ship", "publish", "new version", "/release", or version strings like "v2.0.0". Also triggers when the user wants to cut a release, go live with changes, or coordinate all steps of shipping a new version. Does NOT trigger for questions about release processes, manual single-step changes (just editing CHANGELOG, just updating README), or general git/versioning questions.
+description: Complete release workflow — version bump, CHANGELOG, docs sync, Slack. Triggers: 'release', 'ship', 'publish', '/release', version strings like 'v2.0.0'.
 ---
 
 # Release — Version Bump, Changelog, Docs Sync, Slack Message

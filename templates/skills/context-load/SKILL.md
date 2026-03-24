@@ -1,6 +1,6 @@
 ---
 name: context-load
-description: Load full project context files on demand — STACK.md, ARCHITECTURE.md, CONVENTIONS.md, decisions.md. Use when Claude or the user needs detailed architecture, stack, or convention information beyond what was auto-loaded at session start. Triggers on: `/context-load`, "load the architecture context", "show me the stack details", "load conventions", "I need the full architecture info", "load STACK.md", "what are our coding conventions", "load context for X". Does NOT trigger for reading regular source files, exploring the codebase, or asking general questions about the project.
+description: Load context files on demand — STACK.md, ARCHITECTURE.md, CONVENTIONS.md, decisions.md. Triggers: /context-load, 'load architecture', 'show stack details', 'load conventions'.
 ---
 
 # Context Load — On-Demand L2 Context
