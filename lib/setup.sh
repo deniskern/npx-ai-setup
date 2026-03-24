@@ -179,24 +179,34 @@ cleanup_legacy() {
 cleanup_orphans() {
   local ORPHANS=()
 
-  # Helper: find files in $target_dir not present in $src_dir
+  # Helper: find files in $target_dir not present in $src_dir (flat, maxdepth 1)
   _find_orphan_files() {
     local src="$1" target="$2" glob="${3:-*}"
-    [ -d "$src" ] && [ -d "$target" ] || return
+    [ -d "$src" ] && [ -d "$target" ] || return 0
     while IFS= read -r -d '' f; do
       local name="${f##*/}"
       [ -f "$src/$name" ] || ORPHANS+=("$target/$name")
     done < <(find "$target" -maxdepth 1 -type f -name "$glob" -print0 2>/dev/null)
   }
 
-  # Helper: find subdirs in $target_dir not present in $src_dir
+  # Helper: find subdirs in $target_dir not present in $src_dir (flat, maxdepth 1)
   _find_orphan_dirs() {
     local src="$1" target="$2"
-    [ -d "$src" ] && [ -d "$target" ] || return
+    [ -d "$src" ] && [ -d "$target" ] || return 0
     while IFS= read -r -d '' d; do
       local name="${d##*/}"
       [ -d "$src/$name" ] || ORPHANS+=("$target/$name/")
     done < <(find "$target" -maxdepth 1 -mindepth 1 -type d -print0 2>/dev/null)
+  }
+
+  # Helper: find files installed recursively from $src_dir that no longer exist there
+  _find_orphan_files_recursive() {
+    local src="$1" target="$2"
+    [ -d "$src" ] && [ -d "$target" ] || return 0
+    while IFS= read -r -d '' f; do
+      local rel="${f#$target/}"
+      [ -f "$src/$rel" ] || ORPHANS+=("$target/$rel")
+    done < <(find "$target" -type f -print0 2>/dev/null)
   }
 
   _find_orphan_files "$TPL/commands"      ".claude/commands"  "*.md"
@@ -205,6 +215,7 @@ cleanup_orphans() {
   _find_orphan_files "$TPL/claude/hooks"  ".claude/hooks"
   _find_orphan_files "$TPL/agents"        ".claude/agents"    "*.md"
   _find_orphan_dirs  "$TPL/skills"        ".claude/skills"
+  _find_orphan_files_recursive "$TPL/github" ".github"
 
   if [ ${#ORPHANS[@]} -eq 0 ]; then
     tui_success "No orphaned managed files found"
