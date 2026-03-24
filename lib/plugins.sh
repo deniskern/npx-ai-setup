@@ -11,13 +11,6 @@ install_gsd() {
   return 0
 }
 
-# Legacy compatibility shim.
-# Playwright auto-install was removed; keep function for older callers/tests.
-install_playwright() {
-  echo "  🎭 Playwright auto-install is deprecated and skipped."
-  return 0
-}
-
 # Claude-Mem (Marketplace Plugin — persistent memory)
 install_claude_mem() {
   CLAUDE_MEM_DIR="${HOME}/.claude/plugins/cache/thedotmack/claude-mem"

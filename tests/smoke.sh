@@ -89,7 +89,6 @@ CHECKS=(
   "plugins.sh:install_claude_mem"
   "plugins.sh:install_coderabbit_plugin"
   "plugins.sh:install_context7"
-  "plugins.sh:install_playwright"
   "plugins.sh:show_installation_summary"
   "plugins.sh:show_next_steps"
   "plugins.sh:show_update_next_steps"
