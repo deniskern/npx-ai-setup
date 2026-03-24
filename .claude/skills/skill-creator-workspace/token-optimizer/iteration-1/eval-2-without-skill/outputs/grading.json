@@ -1,0 +1,27 @@
+{
+  "eval_id": 2,
+  "eval_name": "roi-priorisierung-schnell-baseline",
+  "prompt": "Zeig mir eine Token-Optimierungs-Analyse für dieses Projekt — ich will wissen wo ich am meisten rausholen kann ohne viel Zeit zu investieren.",
+  "expectations": [
+    {
+      "text": "roi_prioritization: Priorisiert nach Einsparung ÷ Aufwand",
+      "passed": true,
+      "evidence": "Sehr gute ROI-Tabelle: Log-Dateien (2 Min, ~49k Tokens), templates/ (1 Min, ~115k Tokens)"
+    },
+    {
+      "text": "concise_output: Übersichtlich, nicht zu lang",
+      "passed": true,
+      "evidence": "Gut strukturiert mit klaren Prioritäten"
+    },
+    {
+      "text": "both_levels_covered: Setup und Templates im Output",
+      "passed": false,
+      "evidence": "Fokus auf Dateigröße/claudeignore — kein Template-Quality-Audit mit Token-Overhead pro Nachricht"
+    },
+    {
+      "text": "claudeignore_gap: Prüft .claudeignore auf fehlende Einträge",
+      "passed": true,
+      "evidence": "Hauptstärke der Baseline — fand die wichtigsten Einträge sofort"
+    }
+  ]
+}

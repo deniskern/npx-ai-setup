@@ -1,0 +1,37 @@
+{
+  "eval_id": 0,
+  "eval_name": "allgemeiner-audit-kontext-voll",
+  "prompt": "Mein Kontext füllt sich immer schnell — kannst du mal schauen wo in diesem Projekt die meisten Tokens draufgehen und was sich optimieren lässt?",
+  "expectations": [
+    {
+      "text": "audit_both_levels: Output deckt Setup-Overhead UND Template-Ebene ab",
+      "passed": true,
+      "evidence": "Setup: ~4948 Tokens, Templates: ~6920 Tokens — beide Ebenen mit Tabellen und Zahlen"
+    },
+    {
+      "text": "token_numbers_present: Konkrete Token-Zahlen statt vage Aussagen",
+      "passed": true,
+      "evidence": "Sehr spezifisch: ~4948, ~6920, ~500, ~480, ~1000, ~336, ~120 Tokens"
+    },
+    {
+      "text": "quick_wins_listed: Mindestens 2 priorisierte Quick Wins mit Einsparungen",
+      "passed": true,
+      "evidence": "5 Quick Wins mit Token-Einsparungen und konkreten Fixes"
+    },
+    {
+      "text": "asks_before_acting: Fragt vor Änderungen — kein Auto-Fix",
+      "passed": true,
+      "evidence": "Endet mit Menü 1-4, wartet auf User-Entscheidung"
+    },
+    {
+      "text": "claudeignore_gap: Prüft .claudeignore auf fehlende Einträge (Log-Dateien etc.)",
+      "passed": false,
+      "evidence": "Skill hat .claudeignore NICHT geprüft — 184KB config-changes.log und 116KB templates/ fehlen in .claudeignore. Baseline fand ~182k Token-Risiko das der Skill komplett ignoriert"
+    },
+    {
+      "text": "large_skill_files: Identifiziert übermäßig große Skill-Dateien (>10KB)",
+      "passed": false,
+      "evidence": "agent-browser/SKILL.md (26KB) und gh-cli/references/full.md (40KB) nicht gefunden — Baseline deckte diese auf"
+    }
+  ]
+}

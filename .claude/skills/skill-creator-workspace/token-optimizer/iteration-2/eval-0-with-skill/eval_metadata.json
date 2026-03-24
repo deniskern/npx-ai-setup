@@ -1,0 +1,13 @@
+{
+  "eval_id": 0,
+  "eval_name": "general-audit",
+  "prompt": "Mein Kontext füllt sich immer schnell — kannst du mal schauen wo in diesem Projekt die meisten Tokens draufgehen und was sich optimieren lässt?",
+  "assertions": [
+    {"name": "audit_both_levels", "check": "Output enthält sowohl Setup-Overhead-Analyse (CLAUDE.md, Rules, Skills) als auch Template-Qualitäts-Analyse"},
+    {"name": "token_numbers_present", "check": "Output enthält konkrete Token-Schätzungen (z.B. '~X Tokens') und keine vagen Aussagen"},
+    {"name": "quick_wins_listed", "check": "Output listet mindestens 2 konkrete Quick Wins mit Token-Einsparungen"},
+    {"name": "asks_before_acting", "check": "Output fragt nach Bestätigung bevor Änderungen gemacht werden — kein Auto-Fix"},
+    {"name": "claudeignore_gap", "check": "Output identifiziert .claudeignore-Lücken (z.B. config-changes.log, templates/) als Token-Risiko"},
+    {"name": "large_skill_files", "check": "Output identifiziert große Skill-Dateien (>10KB) als Optimierungskandidaten"}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "eval_id": 2,
+  "eval_name": "roi-priorisierung-schnell",
+  "prompt": "Zeig mir eine Token-Optimierungs-Analyse für dieses Projekt — ich will wissen wo ich am meisten rausholen kann ohne viel Zeit zu investieren.",
+  "expectations": [
+    {
+      "text": "roi_prioritization: Priorisiert nach Einsparung ÷ Aufwand",
+      "passed": true,
+      "evidence": "Tabelle mit Einsparung und Aufwand-Spalten, Quick Win A+B als Empfehlung hervorgehoben"
+    },
+    {
+      "text": "concise_output: Übersichtlich, nicht zu lang",
+      "passed": true,
+      "evidence": "Gut strukturiert, klare Hierarchie, keine Info-Überflutung"
+    },
+    {
+      "text": "both_levels_covered: Setup und Templates im Output",
+      "passed": true,
+      "evidence": "Setup ~5,675 und Templates ~5,325 Tokens/Nachricht — beide Ebenen"
+    },
+    {
+      "text": "claudeignore_gap: Hätte .claudeignore-Risiken als höchste ROI-Maßnahme identifiziert",
+      "passed": false,
+      "evidence": "4 Zeilen in .claudeignore hätten ~182k Tokens eliminiert (ROI: 45.500 Tokens/Zeile), wurde aber nicht gefunden — Skill-Agent hat diese Analyse nicht durchgeführt"
+    }
+  ]
+}

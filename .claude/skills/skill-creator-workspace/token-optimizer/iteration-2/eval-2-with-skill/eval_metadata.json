@@ -1,0 +1,10 @@
+{
+  "eval_id": 2,
+  "eval_name": "roi-prioritized",
+  "prompt": "Zeig mir eine Token-Optimierungs-Analyse für dieses Projekt — ich will wissen wo ich am meisten rausholen kann ohne viel Zeit zu investieren.",
+  "assertions": [
+    {"name": "roi_prioritization", "check": "Output priorisiert nach Einsparung vs Aufwand, nicht nach Vollständigkeit"},
+    {"name": "concise_output", "check": "Output ist übersichtlich strukturiert und nicht länger als ~500 Wörter für die Findings-Präsentation"},
+    {"name": "both_levels_covered", "check": "Sowohl Setup als auch Template-Ebene im Output vorhanden"}
+  ]
+}

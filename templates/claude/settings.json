@@ -3,7 +3,6 @@
   "model": "claude-sonnet-4-6",
   "plansDirectory": ".claude/plans",
   "autoMemoryDirectory": ".agents/memory",
-  "enableAllProjectMcpServers": true,
   "_cacheNote": "Keep tool/permission order stable — reordering the allow list mid-session breaks Claude's prompt cache prefix and increases cost.",
   "respectGitignore": true,
   "attribution": {
@@ -194,11 +193,6 @@
             "type": "command",
             "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/update-check.sh",
             "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/memory-recall.sh",
-            "timeout": 2
           }
         ]
       }

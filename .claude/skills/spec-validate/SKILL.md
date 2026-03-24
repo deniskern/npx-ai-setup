@@ -1,6 +1,7 @@
 ---
 name: spec-validate
 description: Validate a draft spec before execution. Triggers: /spec-validate NNN, 'validate spec NNN', 'is spec NNN ready to implement', 'check spec quality'.
+disable-model-invocation: true
 ---
 
 # Spec Validate — Score a Draft Before Execution

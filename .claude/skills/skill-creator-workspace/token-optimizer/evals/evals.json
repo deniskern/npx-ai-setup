@@ -1,0 +1,67 @@
+{
+  "skill_name": "token-optimizer",
+  "skill_path": "/Users/deniskern/Sites/npx-ai-setup/.claude/skills/token-optimizer",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Mein Kontext füllt sich immer schnell — kannst du mal schauen wo in diesem Projekt die meisten Tokens draufgehen und was sich optimieren lässt?",
+      "expected_output": "Strukturierter Audit mit konkreten Token-Zahlen für Setup (CLAUDE.md, Rules, Skills) UND Template-Overhead für Nutzer. Priorisierte Quick-Wins mit Token-Einsparungsschätzungen. Klare Frage was angegangen werden soll.",
+      "assertions": [
+        {
+          "name": "audit_both_levels",
+          "check": "Output enthält sowohl Setup-Overhead-Analyse (CLAUDE.md, Rules, Skills) als auch Template-Qualitäts-Analyse"
+        },
+        {
+          "name": "token_numbers_present",
+          "check": "Output enthält konkrete Token-Schätzungen (z.B. '~X Tokens') und keine vagen Aussagen"
+        },
+        {
+          "name": "quick_wins_listed",
+          "check": "Output listet mindestens 2 konkrete Quick Wins mit Token-Einsparungen"
+        },
+        {
+          "name": "asks_before_acting",
+          "check": "Output fragt nach Bestätigung bevor Änderungen gemacht werden — kein Auto-Fix"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Schau mal ob die Templates die wir ausliefern zu groß sind. Ich mache mir Sorgen dass wir bei Nutzern zu viel Overhead installieren.",
+      "expected_output": "Spezifische Analyse der templates/ Verzeichnisse: CLAUDE.md Template Größe, Skill-Template Descriptions (verbose?), Rule-Templates (gescopte vs ungescopt). Gesamt-Footprint pro Installation in Tokens. Empfehlungen was konkret zu kürzen ist.",
+      "assertions": [
+        {
+          "name": "template_focus",
+          "check": "Output enthält spezifische Analyse von templates/ Verzeichnis, nicht nur das eigene Setup"
+        },
+        {
+          "name": "installation_footprint",
+          "check": "Output schätzt Gesamt-Token-Overhead nach Installation (summiert Templates + Skills + Rules)"
+        },
+        {
+          "name": "verbose_descriptions_flagged",
+          "check": "Output prüft ob Skill-Descriptions >200 Zeichen sind und listet Kandidaten"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Zeig mir eine Token-Optimierungs-Analyse für dieses Projekt — ich will wissen wo ich am meisten rausholen kann ohne viel Zeit zu investieren.",
+      "expected_output": "Priorisierte Analyse nach ROI (Token-Einsparung ÷ Aufwand). Setup und Templates abgedeckt. Konkrete Top-3 Quick Wins. Klar strukturiert, keine Information-Overload.",
+      "assertions": [
+        {
+          "name": "roi_prioritization",
+          "check": "Output priorisiert nach Einsparung vs Aufwand, nicht nach Vollständigkeit"
+        },
+        {
+          "name": "concise_output",
+          "check": "Output ist übersichtlich strukturiert und nicht länger als ~500 Wörter für die Findings-Präsentation"
+        },
+        {
+          "name": "both_levels_covered",
+          "check": "Sowohl Setup als auch Template-Ebene im Output vorhanden"
+        }
+      ]
+    }
+  ]
+}

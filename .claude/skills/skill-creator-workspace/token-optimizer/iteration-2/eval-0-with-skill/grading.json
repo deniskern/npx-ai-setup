@@ -1,0 +1,37 @@
+{
+  "eval_id": 0,
+  "run": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "audit_both_levels",
+      "passed": true,
+      "evidence": "Output hat explizite 'DEIN SETUP'- und 'DEINE TEMPLATES'-Sektionen mit separater Analyse für beide Ebenen"
+    },
+    {
+      "text": "token_numbers_present",
+      "passed": true,
+      "evidence": "Enthält zahlreiche konkrete Schätzungen: ~47k Tokens, ~177k Tokens, ~6.515 Tokens/Nachricht, ~6.482 Tokens/Nachricht usw."
+    },
+    {
+      "text": "quick_wins_listed",
+      "passed": true,
+      "evidence": "5 priorisierte Quick Wins mit konkreten Token-Einsparungen und Zeitaufwand (1-15 Min)"
+    },
+    {
+      "text": "asks_before_acting",
+      "passed": true,
+      "evidence": "Endet mit expliziter Auswahlfrage (5 Optionen inkl. 'Nur Bericht, kein Auto-Fix') — kein Auto-Fix"
+    },
+    {
+      "text": "claudeignore_gap",
+      "passed": true,
+      "evidence": "Identifiziert config-changes.log (~47k), templates/ (~177k), specs/ (~213k), tool-failures.log (~4.3k) als .claudeignore-Lücken"
+    },
+    {
+      "text": "large_skill_files",
+      "passed": true,
+      "evidence": "Listet gh-cli/references/full.md (~10.1k Tokens) und agent-browser/SKILL.md (~6.7k Tokens) als Optimierungskandidaten"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "eval_id": 0,
+  "eval_name": "allgemeiner-audit-kontext-voll-baseline",
+  "prompt": "Mein Kontext füllt sich immer schnell — kannst du mal schauen wo in diesem Projekt die meisten Tokens draufgehen und was sich optimieren lässt?",
+  "expectations": [
+    {
+      "text": "audit_both_levels: Output deckt Setup-Overhead UND Template-Ebene ab",
+      "passed": false,
+      "evidence": "Baseline fand Log-Dateien und .claudeignore-Lücken (stark!), aber kein Template-spezifischer Audit mit Nutzer-Footprint"
+    },
+    {
+      "text": "token_numbers_present: Konkrete Token-Zahlen statt vage Aussagen",
+      "passed": true,
+      "evidence": "Sehr spezifisch: ~46k tokens für config-changes.log, ~115k für templates/, ~8k CHANGELOG"
+    },
+    {
+      "text": "quick_wins_listed: Mindestens 2 priorisierte Quick Wins",
+      "passed": true,
+      "evidence": "Prioritätsliste mit 6 Maßnahmen, klarer ROI"
+    },
+    {
+      "text": "asks_before_acting: Fragt vor Änderungen",
+      "passed": false,
+      "evidence": "Keine Approval-Gate — Baseline präsentiert Empfehlungen ohne zu fragen ob implementiert werden soll"
+    },
+    {
+      "text": "claudeignore_gap: Prüft .claudeignore auf fehlende Einträge",
+      "passed": true,
+      "evidence": "Stärke der Baseline — fand Log-Dateien, templates/, CHANGELOG.md als claudeignore-Lücken mit ~182k Token-Potenzial"
+    },
+    {
+      "text": "large_skill_files: Identifiziert übermäßig große Skill-Dateien",
+      "passed": true,
+      "evidence": "agent-browser/SKILL.md (26KB) und gh-cli/references/full.md (40KB) als P3/P4 identifiziert"
+    }
+  ]
+}

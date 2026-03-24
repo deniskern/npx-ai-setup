@@ -1,0 +1,87 @@
+{
+  "skill_name": "token-optimizer",
+  "iteration": 1,
+  "configurations": [
+    {
+      "name": "with_skill",
+      "evals": [
+        {
+          "id": "eval-0",
+          "name": "allgemeiner-audit-kontext-voll",
+          "pass_rate": 0.667,
+          "assertions_passed": 4,
+          "assertions_total": 6,
+          "tokens": 39138,
+          "duration_ms": 229439
+        },
+        {
+          "id": "eval-1",
+          "name": "template-overhead-fuer-nutzer",
+          "pass_rate": 0.8,
+          "assertions_passed": 4,
+          "assertions_total": 5,
+          "tokens": 35667,
+          "duration_ms": 181673
+        },
+        {
+          "id": "eval-2",
+          "name": "roi-priorisierung-schnell",
+          "pass_rate": 0.75,
+          "assertions_passed": 3,
+          "assertions_total": 4,
+          "tokens": 37458,
+          "duration_ms": 162680
+        }
+      ],
+      "aggregate": {
+        "mean_pass_rate": 0.739,
+        "mean_tokens": 37421,
+        "mean_duration_ms": 191264
+      }
+    },
+    {
+      "name": "without_skill",
+      "evals": [
+        {
+          "id": "eval-0",
+          "name": "allgemeiner-audit-kontext-voll-baseline",
+          "pass_rate": 0.667,
+          "assertions_passed": 4,
+          "assertions_total": 6,
+          "tokens": 39145,
+          "duration_ms": 173706
+        },
+        {
+          "id": "eval-1",
+          "name": "template-overhead-fuer-nutzer-baseline",
+          "pass_rate": 0.2,
+          "assertions_passed": 1,
+          "assertions_total": 5,
+          "tokens": 35830,
+          "duration_ms": 141091
+        },
+        {
+          "id": "eval-2",
+          "name": "roi-priorisierung-schnell-baseline",
+          "pass_rate": 0.75,
+          "assertions_passed": 3,
+          "assertions_total": 4,
+          "tokens": 38757,
+          "duration_ms": 161702
+        }
+      ],
+      "aggregate": {
+        "mean_pass_rate": 0.539,
+        "mean_tokens": 37911,
+        "mean_duration_ms": 158833
+      }
+    }
+  ],
+  "analyst_observations": [
+    "with_skill schlägt without_skill bei Eval-1 massiv (0.8 vs 0.2) — der Template-Audit mit Token-Zahlen ist der klare Skill-Mehrwert",
+    "Eval-0 ist unentschieden — Baseline fand .claudeignore-Lücken (~182k Tokens!), Skill fand Menu-Overhead (~5k Tokens). Beide nützlich aber VERSCHIEDENE Kategorien",
+    "KRITISCHES GAP: Skill deckt nur Menu-Overhead ab (CLAUDE.md, rules, skills menu) — findet aber NICHT die größten Risiken: .claudeignore-Lücken und übergroße Skill-Dateien",
+    "Baseline ist 17% schneller (158s vs 191s) und findet höheren ROI bei Eval-0/2, aber strukturiert schlechter und hat keinen Approval-Gate",
+    "with_skill hat konsistenten Approval-Gate (3/3) — without_skill nie (0/3). Verhaltensunterschied klar"
+  ]
+}

@@ -1,6 +1,7 @@
 ---
 name: spec-board
 description: Overview of all specs as Kanban board. Triggers: /spec-board, 'show specs', 'spec overview', 'what specs do we have', 'show me whats in progress'.
+disable-model-invocation: true
 ---
 
 # Spec Board — Kanban Overview of All Specs

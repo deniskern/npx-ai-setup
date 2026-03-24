@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "eval_name": "template-overhead-fuer-nutzer",
+  "prompt": "Schau mal ob die Templates die wir ausliefern zu groß sind. Ich mache mir Sorgen dass wir bei Nutzern zu viel Overhead installieren.",
+  "expectations": [
+    {
+      "text": "template_focus: Analysiert templates/ Verzeichnis, nicht nur eigenes Setup",
+      "passed": true,
+      "evidence": "Detaillierter Template-Audit: ~9,755 Tokens Installations-Footprint, 5 kritische Probleme"
+    },
+    {
+      "text": "installation_footprint: Summiert Gesamt-Token-Overhead nach Installation",
+      "passed": true,
+      "evidence": "~9,755 Tokens/Nachricht: CLAUDE.md ~1,845 + Rules ~3,570 + Skills ~4,340"
+    },
+    {
+      "text": "verbose_descriptions_flagged: Prüft Skill-Descriptions auf >200 Zeichen",
+      "passed": true,
+      "evidence": "11 Skill-Descriptions mit >200 Zeichen identifiziert und gelistet"
+    },
+    {
+      "text": "asks_before_acting: Fragt vor Änderungen",
+      "passed": true,
+      "evidence": "Endet mit Menü 1-4, kein Auto-Fix"
+    },
+    {
+      "text": "claudeignore_gap: Prüft ob templates/ in .claudeignore ist",
+      "passed": false,
+      "evidence": "Skill prüft NICHT ob templates/ selbst in .claudeignore steht — 116KB Verzeichnis wäre 0 Overhead wenn ignoriert"
+    }
+  ]
+}

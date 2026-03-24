@@ -1,6 +1,7 @@
 ---
 name: spec-review
 description: Review a completed spec after implementation. Triggers: /spec-review NNN, 'review spec NNN', 'did we complete spec NNN', 'verify spec implementation'.
+disable-model-invocation: true
 ---
 
 # Spec Review — Validate and Close a Spec

@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "eval_name": "template-overhead-fuer-nutzer-baseline",
+  "prompt": "Schau mal ob die Templates die wir ausliefern zu groß sind. Ich mache mir Sorgen dass wir bei Nutzern zu viel Overhead installieren.",
+  "expectations": [
+    {
+      "text": "template_focus: Analysiert templates/ Verzeichnis spezifisch",
+      "passed": true,
+      "evidence": "Guter Template-Fokus: erkannte dass Shopify-Skills nicht automatisch installiert werden, commands/ pauschal installiert wird"
+    },
+    {
+      "text": "installation_footprint: Summiert Gesamt-Token-Overhead nach Installation",
+      "passed": false,
+      "evidence": "Keine Token-Summe — analysierte Dateigröße (KB) statt Token-Overhead pro Nachricht"
+    },
+    {
+      "text": "verbose_descriptions_flagged: Prüft Skill-Descriptions auf >200 Zeichen",
+      "passed": false,
+      "evidence": "Skill-Description-Länge nicht untersucht"
+    },
+    {
+      "text": "asks_before_acting: Fragt vor Änderungen",
+      "passed": false,
+      "evidence": "Keine Approval-Gate in Baseline"
+    },
+    {
+      "text": "claudeignore_gap: Prüft ob templates/ in .claudeignore ist",
+      "passed": false,
+      "evidence": "Nicht geprüft — Baseline fokussierte auf Installationsgröße, nicht auf Claude-spezifischen Overhead"
+    }
+  ]
+}

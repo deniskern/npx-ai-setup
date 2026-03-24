@@ -1,0 +1,10 @@
+{
+  "eval_id": 1,
+  "eval_name": "template-focused",
+  "prompt": "Schau mal ob die Templates die wir ausliefern zu groß sind. Ich mache mir Sorgen dass wir bei Nutzern zu viel Overhead installieren.",
+  "assertions": [
+    {"name": "template_focus", "check": "Output enthält spezifische Analyse von templates/ Verzeichnis, nicht nur das eigene Setup"},
+    {"name": "installation_footprint", "check": "Output schätzt Gesamt-Token-Overhead nach Installation (summiert Templates + Skills + Rules)"},
+    {"name": "verbose_descriptions_flagged", "check": "Output prüft ob Skill-Descriptions >200 Zeichen sind und listet Kandidaten"}
+  ]
+}

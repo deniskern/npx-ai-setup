@@ -1574,3 +1574,6 @@
 2026-03-24T10:24:20Z CONFIG_CHANGE source=skills file=/Users/deniskern/Sites/npx-ai-setup/.claude/skills/agent-browser/SKILL.md
 2026-03-24T10:24:21Z CONFIG_CHANGE source=skills file=/Users/deniskern/Sites/npx-ai-setup/.claude/skills/token-optimizer/SKILL.md
 2026-03-24T10:24:21Z CONFIG_CHANGE source=skills file=/Users/deniskern/Sites/npx-ai-setup/.claude/skills/context-load/SKILL.md
+2026-03-24T10:26:28Z CONFIG_CHANGE source=skills file=/Users/deniskern/Sites/npx-ai-setup/.claude/skills/spec-review/SKILL.md
+2026-03-24T10:26:28Z CONFIG_CHANGE source=skills file=/Users/deniskern/Sites/npx-ai-setup/.claude/skills/spec-board/SKILL.md
+2026-03-24T10:26:28Z CONFIG_CHANGE source=skills file=/Users/deniskern/Sites/npx-ai-setup/.claude/skills/spec-review/SKILL.md
