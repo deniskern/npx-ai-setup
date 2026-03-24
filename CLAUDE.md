@@ -69,7 +69,12 @@ Never say "should work" or "probably passes" — those mean you skipped verifica
 Required: automated checks pass + "Verification complete: [what was checked]".
 
 ## Context Management
-Run `/compact` at 80% context. Before ending a session, run `/pause` — it captures state into `.continue-here.md` and commits a WIP checkpoint.
+Auto-compact triggers at 80% context (`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`).
+- `/compact Focus on <topic>` — targeted compaction, preserves what matters
+- `/rewind` or `Esc+Esc` — rewind to a previous checkpoint (code + conversation)
+- `/btw <question>` — side question that never enters context
+- `/clear` — reset between unrelated tasks; use `/rename` first to save session
+Before ending a session, run `/pause` — captures state into `.continue-here.md`.
 After a fresh start, run `/resume` to restore state and route to the next action.
 
 ## Parallel Orchestration
