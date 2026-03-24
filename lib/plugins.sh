@@ -114,7 +114,7 @@ show_plugin_summary() {
       esac
     done
     echo ""
-    tui_info "Restart Claude Code afterwards"
+    tui_hint "Restart Claude Code afterwards to activate the new plugins."
   fi
 }
 

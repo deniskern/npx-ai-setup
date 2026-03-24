@@ -164,15 +164,15 @@ if [ "$AI_CLI" = "claude" ]; then
     esac
   fi
 elif [ "$AI_CLI" = "copilot" ]; then
-  tui_info "GitHub Copilot detected (no claude CLI)"
-  echo "   Manual steps required:"
-  echo ""
-  echo "   1. Open VS Code / GitHub Copilot Chat"
-  echo "   2. Ask Copilot to extend CLAUDE.md and AGENTS.md with project-specific sections"
+  tui_hint \
+    "GitHub Copilot detected (no claude CLI) — manual steps required:" \
+    "  1. Open VS Code / GitHub Copilot Chat" \
+    "  2. Ask Copilot to extend CLAUDE.md and AGENTS.md with project-specific sections"
 else
-  tui_warn "No AI CLI detected (neither claude nor gh copilot)"
-  echo "   Install Claude Code: npm i -g @anthropic-ai/claude-code"
-  echo "   Then follow the next steps shown below"
+  tui_hint \
+    "No AI CLI detected — install Claude Code to continue:" \
+    "  npm i -g @anthropic-ai/claude-code" \
+    "  Then follow the next steps shown below."
 fi
 
 show_installation_summary
@@ -187,5 +187,5 @@ if [ "$AI_CLI" = "claude" ]; then
   else
     tui_spinner_stop warn "Project context refresh skipped"
   fi
-  tui_info "Run /analyze to generate PATTERNS.md and AUDIT.md for this project."
+  tui_hint "Run /analyze to generate PATTERNS.md and AUDIT.md for this project."
 fi

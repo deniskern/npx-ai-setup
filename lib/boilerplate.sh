@@ -148,17 +148,15 @@ _show_manual_instructions() {
   repo_name=$(get_boilerplate_repo "$system") || repo_name="<repo-name>"
 
   echo ""
-  tui_info "Manual pull instructions (gh CLI not available)"
-  echo ""
-  echo "  Option A — Clone and copy:"
-  echo "    git clone --depth=1 https://github.com/${BOILERPLATE_ORG}/${repo_name}.git /tmp/${repo_name}"
-  echo "    cp -r /tmp/${repo_name}/.claude/skills/* .claude/skills/"
-  echo "    cp /tmp/${repo_name}/.claude/rules/${system}*.md .claude/rules/"
-  echo ""
-  echo "  Option B — Install gh CLI:"
-  echo "    brew install gh && gh auth login"
-  echo "    Then run the setup command again: npx @onedot/ai-setup"
-  echo ""
+  tui_hint \
+    "gh CLI not available — manual pull required:" \
+    "  Option A — Clone and copy:" \
+    "    git clone --depth=1 https://github.com/${BOILERPLATE_ORG}/${repo_name}.git /tmp/${repo_name}" \
+    "    cp -r /tmp/${repo_name}/.claude/skills/* .claude/skills/" \
+    "    cp /tmp/${repo_name}/.claude/rules/${system}*.md .claude/rules/" \
+    "  Option B — Install gh CLI:" \
+    "    brew install gh && gh auth login" \
+    "    Then run the setup command again: npx @onedot/ai-setup"
 }
 
 # Detect whether any system-specific config is already present.
