@@ -66,3 +66,9 @@ __pycache__/
 .agents/repomix-snapshot.xml
 .agents/.skill-cache.json
 .agents/context/.state
+
+# ── Large project directories (read explicitly when needed) ───────────────────
+specs/
+templates/
+CHANGELOG.md
+.claude/*.log
