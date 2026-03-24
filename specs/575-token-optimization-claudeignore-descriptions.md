@@ -16,7 +16,7 @@ Token Optimizer audit (Iteration 2, Eval-0) identified two high-ROI fixes: missi
 
 ## Steps
 - [x] Step 1: Add `.claude/*.log`, `specs/`, `templates/`, `CHANGELOG.md` to project `.claudeignore`
-- [ ] Step 2: Add `.claude/*.log` to template `.claudeignore` (for users)
+- [x] Step 2: Add `.claude/*.log` to template `.claudeignore` (for users)
 - [ ] Step 3: Trim 11 verbose skill descriptions in `templates/skills/*/SKILL.md` to ≤200 chars each
 - [ ] Step 4: Verify — run `wc -c` on all modified skill files, confirm no description >200 chars
 
