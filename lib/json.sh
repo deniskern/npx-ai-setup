@@ -17,13 +17,13 @@ _json_read() {
   else
     local keys
     keys=$(echo "$path" | sed 's/^\.//' | tr '.' ' ')
-    node -e "
+    node - "$file" "$keys" <<'NODESCRIPT' 2>/dev/null
       try {
-        let d = JSON.parse(require('fs').readFileSync('$file','utf8'));
-        for (const k of '$keys'.split(' ').filter(Boolean)) d = d?.[k];
+        let d = JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));
+        for (const k of process.argv[2].split(' ').filter(Boolean)) d = d?.[k];
         if (d != null) process.stdout.write(String(d));
       } catch(e) {}
-    " 2>/dev/null
+NODESCRIPT
   fi
 }
 
@@ -33,10 +33,10 @@ _json_valid() {
   if [ "$_JSON_CMD" = "jq" ]; then
     jq -e . "$file" >/dev/null 2>&1
   else
-    node -e "
-      try{JSON.parse(require('fs').readFileSync('$file','utf8'));process.exit(0);}
+    node - "$file" <<'NODESCRIPT' 2>/dev/null
+      try{JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));process.exit(0);}
       catch(e){process.exit(1);}
-    " 2>/dev/null
+NODESCRIPT
   fi
 }
 
@@ -48,13 +48,14 @@ _json_merge() {
   if [ "$_JSON_CMD" = "jq" ]; then
     jq --argjson m "$merge" '. * $m' "$target" > "$tmp" && mv "$tmp" "$target" || rm -f "$tmp"
   else
-    node -e "
+    node - "$target" "$merge" <<'NODESCRIPT' 2>/dev/null || return 1
       const fs=require('fs');
+      const target=process.argv[1], merge=JSON.parse(process.argv[2]);
       const deep=(a,b)=>typeof b!=='object'||Array.isArray(b)?b:Object.fromEntries(
         [...new Set([...Object.keys(a||{}),...Object.keys(b)])].map(k=>[k,k in b?
         (typeof b[k]==='object'&&!Array.isArray(b[k])&&k in (a||{})?deep(a[k],b[k]):b[k]):a[k]]));
-      fs.writeFileSync('$target',JSON.stringify(deep(JSON.parse(fs.readFileSync('$target','utf8')),$merge),null,2));
-    " 2>/dev/null || return 1
+      fs.writeFileSync(target,JSON.stringify(deep(JSON.parse(fs.readFileSync(target,'utf8')),merge),null,2));
+NODESCRIPT
     rm -f "$tmp"
   fi
 }
@@ -67,8 +68,10 @@ _json_build_metadata() {
     jq -n --arg ver "$ver" --arg inst "$inst" --arg upd "$upd" \
       '{version:$ver,installed_at:$inst,updated_at:$upd,files:{}}'
   else
-    node -e "process.stdout.write(JSON.stringify(
-      {version:'$ver',installed_at:'$inst',updated_at:'$upd',files:{}},null,2));"
+    node - "$ver" "$inst" "$upd" <<'NODESCRIPT'
+      process.stdout.write(JSON.stringify(
+        {version:process.argv[1],installed_at:process.argv[2],updated_at:process.argv[3],files:{}},null,2));
+NODESCRIPT
   fi
 }
 
@@ -81,7 +84,7 @@ _json_set_file() {
   else
     node -e "
       const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
-      d.files=d.files||{};d.files['$key']='$val';
-      process.stdout.write(JSON.stringify(d,null,2));"
+      d.files=d.files||{};d.files[process.argv[1]]=process.argv[2];
+      process.stdout.write(JSON.stringify(d,null,2));" "$key" "$val"
   fi
 }
