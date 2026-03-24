@@ -78,5 +78,6 @@ echo "GIT_HASH=$(git rev-parse HEAD 2>/dev/null)" >> .agents/context/.state
 ## Rules
 - Keep each file under 80 lines — terse and factual, no padding.
 - Write only what you observed, not what you assumed.
+- **Omit any section or subsection where no evidence was found.** Never write "Not determined", "Unknown", or placeholder text.
 - Overwrite existing files completely — do not append.
 - Do NOT read `.env` files.

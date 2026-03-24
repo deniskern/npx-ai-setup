@@ -10,6 +10,11 @@
 STATE_FILE=".agents/context/.state"
 [ ! -f "$STATE_FILE" ] && exit 0
 
+# Age check — warn if last refresh >7 days ago
+STATE_AGE_DAYS=$(( ( $(date +%s) - $(stat -f %m "$STATE_FILE" 2>/dev/null || stat -c %Y "$STATE_FILE" 2>/dev/null || echo "0") ) / 86400 ))
+AGE_WARNING=""
+[ "$STATE_AGE_DAYS" -gt 7 ] 2>/dev/null && AGE_WARNING="context is ${STATE_AGE_DAYS} days old"
+
 # Read stored hashes
 STORED_PKG=""
 STORED_TSC=""
@@ -42,8 +47,9 @@ if [ -n "$STORED_TSC" ] && [ -f "tsconfig.json" ]; then
   [ "$CURRENT_TSC" != "$STORED_TSC" ] && CHANGED="${CHANGED:+$CHANGED, }tsconfig.json"
 fi
 
-if [ -n "$CHANGED" ]; then
-  echo "[CONTEXT STALE] Project context may be outdated ($CHANGED changed since last refresh)." >&2
+REASON="${CHANGED}${CHANGED:+${AGE_WARNING:+, }}${AGE_WARNING}"
+if [ -n "$REASON" ]; then
+  echo "[CONTEXT STALE] .agents/context/ may be outdated ($REASON). Run the context-refresher agent to update." >&2
 fi
 
 exit 0
