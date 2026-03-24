@@ -1,0 +1,37 @@
+{
+  "eval_id": 0,
+  "run": "without_skill",
+  "pass_rate": 0.67,
+  "expectations": [
+    {
+      "text": "audit_both_levels",
+      "passed": false,
+      "evidence": "Output analysiert nur das eigene Setup-Overhead (CLAUDE.md, Rules, Hooks), aber kein 'Template-Qualität für Nutzer'-Abschnitt — die Zwei-Ebenen-Perspektive fehlt"
+    },
+    {
+      "text": "token_numbers_present",
+      "passed": true,
+      "evidence": "Enthält konkrete Token-Schätzungen: ~5.020 Tokens Baseline, ~6.600 Tokens agent-browser, ~10.100 Tokens gh-cli, ~7.980 Tokens CHANGELOG usw."
+    },
+    {
+      "text": "quick_wins_listed",
+      "passed": true,
+      "evidence": "6 priorisierte Empfehlungen nach Hoch/Mittel/Niedrig mit Einsparungsschätzungen"
+    },
+    {
+      "text": "asks_before_acting",
+      "passed": false,
+      "evidence": "Kein Approval-Gate vor Änderungen — Output endet mit Zusammenfassung, keine explizite Frage ob Änderungen durchgeführt werden sollen"
+    },
+    {
+      "text": "claudeignore_gap",
+      "passed": true,
+      "evidence": "Identifiziert config-changes.log (184 KB / ~46.2k Tokens) und tool-failures.log als potenzielle .claudeignore-Kandidaten"
+    },
+    {
+      "text": "large_skill_files",
+      "passed": true,
+      "evidence": "Identifiziert agent-browser SKILL.md (26 KB / ~6.666 Tokens) und gh-cli references/full.md (40 KB / ~10.103 Tokens)"
+    }
+  ]
+}

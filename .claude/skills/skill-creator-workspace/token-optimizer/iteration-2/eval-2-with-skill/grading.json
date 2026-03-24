@@ -1,0 +1,22 @@
+{
+  "eval_id": 2,
+  "run": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "roi_prioritization",
+      "passed": true,
+      "evidence": "ROI-Sterne-Rating für jede Maßnahme, explizite TOP-3 Quick Wins nach Einsparung÷Aufwand — File-Risiko (#1) deutlich vor Setup-Tuning"
+    },
+    {
+      "text": "concise_output",
+      "passed": true,
+      "evidence": "Kompakte Box-Darstellung mit klarer Priorisierung, Rohdaten ausgelagert — unter 400 Wörter für die Findings-Präsentation"
+    },
+    {
+      "text": "both_levels_covered",
+      "passed": true,
+      "evidence": "FILE-RISIKO, SETUP und TEMPLATES explizit als separate Blöcke im Output vorhanden"
+    }
+  ]
+}

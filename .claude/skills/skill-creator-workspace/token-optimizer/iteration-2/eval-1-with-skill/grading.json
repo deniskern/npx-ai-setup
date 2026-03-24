@@ -1,0 +1,22 @@
+{
+  "eval_id": 1,
+  "run": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "template_focus",
+      "passed": true,
+      "evidence": "Dedizierter 'DEINE TEMPLATES'-Abschnitt mit Footprint-Analyse, Stubs-Liste und verbose-Descriptions — templates/ explizit ausgewertet"
+    },
+    {
+      "text": "installation_footprint",
+      "passed": true,
+      "evidence": "Gesamt-Footprint quantifiziert: ~6.482 Tokens/Nachricht, aufgeschlüsselt nach CLAUDE.md (~1.476), Rules (~2.856), Skills-Menü (~1.670)"
+    },
+    {
+      "text": "verbose_descriptions_flagged",
+      "passed": true,
+      "evidence": "11 Descriptions >200 Zeichen aufgelistet: release (619), explore (603), context-load (584), spec-work-all (514), spec-board (523) und weitere"
+    }
+  ]
+}

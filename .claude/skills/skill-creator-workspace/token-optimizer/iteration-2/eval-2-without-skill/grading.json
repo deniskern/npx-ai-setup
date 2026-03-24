@@ -1,0 +1,22 @@
+{
+  "eval_id": 2,
+  "run": "without_skill",
+  "pass_rate": 0.67,
+  "expectations": [
+    {
+      "text": "roi_prioritization",
+      "passed": true,
+      "evidence": "Aufwand-Impact-Matrix vorhanden mit Aufwand (Min) und Token-Einsparung pro Maßnahme, Quick-Win-Reihenfolge explizit angegeben"
+    },
+    {
+      "text": "concise_output",
+      "passed": true,
+      "evidence": "Gut strukturiert mit P1-P5 Priorisierung, Tabelle am Ende — unter 500 Wörter für die Kernaussagen"
+    },
+    {
+      "text": "both_levels_covered",
+      "passed": false,
+      "evidence": "Nur Projekt-Setup analysiert (config-changes.log, agent-browser, context-Dateien) — kein Template-Overhead für Nutzer untersucht"
+    }
+  ]
+}

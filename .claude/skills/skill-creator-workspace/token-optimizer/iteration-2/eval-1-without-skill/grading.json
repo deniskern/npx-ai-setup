@@ -1,0 +1,22 @@
+{
+  "eval_id": 1,
+  "run": "without_skill",
+  "pass_rate": 0.33,
+  "expectations": [
+    {
+      "text": "template_focus",
+      "passed": true,
+      "evidence": "Analysiert templates/ Verzeichnis: 124 Dateien, 708 KB, identifiziert Shopify-Skills (91 KB) und Commands als Overhead"
+    },
+    {
+      "text": "installation_footprint",
+      "passed": false,
+      "evidence": "Gibt Dateigrößen (KB) an, aber keine Token-Schätzung für den Nutzerfootprint nach Installation — kein '~X Tokens/Nachricht'-Summary"
+    },
+    {
+      "text": "verbose_descriptions_flagged",
+      "passed": false,
+      "evidence": "Keine Prüfung der Skill-Description-Längen (>200 Zeichen) — fokussiert auf Dateigröße, nicht auf Description-Overhead im Skills-Menü"
+    }
+  ]
+}

@@ -10,6 +10,8 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 575**: Token optimization — added `specs/`, `templates/`, `CHANGELOG.md`, `.claude/*.log` to project `.claudeignore` (~236K token risk closed); added `.claude/*.log` to template `.claudeignore`; trimmed orchestrate skill description to ≤200 chars
+
 - **Spec 568**: Secure JSON layer — eliminated shell injection in Node.js fallbacks by replacing variable interpolation with process.argv
 
 ## [Unreleased]

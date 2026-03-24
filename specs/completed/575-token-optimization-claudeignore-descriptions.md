@@ -1,6 +1,6 @@
 # Spec: Token Optimization — .claudeignore + Skill Descriptions
 
-> **Spec ID**: 575 | **Created**: 2026-03-24 | **Status**: in-progress | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 575 | **Created**: 2026-03-24 | **Status**: completed | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Reduce token overhead by closing .claudeignore gaps (~236K einmalig) and trimming verbose skill descriptions (~800 tokens/message for all users).
@@ -18,15 +18,15 @@ Token Optimizer audit (Iteration 2, Eval-0) identified two high-ROI fixes: missi
 - [x] Step 1: Add `.claude/*.log`, `specs/`, `templates/`, `CHANGELOG.md` to project `.claudeignore`
 - [x] Step 2: Add `.claude/*.log` to template `.claudeignore` (for users)
 - [x] Step 3: Trim 11 verbose skill descriptions in `templates/skills/*/SKILL.md` to ≤200 chars each
-- [ ] Step 4: Verify — run `wc -c` on all modified skill files, confirm no description >200 chars
+- [x] Step 4: Verify — run `wc -c` on all modified skill files, confirm no description >200 chars
 
 ## Acceptance Criteria
 
 ### Truths
-- [ ] `grep -c 'specs/' .claudeignore` returns 1
-- [ ] `grep -c 'templates/' .claudeignore` returns 1
-- [ ] `grep -c '.claude/\*.log' .claudeignore` returns 1
-- [ ] No template skill description field exceeds 200 characters
+- [x] `grep -c 'specs/' .claudeignore` returns 1
+- [x] `grep -c 'templates/' .claudeignore` returns 1
+- [x] `grep -c '.claude/\*.log' .claudeignore` returns 1
+- [x] No template skill description field exceeds 200 characters
 
 ## Files to Modify
 - `.claudeignore` — add 4 missing entries
