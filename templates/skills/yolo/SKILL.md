@@ -1,4 +1,5 @@
 ---
+name: yolo
 allowed-tools: Read, Edit, Write, Bash, Glob, Grep, Agent, WebFetch, WebSearch
 disable-model-invocation: true
 ---
