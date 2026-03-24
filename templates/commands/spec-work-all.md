@@ -62,8 +62,12 @@ For each completed subagent, using the branch and worktree path from the Agent r
 If the subagent **failed or returned no usable result**:
 1. Set spec status to `blocked`
 2. Add a `## Review Feedback` section to the spec with: "subagent failed — [error message or 'no result returned']"
-3. Report: "Spec NNN blocked — subagent did not complete. Run `/spec-work NNN` to retry manually."
-4. Skip remaining post-processing for this spec.
+3. Remove the worktree:
+   ```bash
+   git worktree remove --force <worktree-path> 2>/dev/null; rm -rf <worktree-path> 2>/dev/null
+   ```
+4. Report: "Spec NNN blocked — subagent did not complete. Run `/spec-work NNN` to retry manually."
+5. Skip remaining post-processing for this spec.
 
 If the subagent **succeeded**:
 1. Check all spec steps off in `specs/NNN-*.md`
@@ -73,13 +77,18 @@ If the subagent **succeeded**:
    - Add: `- **Spec NNN**: [Title] — [1-sentence summary]`
    - Insert after the `## [Unreleased]` heading
 5. Remove the worktree (branch is preserved for `/spec-review`):
-   `git worktree remove --force <worktree-path-from-agent-result> || true`
+   ```bash
+   git worktree remove --force <worktree-path> 2>/dev/null; rm -rf <worktree-path> 2>/dev/null
+   ```
 
 **Wave 2+**: After each wave completes, launch the next wave of specs that are now unblocked.
 
 ### 4. Final summary
 After all waves complete:
-1. Run `git worktree prune` to clean up stale worktree registrations
+1. Force-clean all worktrees:
+   ```bash
+   git worktree prune && rm -rf .claude/worktrees/* 2>/dev/null
+   ```
 2. Report:
    - Completed specs (with spec ID, title, and branch name)
    - Failed specs (with spec ID and reason)
