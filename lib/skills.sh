@@ -94,9 +94,9 @@ run_skill_installation() {
   done
   rm -rf "$tmpdir"
 
-  echo ""
-  tui_info "Run /find-skills in Claude Code to discover skills matched to your project"
-  echo "     Skills that understand your actual codebase are more effective than generic ones."
+  tui_hint \
+    "Run /find-skills in Claude Code to discover skills matched to your project" \
+    "Skills that understand your actual codebase are more effective than generic ones."
 
   set -e
   return 0

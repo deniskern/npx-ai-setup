@@ -294,6 +294,17 @@ tui_success() {
   printf '  %b%s%b %s\n' "$TUI_GREEN" "$TUI_OK" "$TUI_RESET" "$1"
 }
 
+# tui_hint "line1" ["line2" ...]  — visually distinct callout for tips/next steps
+tui_hint() {
+  _tui_init
+  printf '\n  %b%s%s Tip%b\n' "$TUI_YELLOW" "$TUI_TL" "$TUI_H$TUI_H" "$TUI_RESET"
+  local line
+  for line in "$@"; do
+    printf '  %b%s%b  %s\n' "$TUI_YELLOW" "$TUI_V" "$TUI_RESET" "$line"
+  done
+  printf '\n'
+}
+
 tui_warn() {
   _tui_init
   printf '  %b%s%b %s\n' "$TUI_YELLOW" "$TUI_WARN" "$TUI_RESET" "$1"
