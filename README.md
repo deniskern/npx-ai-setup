@@ -99,6 +99,7 @@ npx github:onedot-digital-crew/npx-ai-setup [flags]
 --force-skills            # Re-run skill discovery even if skills already exist
 --audit                   # Run audit mode for managed-file drift checks
 --patch <pattern>         # Fast sync: copy only templates matching pattern (e.g. --patch spec-work)
+--reset                   # Delete all managed files, then reinstall from scratch
 ```
 
 Framework-specific boilerplate is selected interactively during setup. Regeneration is available from the update flow instead of a standalone flag.
@@ -112,6 +113,25 @@ Run the same command again — the script auto-detects and offers:
 - **Update files** — compare each template, ask before overwriting user-modified files
 - **Regenerate** — re-run Claude analysis (CLAUDE.md, AGENTS.md, context, commands, skills)
 - **Clean reinstall** — remove all managed files, fresh install
+
+### Reset (complete clean reinstall)
+
+Use `--reset` when you want to wipe all setup-managed files and reinstall from scratch:
+
+```bash
+npx github:onedot-digital-crew/npx-ai-setup --reset
+```
+
+What gets deleted (with confirmation prompt):
+- `.claude/commands/`, `.claude/rules/`, `.claude/scripts/`, `.claude/hooks/`
+- Template-matched skills in `.claude/skills/` (custom skills are preserved)
+- Template-matched agents in `.claude/agents/`
+- `.claude/settings.json`, `.claudeignore`, `AGENTS.md`, `WORKFLOW-GUIDE.md`
+- `.gemini/settings.json`, `.codex/config.toml`, `.github/` templates, `opencode.json`
+
+**Never deleted automatically:** `CLAUDE.md`, `specs/`, `.agents/memory/`, `.claude/settings.local.json`
+
+After reset, the script prints exact `rm` commands for those files if you want a full wipe.
 
 ### Update existing projects in ~60s
 
