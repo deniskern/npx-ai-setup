@@ -87,6 +87,7 @@ handle_version_check() {
     ask_single_choice_menu "What should happen next?" --default 1 \
       "Update files|Sync changed template files|Recommended" \
       "Regenerate|Rebuild docs, context, commands, and skills" \
+      "Reset|Remove all managed files and reinstall from scratch|Destructive" \
       "Skip|Exit without changes|Default"
     UPTODATE_CHOICE="${TUI_MENU_INDEX:-1}"
 
@@ -118,6 +119,9 @@ handle_version_check() {
         fi
         show_update_next_steps
         exit "$regen_ok"
+        ;;
+      3)
+        run_reset
         ;;
       *)
         echo "   Skipped. No changes made."
