@@ -2,27 +2,8 @@
 
 ## Memory
 
-**Built-in Auto Memory** — Claude automatically saves notes to `.agents/memory/MEMORY.md` in this project. No setup required. Claude writes to this file during sessions and reads it back at the start of each conversation to maintain continuity.
-
-**claude-mem** (optional) — structured observation database with semantic search across sessions. Install if you want cross-session search and team-shared memory:
-```
-/plugin marketplace add thedotmack/claude-mem
-/plugin install claude-mem
-```
-
-## Tips
-
-- `ultrathink:` prefix — triggers extended reasoning without switching models.
-  Example: `ultrathink: refactor this auth module`
-- `! command` — run a bash command instantly without token overhead.
-  Example: `! git log --oneline -10`
-- `@path/to/file` — import file contents compactly into context.
-  Example: `@src/auth/index.ts`
-- One task per conversation — start a fresh session for unrelated work to prevent context bleed.
-- `Esc Esc` — rewind or summarize the last response to recover tokens when context grows large.
-- `/rename` + `/resume` — rename the current session for easy retrieval, then resume it later with `/resume`.
-- Commit after each completed task — creates a checkpoint you can revert to if later changes go wrong.
-- New to this setup? Read `.claude/WORKFLOW-GUIDE.md` for a full commands reference and workflow walkthrough.
+**Built-in**: Auto-saves to `.agents/memory/MEMORY.md`. No setup required.
+**claude-mem** (optional): Cross-session semantic search. Install: `/plugin marketplace add thedotmack/claude-mem && /plugin install claude-mem`
 
 ## MCP Servers
 
@@ -55,10 +36,9 @@ For complex tasks needing full details, use `/context-load STACK.md` (or ARCHITE
 Never read or search inside build output directories (dist/, .output/, .nuxt/, .next/, build/, coverage/). These directories contain generated artifacts that waste tokens and pollute context.
 
 ## Token Optimization
-- **RTK** auto-compresses CLI output (git, grep, test) by 60-90%. If installed, hooks are active transparently.
 - **Prep-scripts** (`.claude/scripts/*-prep.sh`) gather data in shell before Claude analyzes — zero tokens on green paths.
 - **Defuddle** (`defuddle parse <url> --md`) replaces WebFetch for web pages — strips noise, saves ~80% tokens.
-- Run `rtk gain` to check current token savings. See `.claude/docs/token-optimization.md` for the full guide.
+- See `.claude/docs/token-optimization.md` for the full guide.
 
 ## Task Complexity Routing
 Before starting, classify and state the task tier:
@@ -71,32 +51,18 @@ Before starting, classify and state the task tier:
 Never start a complex task without flagging the model requirement first.
 
 ## Verification
-Claiming work is complete without verification is dishonesty, not efficiency.
+**Iron Law**: Run verification in THIS message before claiming it passes.
 
-**Iron Law**: If you haven't run the verification command in THIS message, you cannot claim it passes.
-
-Before marking done:
-- Run tests if available (`/test`)
-- For UI changes: use browser tools or describe expected result
-- For API changes: make a test request
-- Check the build still passes
-
-**Red Flags** — these words mean you skipped verification: "should work", "probably passes", "seems to", "looks correct".
-
-Never mark work as completed without BOTH:
-1. Automated checks pass (tests green, linter clean, build succeeds)
-2. Explicit statement: "Verification complete: [what was checked and result]"
+Before marking done: run tests (`/test`), check the build, make a test request for API changes.
+Never say "should work" or "probably passes" — those mean you skipped verification.
+Required: automated checks pass + "Verification complete: [what was checked]".
 
 ## Context Management
 Run `/compact` at 80% context. Before ending a session, run `/pause` — it captures state into `.continue-here.md` and commits a WIP checkpoint.
 After a fresh start, run `/resume` to restore state and route to the next action.
 
 ## Parallel Orchestration
-Use subagents by default for focused delegated work.
-If teammates must coordinate directly, use experimental agent teams (enable only when needed):
-- Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in local Claude settings or environment
-- Start with 3-5 teammates for independent tasks
-- Clean up the team after completion
+Use subagents by default. For direct agent coordination: set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use 3-5 teammates, clean up after.
 
 ## Automation (Agent SDK CLI)
 For non-interactive runs, use `claude -p "<prompt>"`.
