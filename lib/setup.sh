@@ -150,12 +150,6 @@ cleanup_legacy() {
   [ -d ".claude/skills/template-skill" ] && FOUND+=(".claude/skills/template-skill/")
   [ -d ".claude/skills/learn" ] && FOUND+=(".claude/skills/learn/")
   [ -f ".claude/INIT.md" ] && FOUND+=(".claude/INIT.md")
-  [ -f ".claude/commands/spec.md" ] && FOUND+=(".claude/commands/spec.md")
-  [ -f ".claude/commands/spec-work.md" ] && FOUND+=(".claude/commands/spec-work.md")
-  [ -f ".claude/commands/spec-review.md" ] && FOUND+=(".claude/commands/spec-review.md")
-  [ -f ".claude/commands/spec-validate.md" ] && FOUND+=(".claude/commands/spec-validate.md")
-  [ -f ".claude/commands/spec-board.md" ] && FOUND+=(".claude/commands/spec-board.md")
-  [ -f ".claude/commands/spec-work-all.md" ] && FOUND+=(".claude/commands/spec-work-all.md")
   [ -d "skills/" ] && FOUND+=("skills/")
   [ -d ".skillkit/" ] && FOUND+=(".skillkit/")
   [ -f "skillkit.yaml" ] && FOUND+=("skillkit.yaml")
@@ -176,6 +170,58 @@ cleanup_legacy() {
     fi
   else
     tui_success "No legacy structures found"
+  fi
+}
+
+# Diff-based orphan cleanup: remove managed files/dirs that no longer exist in their template source.
+# Covers commands, rules, scripts, hooks, and skills directories.
+# Runs AFTER all installs so comparisons reflect the current template state.
+cleanup_orphans() {
+  local ORPHANS=()
+
+  # Helper: find files in $target_dir not present in $src_dir
+  _find_orphan_files() {
+    local src="$1" target="$2" glob="${3:-*}"
+    [ -d "$src" ] && [ -d "$target" ] || return
+    while IFS= read -r -d '' f; do
+      local name="${f##*/}"
+      [ -f "$src/$name" ] || ORPHANS+=("$target/$name")
+    done < <(find "$target" -maxdepth 1 -type f -name "$glob" -print0 2>/dev/null)
+  }
+
+  # Helper: find subdirs in $target_dir not present in $src_dir
+  _find_orphan_dirs() {
+    local src="$1" target="$2"
+    [ -d "$src" ] && [ -d "$target" ] || return
+    while IFS= read -r -d '' d; do
+      local name="${d##*/}"
+      [ -d "$src/$name" ] || ORPHANS+=("$target/$name/")
+    done < <(find "$target" -maxdepth 1 -mindepth 1 -type d -print0 2>/dev/null)
+  }
+
+  _find_orphan_files "$TPL/commands"      ".claude/commands"  "*.md"
+  _find_orphan_files "$TPL/claude/rules"  ".claude/rules"     "*.md"
+  _find_orphan_files "$TPL/scripts"       ".claude/scripts"   "*.sh"
+  _find_orphan_files "$TPL/claude/hooks"  ".claude/hooks"
+  _find_orphan_dirs  "$TPL/skills"        ".claude/skills"
+
+  if [ ${#ORPHANS[@]} -eq 0 ]; then
+    tui_success "No orphaned managed files found"
+    return 0
+  fi
+
+  tui_warn "Orphaned files found (no longer in templates)"
+  for f in "${ORPHANS[@]}"; do echo "   - $f"; done
+  echo ""
+  if ask_yes_no_menu \
+    "Remove orphaned files?" \
+    "Yes" "Delete them now" \
+    "No" "Keep them and continue" \
+    "yes"; then
+    for f in "${ORPHANS[@]}"; do rm -rf "$f"; done
+    tui_success "Orphan cleanup complete (${#ORPHANS[@]} items removed)"
+  else
+    tui_info "Orphan cleanup skipped"
   fi
 }
 

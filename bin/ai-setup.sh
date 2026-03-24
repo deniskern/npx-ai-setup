@@ -106,6 +106,7 @@ install_commands
 install_claude_scripts
 install_spec_skills
 install_agents
+cleanup_orphans
 select_boilerplate_system
 customize_settings_for_stack
 tui_step "Writing installation metadata"
