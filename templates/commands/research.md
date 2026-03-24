@@ -137,9 +137,25 @@ Continue interviewing until the user signals they're satisfied. Minimum 2 rounds
 
 ---
 
+## Phase 5.5 — Philosophy Check (mandatory before specs)
+
+Before creating any specs, validate each candidate against the project's core principles.
+
+1. Read `CONCEPT.md` (or `.agents/context/CONCEPT.md`) and `decisions.md` if they exist
+2. For each remaining candidate, check:
+   - Does it ADD safety or REMOVE it? (npx-ai-setup is safety-first — reject anything that removes guardrails)
+   - Does it belong in the base setup or in a boilerplate/stack-specific layer?
+   - Does an existing feature already cover this? (read the actual command/agent/hook, not just the name)
+3. Present a suitability verdict per candidate: GO / PIVOT (right idea, wrong layer) / SKIP (doesn't fit)
+4. Only GO candidates proceed to Phase 6
+
+This phase exists because /research tends to generate enthusiasm — scraping a repo reveals many patterns, and the interview selects favorites. Without this gate, specs get created and then cancelled after deeper review. The gate saves that wasted effort.
+
+---
+
 ## Phase 6 — Spec Creation Gate
 
-After interview rounds, present final prioritized list:
+After philosophy check, present final prioritized list of GO candidates only:
 
 Use `AskUserQuestion` with multiSelect: true — one option per adoption candidate.
 
