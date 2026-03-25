@@ -19,9 +19,13 @@ _smart_merge_file() {
   # Require claude CLI
   command -v claude >/dev/null 2>&1 || return 1
 
-  local tmp_prompt tmp_out
+  local tmp_prompt tmp_out tmp_target
   tmp_prompt=$(mktemp)
   tmp_out=$(mktemp)
+  tmp_target="${target}.merge-tmp"
+
+  # Ensure cleanup on all exit paths (signals, set -e, normal return)
+  trap 'rm -f "$tmp_prompt" "$tmp_out"' RETURN
 
   cat > "$tmp_prompt" << 'MERGE_PROMPT_EOF'
 Merge two versions of a configuration file. Output ONLY the merged file content — no explanation, no preamble, no code fences.
@@ -39,15 +43,20 @@ MERGE_PROMPT_EOF
   printf '\n=== LOCAL (user-modified) ===\n' >> "$tmp_prompt"
   cat "$target" >> "$tmp_prompt"
 
+  # Note: "$(cat file)" command substitution is safe here — the result is a single
+  # string argument; shell metacharacters in file content are NOT re-evaluated.
   if claude -p "$(cat "$tmp_prompt")" --model claude-haiku-4-5 --output-format text > "$tmp_out" 2>/dev/null; then
     if [ -s "$tmp_out" ]; then
-      cp "$tmp_out" "$target"
-      rm -f "$tmp_prompt" "$tmp_out"
+      # Atomic write: cp to .merge-tmp then mv (mv is atomic on same filesystem)
+      cp "$tmp_out" "$tmp_target" && mv "$tmp_target" "$target" || {
+        rm -f "$tmp_target"
+        return 1
+      }
       return 0
     fi
   fi
 
-  rm -f "$tmp_prompt" "$tmp_out"
+  rm -f "$tmp_target"
   return 1
 }
 
