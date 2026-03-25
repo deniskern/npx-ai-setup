@@ -8,7 +8,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 <!-- Entries are prepended below this line, newest first -->
 
-## [Unreleased]
+## [v2.0.3] — 2026-03-26
 
 ### Was ist neu für dich
 
