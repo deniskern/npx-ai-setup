@@ -13,10 +13,3 @@ For full details: `/context-load STACK.md` (or ARCHITECTURE.md, CONVENTIONS.md, 
 
 Never read or search inside: `dist/`, `.output/`, `.nuxt/`, `.next/`, `build/`, `coverage/`.
 
-## Commands
-
-<!-- Auto-Init populates this -->
-
-## Critical Rules
-
-<!-- Auto-Init populates this -->
