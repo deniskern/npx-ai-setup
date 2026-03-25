@@ -1,4 +1,5 @@
 ---
+description: Scans recently changed files for tech debt and fixes safe wins. Use at end of session to clean up before committing.
 model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent
 ---

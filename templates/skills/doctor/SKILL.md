@@ -1,4 +1,5 @@
 ---
+description: Run AI setup health check (12 checks: hooks, settings, context files, CLAUDE.md size, MCP, skills, scripts, git config, metadata, specs).
 disable-model-invocation: true
 ---
 

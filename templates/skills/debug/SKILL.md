@@ -1,4 +1,5 @@
 ---
+description: "Investigates and fixes bug: $ARGUMENTS. Use when a defect needs hypothesis-driven root-cause analysis and a minimal targeted fix."
 model: sonnet
 argument-hint: "[bug description]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent

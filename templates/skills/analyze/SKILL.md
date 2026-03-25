@@ -1,4 +1,5 @@
 ---
+description: Produces a structured codebase overview via parallel agents. Use when exploring or preparing for major changes.
 model: sonnet
 allowed-tools: Read, Glob, Grep, Bash, Agent
 ---

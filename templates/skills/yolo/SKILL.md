@@ -1,4 +1,5 @@
 ---
+description: "Autonomous execution mode. Execute the task described in **$ARGUMENTS** fully independently — plan, implement, verify, commit, repeat until done."
 model: sonnet
 argument-hint: "[task description]"
 allowed-tools: Read, Edit, Write, Bash, Glob, Grep, Agent, WebFetch, WebSearch
