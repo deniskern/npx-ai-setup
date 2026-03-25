@@ -90,7 +90,7 @@ Sort by priority descending. Max 8 findings — cut noise below ⚪.
 - If a finding references a file, verify the issue still exists before including it.
 - If both data sources return nothing, report: "No signal in last 30 days — setup looks clean."
 - Skip findings that duplicate what's already in `.agents/context/LEARNINGS.md`.
-- Haiku for all MCP searches; Sonnet only for pattern synthesis.
+- **Model routing**: Use `model: haiku` for all MCP searches (Steps 2–3). Use `model: sonnet` only for pattern synthesis (Step 4 onwards). Never use Opus in this skill.
 
 ## Next Step
 
