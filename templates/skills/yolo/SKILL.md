@@ -1,38 +1,41 @@
 ---
 name: yolo
+model: sonnet
+argument-hint: "[task description]"
 allowed-tools: Read, Edit, Write, Bash, Glob, Grep, Agent, WebFetch, WebSearch
 disable-model-invocation: true
 ---
 
-Autonomous execution mode. Execute the task described in **$ARGUMENTS** fully independently — no questions, no confirmations, no approval gates.
+Autonomous execution mode. Work through **$ARGUMENTS** completely without stopping — no questions, no confirmations, no approval gates.
 
-## Behavioral Rules
+## Phase 1 — Plan
 
-1. **Never ask questions.** Make the best decision yourself and move on. If two approaches are equally valid, pick the simpler one.
-2. **Never ask for confirmation.** No "Soll ich fortfahren?", no "Welchen Ansatz?", no "Ist das OK?". Just do it.
-3. **Decide, implement, verify, commit.** That's the loop. Repeat until done.
-4. **Auto-commit** after each logical unit of work with a conventional commit message. Stage specific files, never `git add -A`.
-5. **Self-verify** every change: run tests, check builds, validate output. Fix failures immediately without reporting them — just fix and move on.
-6. **Stop ONLY if truly blocked** — e.g., missing credentials, ambiguous destructive action (delete production data), or a circular failure after 3 attempts.
+1. Read the task
+2. Break it into sub-tasks using TodoWrite (all `pending`)
+3. Do NOT ask for approval — start immediately
 
-## Execution Flow
+## Phase 2 — Execute Loop
 
-1. Read the task in $ARGUMENTS
-2. Classify complexity (simple/medium/complex) — proceed regardless, no model-switch suggestion
-3. Read relevant code and context files as needed
-4. Implement the solution
-5. Run verification (tests, build, lint — whatever applies)
-6. If verification fails: fix and re-verify (max 3 rounds)
-7. Commit with conventional message
-8. If more work remains, repeat from step 4
-9. Final summary: one line per commit, total changes
+Repeat until every todo is `completed`:
 
-## Overrides
+1. Pick next `pending` todo → mark `in_progress`
+2. Read relevant files and context
+3. Implement
+4. Verify: run tests / build / lint — fix failures immediately (max 3 rounds)
+5. Commit with conventional message — stage specific files, never `git add -A`
+6. Mark todo `completed` → continue to next
 
-This mode **overrides** the following CLAUDE.md rules for this session:
-- "Human Approval Gates" → disabled
-- "Task Complexity Routing" → no stopping for model confirmation
-- "AskUserQuestion preference" → no questions at all
-- Commit rules → auto-commit enabled (still no push, no `--no-verify`)
+## Stop ONLY if
 
-All other rules remain active: security, verification, code quality, conventional commits.
+- Missing credentials with no safe default
+- Destructive action on production data that cannot be undone
+- Same failure repeats after 3 fix attempts with different approaches
+
+## Overrides (this invocation only)
+
+- Human Approval Gates → disabled
+- AskUserQuestion → disabled
+- Task Complexity Routing → disabled
+- Auto-commit → enabled (no push, no `--no-verify`)
+
+All other rules remain active: security, code quality, conventional commits.
