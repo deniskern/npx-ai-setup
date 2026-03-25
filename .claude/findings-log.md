@@ -9,6 +9,9 @@
 <!-- Format: - [ ] [Category] Title — Fix applied: `file:line` or Spec NNN -->
 - [x] [E] Specs 577+578 in specs/ nicht zu completed/ verschoben — verschoben (2026-03-25)
 - [ ] [T] Haiku 0% — Verifikation nach Spec 578 ausständig; nächste Session mit /analyze triggern und Modell-Split prüfen
+- [x] [T] Template CLAUDE.md fehlte Model-Routing-Sektion — 8 Zeilen ergänzt, templates/CLAUDE.md (2026-03-26)
+- [x] [T] spec-work SKILL.md 11.5KB → 4.4KB (62% Reduktion) — Verbose Erklärungen, Debugging-Discipline, Blockquotes kondensiert (2026-03-26)
+- [x] [T] apply-learnings Mapping für CLAUDE.md — bereits vorhanden (Zeile 19), stale Observation #25044 (2026-03-26)
 - [x] [T] template/skills/ nicht mit .claude/skills/ synchronisiert — token-optimizer 295→142, release 214→86, spec 187→115 (2026-03-25)
 - [x] [Q] update.sh Version-Check schlägt lautlos fehl bei GitHub API Fehler — tui_hint nach letztem Fallback ergänzt, lib/update.sh:60 (2026-03-25)
 - [x] [E] Spec-Backlog 165–170 obsolet (alte Nummerierungsrunde) — alle 6 nach specs/completed/ verschoben (2026-03-25)

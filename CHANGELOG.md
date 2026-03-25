@@ -8,6 +8,33 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 <!-- Entries are prepended below this line, newest first -->
 
+## [Unreleased]
+
+### Was ist neu für dich
+
+**Alle Skills jetzt automatisch erkennbar.**
+33 von 33 Template-Skills haben jetzt eine `description` im Frontmatter. Claude Code erkennt dadurch den passenden Skill automatisch, ohne den gesamten Skill-Body lesen zu müssen. Vorher fehlte die Description bei 20 Skills.
+
+**Model-Routing direkt im Projekt.**
+Neue Projekte bekommen über `templates/CLAUDE.md` eine Haiku/Sonnet/Opus-Routing-Tabelle. Subagents laufen damit von Anfang an auf dem richtigen Modell — kein manuelles Nachkonfigurieren nötig.
+
+**spec-work um 62% schlanker.**
+Der meistgenutzte Skill (`/spec-work`) ist von 11.5KB auf 4.4KB getrimmt — spart ~1.400 Tokens pro Aufruf bei gleichem Verhalten.
+
+**Statusline zeigt mehr Kontext.**
+Specs-Count, ai-setup-Version und Kalenderwochen-Datum direkt in der Claude Code Statusline sichtbar.
+
+### Technische Details
+
+- All 33 template skills now have `description:` frontmatter for Claude Code skill discovery
+- `templates/CLAUDE.md`: Model Routing section added (Haiku for search/explore, Sonnet for implementation, Opus for architecture)
+- `spec-work/SKILL.md`: 141 → 81 lines, 11.5KB → 4.4KB — removed debugging discipline, condensed Haiku Investigator, trimmed stall detection
+- Statusline: specs count via `ls specs/*.md`, ai-setup version from `.ai-setup.json`, weekly date in English format
+- `findings-log.md`: deduplication pre-filter prevents session-optimize from re-reporting addressed findings
+- `session-extract.sh`: progress message and Agent-tool-call fallback for accurate subagent counts
+
+**Update:** `npx github:onedot-digital-crew/npx-ai-setup`
+
 ## [v2.0.2] — 2026-03-25
 
 ### Was ist neu für dich
