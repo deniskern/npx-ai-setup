@@ -97,6 +97,6 @@ Sort by priority descending. Max 8 findings — cut noise below ⚪.
 
 ## Next Step
 
-Review findings and pick top items to address. For each fix: open a spec (`/spec-create`) or apply directly if it's a single-line change.
+Review findings and pick top items to address. For each fix: open a spec (`/spec`) or apply directly if it's a single-line change.
 
 After the report: add all new findings to `.claude/findings-log.md` under `## Open`. When a finding is resolved, move it to `## Addressed` with date and fix reference.

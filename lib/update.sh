@@ -57,7 +57,10 @@ show_cli_update_notice() {
     [ -n "$latest" ] && printf '%s\n' "$latest" > "$cache"
   fi
 
-  [ -n "$latest" ] || return 0
+  if [ -z "$latest" ]; then
+    tui_hint "Version check unavailable — npm registry and GitHub API both unreachable" || true
+    return 0
+  fi
   # Only show notice when registry version is strictly newer (semver compare)
   if [ "$latest" != "$current" ] && _semver_gt "$latest" "$current"; then
     echo ""

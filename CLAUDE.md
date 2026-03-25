@@ -76,6 +76,7 @@ Auto-compact triggers at 80% context (`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`).
 - `/clear` — reset between unrelated tasks; use `/rename` first to save session
 Before ending a session, run `/pause` — captures state into `.continue-here.md`.
 After a fresh start, run `/resume` to restore state and route to the next action.
+After sessions with >30 tool calls: run `/reflect` then `/commit` to capture learnings and checkpoint.
 
 ## Parallel Orchestration
 Use subagents by default. For direct agent coordination: set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use 3-5 teammates, clean up after.

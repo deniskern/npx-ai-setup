@@ -103,9 +103,9 @@ for filepath in files:
 
     total_tools = sum(tool_counts.values())
 
-    # Skills invoked
+    # Skills invoked (check both assistant and progress messages)
     skills = []
-    for e in assistant_msgs:
+    for e in assistant_msgs + progress_msgs:
         msg = e.get('message', {})
         content = msg.get('content', []) if isinstance(msg, dict) else []
         if isinstance(content, list):
@@ -115,9 +115,19 @@ for filepath in files:
                     if isinstance(inp, dict):
                         skills.append(inp.get('skill', '?'))
 
-    # Subagent count
+    # Agent tool calls (proxy for subagents spawned via skills)
+    agent_calls = 0
+    for e in assistant_msgs + progress_msgs:
+        msg = e.get('message', {})
+        content = msg.get('content', []) if isinstance(msg, dict) else []
+        if isinstance(content, list):
+            for c in content:
+                if isinstance(c, dict) and c.get('type') == 'tool_use' and c.get('name') == 'Agent':
+                    agent_calls += 1
+
+    # Subagent count — directory first, fall back to Agent tool call count
     subagent_dir = os.path.join(os.path.dirname(filepath), session_id, 'subagents')
-    subagent_count = len([f for f in os.listdir(subagent_dir) if f.endswith('.jsonl')]) if os.path.isdir(subagent_dir) else 0
+    subagent_count = len([f for f in os.listdir(subagent_dir) if f.endswith('.jsonl')]) if os.path.isdir(subagent_dir) else agent_calls
 
     # Token estimate (rough: count text characters in assistant responses)
     assistant_chars = 0

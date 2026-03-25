@@ -57,7 +57,7 @@ build_template_map
 # Superseded by install_skills() which installs all templates/skills/ generically.
 SPEC_SKILLS_MAP=(
   "templates/skills/spec-board/SKILL.md:.claude/skills/spec-board/SKILL.md"
-  "templates/skills/spec-create/SKILL.md:.claude/skills/spec-create/SKILL.md"
+  "templates/skills/spec/SKILL.md:.claude/skills/spec/SKILL.md"
   "templates/skills/spec-review/SKILL.md:.claude/skills/spec-review/SKILL.md"
   "templates/skills/spec-validate/SKILL.md:.claude/skills/spec-validate/SKILL.md"
   "templates/skills/spec-work/SKILL.md:.claude/skills/spec-work/SKILL.md"

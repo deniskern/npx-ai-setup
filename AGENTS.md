@@ -27,7 +27,7 @@ Primary project commands come from `package.json` scripts. Spec workflow skills 
 
 | Skill | Purpose |
 |-------|---------|
-| spec-create | Create a structured implementation plan |
+| spec | Create a structured implementation plan |
 | spec-work | Execute a spec step by step |
 | spec-board | Show Kanban overview of all specs |
 | spec-review | Review completed spec against acceptance criteria |

@@ -7,15 +7,21 @@
 
 <!-- Add new findings here after each /session-optimize run -->
 <!-- Format: - [ ] [Category] Title — Fix applied: `file:line` or Spec NNN -->
-- [ ] [E] Specs 577+578 in specs/ nicht zu completed/ verschoben — `mv specs/577-*.md specs/578-*.md specs/completed/`
+- [x] [E] Specs 577+578 in specs/ nicht zu completed/ verschoben — verschoben (2026-03-25)
 - [ ] [T] Haiku 0% — Verifikation nach Spec 578 ausständig; nächste Session mit /analyze triggern und Modell-Split prüfen
-- [ ] [Q] update.sh Version-Check schlägt lautlos fehl bei GitHub API Fehler — Warn-Ausgabe nach letztem Fallback ergänzen (`lib/update.sh:57`)
-- [ ] [E] Spec-Backlog 165–170 obsolet (alte Nummerierungsrunde) — prüfen ob noch relevant, ggf. löschen
+- [x] [Q] update.sh Version-Check schlägt lautlos fehl bei GitHub API Fehler — tui_hint nach letztem Fallback ergänzt, lib/update.sh:60 (2026-03-25)
+- [x] [E] Spec-Backlog 165–170 obsolet (alte Nummerierungsrunde) — alle 6 nach specs/completed/ verschoben (2026-03-25)
+- [x] [T] Keine Skills in hochkomplexen Sessions — /reflect + /commit nach >30 Tool-Call Sessions in CLAUDE.md ergänzt (2026-03-25)
+- [x] [T] Template Domain-Skills laden für alle User — obsolet: Domain-Skills kommen aus Boilerplates, nicht aus core templates (2026-03-25)
 - [x] [T] agent-browser/SKILL.md 686 Zeilen (26KB, ~6.500 Token) — auf 81 Zeilen (2.3KB) getrimmt, Spec 586 (2026-03-25)
+
+- [x] [E] /analyze unsichtbar in Session-Metriken — session-extract.sh: progress_msgs + Agent-tool-call-Fallback für Subagent-Count (2026-03-25)
+- [x] [T] token-optimizer/SKILL.md 350→142 Zeilen — Bash-Details aus Agent-Prompts entfernt (2026-03-25)
+- [x] [T] release/SKILL.md 214→86 Zeilen — Phase 2 Inventory kondensiert, Slack-Template gestrafft (2026-03-25)
 
 ## Addressed
 
-<!-- Move items here once fixed. Keep for 90 days, then delete. -->
+<!-- Move items here once fixed. Keep for 30 days, then delete. -->
 
 - [x] [E] session-optimize repeated same findings — findings-log.md als Pre-Filter eingebaut, Spec 584 (2026-03-25)
 - [x] [T] spec-review Agent-Spawns ohne explizites Model — `model: sonnet` ergänzt, Spec 583 (2026-03-25)
