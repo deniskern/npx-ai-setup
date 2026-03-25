@@ -13,3 +13,13 @@ For full details: `/context-load STACK.md` (or ARCHITECTURE.md, CONVENTIONS.md, 
 
 Never read or search inside: `dist/`, `.output/`, `.nuxt/`, `.next/`, `build/`, `coverage/`.
 
+## Automation (Agent SDK CLI)
+Non-interactive runs: `claude -p "<prompt>"`. Structured output: `--output-format json`.
+`--bare` — CI-recommended: disables Hooks/Skills/MCP, reproducible runs (becomes default for `-p`).
+`--max-budget-usd 0.50` / `--max-turns 20` — cost controls for automated agents.
+`--fallback-model <model>` — model fallback on rate limits. `--no-session-persistence` — stateless runs.
+
+## Permission Modes
+`Shift+Tab` cycles: `default` → `acceptEdits` → `plan` → `auto` (Classifier) → `dontAsk` (pre-approved only).
+`bypassPermissions` — only in isolated VMs/containers. Settings: `{ "permissions": { "defaultMode": "..." } }`
+
