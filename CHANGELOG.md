@@ -10,6 +10,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 585**: apply-learnings Skill — LEARNINGS.md wird Transit-Log statt Endlager; neuer `/apply-learnings` Skill verteilt Einträge in korrekte Zieldateien und markiert sie als applied
 - **Spec 582**: CLAUDE.md Autonomie-Doku — `--bare` CI-Empfehlung, Budget/Turn-Controls, neue Permission Modes Section (~80 Tokens)
 - **Spec 581**: yolo Safety Guards — `--max-budget-usd`, `--max-turns` und Stall-Detection im yolo-Skill dokumentiert
 - **Spec 579**: Opus in Routine-Sessions — `reflect` und `review` Skills von `model: opus` auf `model: sonnet` geändert, `review` Mode C (Adversarial) als optionaler Opus-Aufruf dokumentiert

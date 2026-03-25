@@ -24,3 +24,5 @@ Each agent file contains `## When to Use` and `## Avoid If` sections. Read these
 - Never let subagents inherit your session context — construct exactly what they need in the prompt
 - Never invent or guess file paths — verify with Glob/Grep before referencing
 - If an agent reports a file path or symbol, verify it exists before acting on the report
+- claude-mem observations may reference worktree files never merged to main — always verify paths exist before acting on them
+- Skills with `disable-model-invocation: true` but no `model:` on agent spawns inherit the parent session model — in Opus sessions this costs 5× too much; always set `model:` explicitly on every agent spawn

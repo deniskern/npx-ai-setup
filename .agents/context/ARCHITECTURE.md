@@ -72,9 +72,15 @@ tests/              # Test suite
 5. **Hook Installation:** Install 13 safety/automation hooks into git config
 6. **Verification:** Run tests to confirm installation
 
+## Directory Ownership
+- **templates/** — end-user config (copied to projects); no dev/debug tooling
+- **.claude/** — maintainer/dev tools (metrics, debugging, hooks for this repo only)
+- **lib/skills.sh** — generic skills only; stack-specific skills belong in boilerplate repos (lib/boilerplate.sh) or via `/find-skills` on demand
+
 ## Key Patterns
 - **Modular bash:** Functions in lib/ modules, sourced via source_lib
 - **Hook-based safety:** Git hooks enforce security (pre-commit, post-commit)
 - **Template versioning:** All templates checked into git, versioned with package
 - **Spec-driven features:** Multi-file changes go through specs/NNN-title.md
 - **Parallel execution:** Multi-spec work uses worktrees and parallel agents
+- **Valid hook types:** SubagentStart and SubagentStop are confirmed valid Claude Code hook types

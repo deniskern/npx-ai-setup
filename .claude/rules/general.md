@@ -18,6 +18,10 @@ Prefer `defuddle parse <url> --md` over WebFetch for reading web pages — it st
 Alternative: prepend `https://markdown.new/` to any URL for instant markdown conversion without a CLI.
 Use WebFetch only when defuddle is unavailable or the page requires JavaScript rendering.
 
+## Research & Spec Gate
+Before /research creates specs: validate candidates against CONCEPT.md and project philosophy first — 3 of 4 specs in one session were cancelled post-creation for violating existing decisions.
+Before creating a spec from session-optimize findings: verify the finding still applies by reading the current file state — findings may describe issues already fixed.
+
 ## Sandbox Safety
 Never set `dangerouslyDisableSandbox: true` on a Bash tool call without first:
 1. Explaining to the user why the sandbox blocks the command
