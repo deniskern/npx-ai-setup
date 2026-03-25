@@ -2,10 +2,59 @@
 # Fresh install steps: requirements, templates, hooks, commands
 # Requires: core.sh ($TPL, $TEMPLATE_MAP)
 
+# Smart-merge a user-modified .md file with its upstream template via claude -p (Haiku).
+# Keeps local additions (learnings, custom rules) while applying template updates.
+# Usage: _smart_merge_file <template_src> <target>
+# Returns: 0 on success (target updated), 1 on failure (caller falls back to skip)
+_smart_merge_file() {
+  local src="$1"
+  local target="$2"
+
+  # Only merge markdown files — skip scripts and JSON (risk of invalid output)
+  case "$target" in
+    *.md) ;;
+    *) return 1 ;;
+  esac
+
+  # Require claude CLI
+  command -v claude >/dev/null 2>&1 || return 1
+
+  local tmp_prompt tmp_out
+  tmp_prompt=$(mktemp)
+  tmp_out=$(mktemp)
+
+  cat > "$tmp_prompt" << 'MERGE_PROMPT_EOF'
+Merge two versions of a configuration file. Output ONLY the merged file content — no explanation, no preamble, no code fences.
+
+Rules:
+- Keep all content from TEMPLATE that has not been intentionally removed in LOCAL
+- Preserve all LOCAL additions not present in TEMPLATE (custom rules, learnings, extra sections)
+- For existing sections present in both: TEMPLATE content takes precedence
+- No duplicate entries or sections
+- Preserve file structure, formatting, and comments exactly
+MERGE_PROMPT_EOF
+
+  printf '\n=== TEMPLATE (upstream update) ===\n' >> "$tmp_prompt"
+  cat "$src" >> "$tmp_prompt"
+  printf '\n=== LOCAL (user-modified) ===\n' >> "$tmp_prompt"
+  cat "$target" >> "$tmp_prompt"
+
+  if claude -p "$(cat "$tmp_prompt")" --model claude-haiku-4-5 --output-format text > "$tmp_out" 2>/dev/null; then
+    if [ -s "$tmp_out" ]; then
+      cp "$tmp_out" "$target"
+      rm -f "$tmp_prompt" "$tmp_out"
+      return 0
+    fi
+  fi
+
+  rm -f "$tmp_prompt" "$tmp_out"
+  return 1
+}
+
 # Install a template file, updating it if the template is newer.
 # Skips if installed file matches template checksum.
 # Updates silently if user hasn't modified the file (checksum matches .ai-setup.json).
-# Skips with notice if user has modified the file (preserves user changes).
+# Smart-merges via Haiku if user has modified the file (preserves local additions).
 # Usage: _install_or_update_file <template_path> <target_path>
 _install_or_update_file() {
   local src="$1"
@@ -39,8 +88,12 @@ _install_or_update_file() {
       " 2>/dev/null)
     fi
     if [ -n "$stored_cs" ] && [ "$stored_cs" != "$cur_cs" ]; then
-      # User modified this file — don't overwrite
-      tui_warn "$target kept (user-modified)"
+      # User modified this file — attempt smart merge, fall back to skip
+      if _smart_merge_file "$src" "$target"; then
+        tui_success "$target merged (template + local)"
+      else
+        tui_warn "$target kept (user-modified, merge unavailable)"
+      fi
       return 0
     fi
   fi

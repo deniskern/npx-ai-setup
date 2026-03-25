@@ -44,6 +44,8 @@ Orphan-Dateien aus älteren Versionen werden beim Update automatisch erkannt und
 
 ### Technische Details
 
+**Spec 586** — Smart Merge bei ai-setup-Updates: `_smart_merge_file` in `lib/setup.sh` ruft `claude -p --model claude-haiku-4-5` auf wenn user-modifizierte .md-Dateien einen Template-Update haben. Lokale Additions überleben, Template-Neuheiten landen trotzdem. Fallback auf Skip wenn `claude` nicht im PATH.
+
 **Spec 585** — `/apply-learnings` Skill: LEARNINGS.md als Transit-Log, Kategorie-Mapping auf Zieldateien (Process/CLI → CLAUDE.md, Architecture → ARCHITECTURE.md), Applied-Section mit Timestamp-Tracking, reflect Skill verlinkt auf apply-learnings als Next Step, skill in `templates/skills/` für Neuinstallationen verfügbar.
 
 **Spec 582** — CLAUDE.md Template: `--bare` CI-Empfehlung ergänzt, Budget/Turn-Controls dokumentiert, neue "Permission Modes" Section (~80 Tokens), Autonomie-Flags mit Beispielen.
