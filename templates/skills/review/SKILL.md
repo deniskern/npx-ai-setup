@@ -1,10 +1,11 @@
 ---
-model: opus
+model: sonnet
 mode: plan
 allowed-tools: Read, Glob, Grep, Bash
 ---
 
 Reviews uncommitted changes with selectable intensity. Use before committing or merging.
+Note: Mode C (Adversarial Grill) benefits from Opus — invoke with `claude --model claude-opus-4-6` if maximum depth is required.
 
 ## Step 0 — Select Intensity
 
