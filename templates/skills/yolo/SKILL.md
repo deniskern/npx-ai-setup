@@ -28,11 +28,15 @@ Repeat until every todo is `completed`:
 
 Output a single summary: one line per commit, total files changed.
 
+## Safety Guards (recommended)
+
+Use `--max-budget-usd 2` to cap spend; use `--max-turns 40` for bounded runs.
+
 ## Stop ONLY if
 
 - Missing credentials with no safe default
 - Destructive action on production data that cannot be undone
-- Same failure after 3 fix attempts with different approaches
+- Same failure after 3 fix attempts with different approaches (stall-detection)
 
 ## Overrides (this invocation only)
 
