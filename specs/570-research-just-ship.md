@@ -1,6 +1,7 @@
 # Brainstorm: Just Ship Adaptionen für npx-ai-setup
 
 > **Source**: https://github.com/yves-s/just-ship
+> **Status**: ✅ Completed — Research abgeschlossen, 4 Kandidaten-Specs erstellt (571-574, alle cancelled)
 > **Erstellt**: 2026-03-24
 > **Zweck**: Research welche Patterns aus dem Just Ship Multi-Agent-Framework adaptierbar sind
 

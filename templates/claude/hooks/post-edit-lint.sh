@@ -24,9 +24,9 @@ fi
 # ESLint for JS/TS files
 if [[ "$FILE_PATH" == *.js || "$FILE_PATH" == *.ts || "$FILE_PATH" == *.jsx || "$FILE_PATH" == *.tsx ]]; then
   if [ -x "node_modules/.bin/eslint" ]; then
-    OUTPUT=$(./node_modules/.bin/eslint "$FILE_PATH" --fix 2>&1)
+    ./node_modules/.bin/eslint "$FILE_PATH" --fix >/dev/null 2>&1
   else
-    OUTPUT=$(npx eslint "$FILE_PATH" --fix 2>&1)
+    npx eslint "$FILE_PATH" --fix >/dev/null 2>&1
   fi
   # Silent by design: lint output must not be shown to Claude.
 

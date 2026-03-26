@@ -20,7 +20,7 @@ WARN=5
 BLOCK=8
 
 # Raise thresholds when a spec is actively in-progress — planned edits, not a loop
-if [ -d specs ] && grep -rl "Status.*in-progress" specs/*.md >/dev/null 2>&1; then
+if [ -d specs ] && grep -ql "Status.*in-progress" specs/*.md 2>/dev/null; then
   WARN=12
   BLOCK=20
   # Further raise when multiple specs are in-progress (spec-work-all batch scenario)

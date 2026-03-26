@@ -1,6 +1,6 @@
 # Spec: Agent Lifecycle Hooks — SubagentStart/Stop Metriken
 
-> **Spec ID**: 574 | **Created**: 2026-03-24 | **Status**: cancelled | **Complexity**: simple | **Branch**: —
+> **Spec ID**: 574 | **Created**: 2026-03-24 | **Status**: ✅ completed (cancelled) | **Complexity**: simple | **Branch**: —
 > **Source**: [specs/570-research-just-ship.md](570-research-just-ship.md) Kandidat #4
 
 ## Goal

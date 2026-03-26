@@ -164,3 +164,19 @@
 2026-03-26T13:15:51Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
 2026-03-26T13:15:56Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 /Users/deniskern/.agents/skills/skill-creator
 2026-03-26T13:18:00Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1
+2026-03-26T13:31:30Z TOOL_FAIL tool=WebFetch interrupt=false error=Request failed with status code 404
+2026-03-26T13:34:30Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 Error: rtk find does not support compound predicates or actions (e.g. -not, -exec). Use `find` directly.
+2026-03-26T13:34:40Z TOOL_FAIL tool=Glob interrupt=false error=Ripgrep search timed out after 20 seconds. The search may have matched files but did not complete in time. Try searching a more specific path or pattern.
+2026-03-26T13:35:35Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 Error: getaddrinfo ENOTFOUND github.com
+2026-03-26T13:36:51Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 Traceback (most recent call last):   File "<string>", line 6, in <module>     name = p.get('name', p.get('id', '?'))            ^^^^^ AttributeError: 'str' object has no attribute 'get'
+2026-03-26T13:42:10Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 Checking for updates for plugin "ralph-loop" at user scope… ✘ Failed to update plugin "ralph-loop": Plugin "ralph-loop" not found
+2026-03-26T13:42:35Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 (eval):1: no matches found: /Users/deniskern/.claude/skills/token-optimizer/data/*.db
+2026-03-26T13:51:10Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 128 Schwerwiegend: Konnte Arbeitsverzeichnis '/Users/deniskern/claude-peers-mcp' nicht erstellen: Operation not permitted
+2026-03-26T13:56:16Z TOOL_FAIL tool=TeamCreate interrupt=false error=Already leading team "code-review". A leader can only manage one team at a time. Use TeamDelete to end the current team before creating a new one.
+2026-03-26T14:03:11Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
+2026-03-26T14:03:12Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
+2026-03-26T14:03:13Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
+2026-03-26T14:03:13Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
+2026-03-26T14:06:23Z TOOL_FAIL tool=Read interrupt=false error=File content (11500 tokens) exceeds maximum allowed tokens (10000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.
+2026-03-26T14:06:32Z TOOL_FAIL tool=Read interrupt=false error=File content (10333 tokens) exceeds maximum allowed tokens (10000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.
+2026-03-26T14:07:20Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 SKILL.md  1.6K  1 files, 0 dirs (1 .md) ls: /Users/deniskern/Sites/npx-ai-setup/.claude/skills/yolo/: No such file or directory

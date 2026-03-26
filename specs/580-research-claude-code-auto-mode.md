@@ -1,6 +1,7 @@
 # Brainstorm: Claude Code Auto Mode Adaptionen für npx-ai-setup
 
 > **Source**: https://code.claude.com/docs/en/best-practices#run-autonomously-with-auto-mode
+> **Status**: ✅ Completed — Research abgeschlossen, Auto-Mode dokumentiert
 > **Erstellt**: 2026-03-25
 > **Zweck**: Research welche Auto-Mode- und Autonomie-Patterns adaptierbar sind
 

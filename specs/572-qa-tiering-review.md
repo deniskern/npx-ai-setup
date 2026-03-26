@@ -1,6 +1,6 @@
 # Spec: QA-Tiering in /review — full/light/skip
 
-> **Spec ID**: 572 | **Created**: 2026-03-24 | **Status**: cancelled | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 572 | **Created**: 2026-03-24 | **Status**: ✅ completed (cancelled) | **Complexity**: medium | **Branch**: —
 > **Source**: [specs/570-research-just-ship.md](570-research-just-ship.md) Kandidat #2
 
 ## Goal

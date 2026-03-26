@@ -150,7 +150,7 @@ $(head -50 "$f" 2>/dev/null)"
     HAS_TESTS=""
     if cat package.json 2>/dev/null | grep -qE '"(jest|vitest|mocha|jasmine|ava)"'; then
       HAS_TESTS="jest/vitest/mocha"
-    elif [ -f "pytest.ini" ] || [ -f "pyproject.toml" ] && grep -q "pytest" pyproject.toml 2>/dev/null; then
+    elif [ -f "pytest.ini" ] || { [ -f "pyproject.toml" ] && grep -q "pytest" pyproject.toml 2>/dev/null; }; then
       HAS_TESTS="pytest"
     elif [ -f "requirements.txt" ] && grep -qi "pytest" requirements.txt 2>/dev/null; then
       HAS_TESTS="pytest"

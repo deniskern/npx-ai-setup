@@ -188,7 +188,7 @@ select_boilerplate_system() {
     SELECTED_SYSTEM="nuxt"
   elif ls next.config.* 1>/dev/null 2>&1; then
     SELECTED_SYSTEM="next"
-  elif [ -f "theme.liquid" ] || ls shopify.* 1>/dev/null 2>&1 || [ -d "sections" ] && [ -d "snippets" ]; then
+  elif [ -f "theme.liquid" ] || ls shopify.* 1>/dev/null 2>&1 || { [ -d "sections" ] && [ -d "snippets" ]; }; then
     SELECTED_SYSTEM="shopify"
   fi
 
