@@ -4,6 +4,8 @@
 # Requires: bash 3.2+, git, python3 (for JSON and CHANGELOG manipulation)
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # ── Dependency checks ──────────────────────────────────────────────────────────
 if ! command -v git >/dev/null 2>&1; then
   echo "ERROR: git not found in PATH" >&2; exit 1
@@ -80,6 +82,21 @@ TODAY="$(date +%Y-%m-%d)"
 
 echo "New version:     **${NEW_VERSION}** (${BUMP} bump)"
 echo ""
+
+# ── Docs audit ────────────────────────────────────────────────────────────────
+DOCS_AUDIT_SCRIPT="$SCRIPT_DIR/docs-audit.sh"
+if [ -f "$DOCS_AUDIT_SCRIPT" ]; then
+  echo "## Docs Audit"
+  echo ""
+  if bash "$DOCS_AUDIT_SCRIPT" 2>&1; then
+    echo ""
+  else
+    echo ""
+    echo "WARNING: Documentation has stale counts. Fix before releasing."
+    echo "Run: bash .claude/scripts/docs-audit.sh --fix"
+    echo ""
+  fi
+fi
 
 # ── Check CHANGELOG.md ─────────────────────────────────────────────────────────
 if [ ! -f "CHANGELOG.md" ]; then

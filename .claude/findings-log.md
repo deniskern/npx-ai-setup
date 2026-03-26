@@ -12,7 +12,11 @@
 - [x] [Q] apply-learnings Mapping für Process/CLI → CLAUDE.md war bereits vorhanden (Zeile 19) — Spec 590 (2026-03-26)
 - [x] [T] templates/claude/rules/agents.md hat bereits Model-Routing — Spec 591 (2026-03-26)
 - [x] [E] Specs 577+578 in specs/ nicht zu completed/ verschoben — verschoben (2026-03-25)
-- [ ] [T] Haiku 0% — Verifikation nach Spec 578 ausständig; nächste Session mit /analyze triggern und Modell-Split prüfen
+- [ ] [T] Haiku 0% — Verifikation nach Spec 578 ausständig; Sonnet-Limit aktuell voll, Validierung ab ~2026-03-30 möglich
+- [ ] [T] Opus für Non-Code-Projekte (Obsidian, Finanzplanung) — Sonnet reicht für Markdown-Editing, 15x günstiger
+- [ ] [E] npx-ai-setup Sessions haben quasi keine Subagents (0-2) trotz 100+ Tool-Calls — Skills wie /analyze, /review nutzen
+- [ ] [T] Große Opus-Sessions ohne Parallelisierung (mcp-platform 226 Tools/2 SA, shop-force-os 212 Tools/5 SA)
+- [ ] [E] Projekte ohne ai-setup haben 0 Subagents — crew-buddy, mcp-platform, Obsidian Vaults fehlt Parallelisierungs-Guidance
 - [x] [T] Template CLAUDE.md fehlte Model-Routing-Sektion — 8 Zeilen ergänzt, templates/CLAUDE.md (2026-03-26)
 - [x] [T] spec-work SKILL.md 11.5KB → 4.4KB (62% Reduktion) — Verbose Erklärungen, Debugging-Discipline, Blockquotes kondensiert (2026-03-26)
 - [x] [T] apply-learnings Mapping für CLAUDE.md — bereits vorhanden (Zeile 19), stale Observation #25044 (2026-03-26)
