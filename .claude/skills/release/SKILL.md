@@ -46,9 +46,12 @@ Update `package.json` version. Update `CHANGELOG.md`: rename `[Unreleased]` → 
 
 ### Phase 5: Slack Announcement
 
-Generate dev team message. Only include categories with entries:
+Generate dev team message and write it into `CHANGELOG.md` directly below the version heading, wrapped in `<!-- slack-announcement -->` / `<!-- /slack-announcement -->` markers. This block is automatically posted to Slack.
+
+Only include categories with entries:
 
 ```
+<!-- slack-announcement -->
 :rocket: *@onedot/ai-setup vX.Y.Z*
 
 *Was ist neu:*
@@ -60,9 +63,10 @@ Generate dev team message. Only include categories with entries:
 
 *Zahlen:* N Commands | N Agents | N Hooks | N Skills
 *Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
 ```
 
-Show copy-ready, ask: "Passt so" / "Anpassen" / "Ohne Slack"
+Show the generated message and ask: "Passt so" / "Anpassen" / "Ohne Slack"
 
 ### Phase 6: Commit and Tag
 
