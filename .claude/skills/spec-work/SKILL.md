@@ -67,6 +67,18 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     - High: spawn `code-reviewer` + `staff-reviewer` in parallel.
     - FAIL → leave `in-review`, report issues. PASS/CONCERNS → set `completed`, move to `specs/completed/`.
 
+## Skill-Trimming Quality Gate
+
+When a spec modifies SKILL.md files (trimming, condensing, refactoring): after all steps, before step 13, spawn a **quality-diff subagent** (model: haiku):
+
+**Prompt**: "Compare the original and trimmed versions of these SKILL.md files. For each file:
+1. Run `git diff HEAD -- <file>` to see what changed
+2. List every REMOVED functional element (commands, decision tables, agent spawn instructions, output format templates, conditional logic, file paths, specific flags/options)
+3. For each removed element: classify as REDUNDANT (obvious to Claude, derivable from context) or CRITICAL (specific values, formats, or logic that Claude would not infer)
+4. Report: file, removed element, classification, risk if missing"
+
+**Gate**: If any element is classified CRITICAL → stop, report to user, do NOT mark spec as completed. Re-add the critical elements before proceeding.
+
 ## Rules
 - **ALWAYS update status and move the file when done.**
 - Follow the spec exactly — nothing outside Steps and scope.

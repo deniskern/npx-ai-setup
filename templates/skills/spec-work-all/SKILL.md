@@ -11,103 +11,47 @@ Executes all draft specs in `specs/` in dependency-aware waves using isolated Gi
 ## Process
 
 ### 1. Discover draft specs
-Scan `specs/` for all `NNN-*.md` files (excluding `specs/completed/`). Only pick specs with `Status: draft`. Read each spec's Goal and Out of Scope to build a dependency map.
+Scan `specs/` for `NNN-*.md` (excluding `specs/completed/`). Only `Status: draft`. Read Goal and Out of Scope for dependency map. No drafts → report and stop.
 
 ### 2. Dependency detection
-A spec is **dependent** on another if its "Out of Scope" section explicitly names another spec number (e.g. "Spec 010", "spec 009"). Dependent specs must run after the spec they reference.
-
-Group specs into:
-- **Parallel group**: specs with no dependencies on each other
-- **Sequential queue**: specs that depend on a parallel spec (run after their dependency completes)
-
-If `specs/` has no draft specs, report "No draft specs found" and stop.
+A spec depends on another if Out of Scope names a spec number. Group into parallel (no deps) and sequential (run after dependency).
 
 ### 3. Execute in waves
 
-#### Wave setup — before launching subagents
-For each spec in the current wave:
+**Setup** per spec: derive branch `spec/NNN-title`, set status to `in-progress` and branch in spec header.
 
-1. Derive branch name: `spec/NNN-title` (lowercase, hyphens, from spec filename without `.md`)
-2. Update spec header in the **main working directory** spec file:
-   - Set `**Status**: in-progress`
-   - Set `**Branch**: spec/NNN-title`
+**Execution**: Max 2 concurrent worktree agents per wave. Launch via Agent tool with `isolation: "worktree"`, `model: sonnet`.
 
-#### Wave execution — parallel subagents
-**Max 2 concurrent worktree agents per wave.** Split larger waves into sub-waves of 2. Launch one Agent subagent per spec simultaneously using `isolation: "worktree"`.
+**Subagent prompt** must include:
+1. `git branch -m spec/NNN-title`
+2. Copy .env from main repo: `MAIN_REPO=$(git worktree list | head -1 | awk '{print $1}')` then copy all `.env*` except `.env.example` and `.env.template`
+3. Install deps: check for `bun.lockb` → `bun install --frozen-lockfile`, else `package-lock.json` → `npm ci`, else `pnpm-lock.yaml` → `pnpm install --frozen-lockfile`, else `yarn.lock` → `yarn install --frozen-lockfile`
+4. Execute spec steps, verify criteria, commit: `git add -A && git commit -m "spec(NNN): [title]"`
 
-**Prompt for each subagent:**
-```
-Execute this spec. You are running in an isolated Git worktree.
-Do first:
-1. Rename the current branch to `spec/NNN-title`:
-   git branch -m spec/NNN-title
-2. Get the main repo path (the parent of this worktree):
-   MAIN_REPO=$(git worktree list | head -1 | awk '{print $1}')
-3. Copy .env files from the main repo (skip .env.example and .env.template):
-   for f in "$MAIN_REPO"/.env*; do
-     [[ -f "$f" ]] || continue
-     base=$(basename "$f")
-     [[ "$base" == ".env.example" || "$base" == ".env.template" ]] && continue
-     cp "$f" . 2>/dev/null || echo "⚠️  Could not copy $base — continuing"
-   done
-4. Install dependencies if a lockfile exists (run from worktree root):
-   if [ -f "bun.lockb" ]; then bun install --frozen-lockfile 2>/dev/null || echo "⚠️  bun install failed"
-   elif [ -f "package-lock.json" ]; then npm ci 2>/dev/null || echo "⚠️  npm ci failed"
-   elif [ -f "pnpm-lock.yaml" ]; then pnpm install --frozen-lockfile 2>/dev/null || echo "⚠️  pnpm install failed"
-   elif [ -f "yarn.lock" ]; then yarn install --frozen-lockfile 2>/dev/null || echo "⚠️  yarn install failed"
-   fi
-Then follow the `/spec-work` process for this spec inside the worktree: read context, load referenced skills, execute each step in order, verify acceptance criteria, then commit with `git add -A && git commit -m "spec(NNN): [spec title]"`.
-Spec content:
-[full spec content here]
-```
+Low-complexity specs (1-2 files, no build) can run directly in main repo.
 
-Low-complexity specs (1-2 files, no build step) can run directly in the main repo without worktree isolation to save auth sessions.
+**Post-processing per subagent:**
 
-#### Wave post-processing — after each subagent returns
+Failed: set `blocked`, add `## Review Feedback`, remove worktree, report.
 
-If the subagent **failed or returned no usable result**:
-1. Set spec status to `blocked`
-2. Add a `## Review Feedback` section to the spec with: "subagent failed — [error message or 'no result returned']"
-3. Remove the worktree:
-   ```bash
-   git worktree remove --force <worktree-path> 2>/dev/null; rm -rf <worktree-path> 2>/dev/null
-   ```
-4. Report: "Spec NNN blocked — subagent did not complete. Run `/spec-work NNN` to retry manually."
-5. Skip remaining post-processing for this spec.
-
-If the subagent **succeeded**:
-1. Check all spec steps off in `specs/NNN-*.md`
-2. Mark all acceptance criteria as checked
-3. Set spec status to `in-review`
-4. Prepend CHANGELOG entry under `## [Unreleased]`:
-   - Add: `- **Spec NNN**: [Title] — [1-sentence summary]`
-   - Insert after the `## [Unreleased]` heading
-5. Remove the worktree (branch is preserved for `/spec-review`):
-   ```bash
-   git worktree remove --force <worktree-path> 2>/dev/null; rm -rf <worktree-path> 2>/dev/null
-   ```
-
-**Wave 2+**: After each wave completes, launch the next wave of specs that are now unblocked.
+Succeeded:
+1. Check off all steps and criteria in spec
+2. Status → `in-review`
+3. Add CHANGELOG entry under `## [Unreleased]`
+4. Remove worktree (branch preserved for `/spec-review`)
 
 ### 4. Final summary
-After all waves complete:
-1. Force-clean all worktrees:
-   ```bash
-   git worktree prune && rm -rf .claude/worktrees/* 2>/dev/null
-   ```
-2. Report:
-   - Completed specs (with spec ID, title, and branch name)
-   - Failed specs (with spec ID and reason)
-   - Total: N completed, M failed
-   - Next step: `Run /spec-review NNN for each completed spec, or /spec-board for overview`
+```bash
+git worktree prune && rm -rf .claude/worktrees/* 2>/dev/null
+```
+Report completed/failed specs with IDs, titles, branches. Next: `/spec-review NNN` or `/spec-board`.
+
+## Skill-Trimming Quality Gate
+
+When a spec modifies SKILL.md files: after subagent completes but before marking `in-review`, spawn a **quality-diff subagent** (model: haiku) that compares `git diff` of each changed SKILL.md. It must classify every removed element as REDUNDANT or CRITICAL. Any CRITICAL removal blocks the spec — set `blocked` instead of `in-review`, report findings.
 
 ## Rules
-
-- **Max 2 concurrent worktree agents per wave.** Parallel agents each consume an auth session — more than 2 causes "Not logged in" failures. Split larger waves into sub-waves of 2.
-- Low-complexity specs (1-2 files, no build step) can run directly in the main repo without worktree isolation to save auth sessions.
-- Follow each spec exactly — no scope creep.
-- If a step in a spec is blocked or unclear, mark it unchecked and continue remaining steps.
-- Respect spec dependencies — dependent specs run after their dependency completes.
-- Do not silently skip blocked specs — always report with reason.
-- Report partial completion clearly.
-- If an Agent subagent fails, mark the spec as `blocked` and report the error.
+- Max 2 concurrent worktree agents — more causes auth failures
+- Follow specs exactly — no scope creep
+- Blocked steps: mark unchecked, continue remaining
+- Always report failures with reason

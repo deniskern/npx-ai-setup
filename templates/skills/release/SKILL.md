@@ -81,6 +81,6 @@ Report: "Tagged vX.Y.Z. Run `git push && git push --tags` when ready."
 - **Never push automatically** — leave push to user
 - **Never skip the docs audit** — stale counts are the #1 source of confusion
 - **Count from filesystem** — run actual ls/wc/grep, never guess
-- **Template parity** — if `.claude/WORKFLOW-GUIDE.md` changes, `templates/claude/WORKFLOW-GUIDE.md` must match
+- **Template parity** — if `WORKFLOW-GUIDE.md` changes, `templates/WORKFLOW-GUIDE.md` must match
 - **Additive only** — docs sync adds, never removes (removal = manual review)
 - Stop if uncommitted changes or missing `[Unreleased]` in CHANGELOG

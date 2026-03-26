@@ -2,15 +2,16 @@
 
 ## CRITICAL: Model Routing
 
-Always set `model:` when spawning subagents. Haiku costs 12× less than Sonnet — use it for all search and explore work.
+Always set `model:` when spawning subagents. Haiku is the default — Sonnet only for substantial work.
 
 | Model | Use for |
 |-------|---------|
-| `haiku` | **CRITICAL** — ALL Explore agents, file search, codebase questions, simple research |
-| `sonnet` | Implementation, code generation, test writing |
+| `haiku` | **DEFAULT** — Explore, search, codebase questions, simple edits, config changes, single-file fixes |
+| `sonnet` | **Only** multi-file implementation, complex code generation, full test suites |
 | `opus` | Architecture review, complex analysis, spec creation |
 
-Never spawn an Explore or search agent without `model: haiku`. No default means Sonnet — always be explicit.
+Before spawning: Can Haiku handle this? If yes, use Haiku. Sonnet is the scarcest budget.
+Prefer direct Glob/Grep/Read over agent spawns when < 3 tool calls needed.
 
 ## Agent Selection
 

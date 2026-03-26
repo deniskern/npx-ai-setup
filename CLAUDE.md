@@ -14,7 +14,6 @@
 - `Esc Esc` — rewind or summarize the last response to recover tokens
 - `/rename` + `/resume` — rename session for easy retrieval, restore later
 - Commit after each completed task — creates a checkpoint you can revert to
-- New to this setup? Read `.claude/WORKFLOW-GUIDE.md`
 
 ## MCP Servers
 

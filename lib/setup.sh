@@ -528,7 +528,7 @@ install_specs() {
 # Install developer workflow guide
 install_workflow_guide() {
   tui_step "Installing workflow guide"
-  _install_or_update_file "$TPL/claude/WORKFLOW-GUIDE.md" WORKFLOW-GUIDE.md
+  _install_or_update_file "$TPL/WORKFLOW-GUIDE.md" WORKFLOW-GUIDE.md
 }
 
 # Install all template skills (commands + spec workflow) to .claude/skills/

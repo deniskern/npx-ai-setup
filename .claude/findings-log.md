@@ -7,6 +7,10 @@
 
 <!-- Add new findings here after each /session-optimize run -->
 <!-- Format: - [ ] [Category] Title — Fix applied: `file:line` or Spec NNN -->
+- [x] [T] spec-validate 6.1→2.2KB, spec-review 5.7→2.6KB, spec-work-all 5.5→2.0KB — Spec 588 (2026-03-26)
+- [x] [T] Model-Routing in Spec-Skills beim Trimming ergänzt (spec-review + spec-work-all) — Spec 589 (2026-03-26)
+- [x] [Q] apply-learnings Mapping für Process/CLI → CLAUDE.md war bereits vorhanden (Zeile 19) — Spec 590 (2026-03-26)
+- [x] [T] templates/claude/rules/agents.md hat bereits Model-Routing — Spec 591 (2026-03-26)
 - [x] [E] Specs 577+578 in specs/ nicht zu completed/ verschoben — verschoben (2026-03-25)
 - [ ] [T] Haiku 0% — Verifikation nach Spec 578 ausständig; nächste Session mit /analyze triggern und Modell-Split prüfen
 - [x] [T] Template CLAUDE.md fehlte Model-Routing-Sektion — 8 Zeilen ergänzt, templates/CLAUDE.md (2026-03-26)

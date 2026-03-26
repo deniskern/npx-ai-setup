@@ -9,112 +9,57 @@ Reviews spec $ARGUMENTS and its code changes against acceptance criteria. Use af
 ## Process
 
 ### 1. Find the spec
-If `$ARGUMENTS` is a number (e.g. `011`), open `specs/011-*.md`. If it's a filename, open that directly. If empty, list all specs with status `in-review` in `specs/` and ask which one to review.
+If `$ARGUMENTS` is a number, open `specs/NNN-*.md`. If empty, list specs with status `in-review` and ask. Must be `in-review` — otherwise report status and stop.
 
-### 2. Validate status
-The spec's status must be `in-review`. If it's `draft` or `in-progress`, report: "Spec is not ready for review (status: X). Run `/spec-work NNN` first." and stop. If it's `completed`, report: "Spec is already completed." and stop.
+### 2. Read the spec
+Understand Goal, Steps, Acceptance Criteria, Files to Modify, Out of Scope. Note checked items.
 
-### 3. Read the spec
-Understand Goal, Steps, Acceptance Criteria, Files to Modify, and Out of Scope. Note which steps and criteria are checked off.
+### 3. Inspect code changes
+Read `**Branch**` from spec header:
+- Branch exists: `git diff main...BRANCH`
+- No branch: `git diff` + `git diff --staged`
 
-### 4. Inspect code changes
-Read the `**Branch**` field from the spec header. Then:
+Read full files for the 5 most changed files; review only diff hunks for the rest.
 
-- If a branch exists (not `—`): run `git diff main...BRANCH` to see all changes on that branch
-- If no branch: run `git diff` and `git diff --staged` to see uncommitted changes
+### 4. Review against spec
 
-For each changed file, read the full file to understand context around the changes. **Cap**: Read at most the 5 most significantly changed files in full; for remaining files, review only the diff hunks.
+**4a — Goal achievement** ("Task done ≠ Goal achieved"):
+- Verify the Goal is actually met, not just checkboxes
+- Verify acceptance criteria against diff
+- Flag Out of Scope violations
 
-### 5. Review against spec
+For structured criteria: verify Truths (run commands), Artifacts (file exists with real content), Key Links (imports present).
 
-#### 5a — Goal achievement (not just checkbox checking)
-**"Task done ≠ Goal achieved."** First verify the spec's Goal is actually achieved — not just that steps were executed. Then check details:
-- Are ALL steps checked off and matching what was described?
-- Are acceptance criteria genuinely met (verify against diff, not checkboxes)?
-- Was anything built that's listed in "Out of Scope"? Flag scope creep.
+**4b — Definition of Done**: Check `.agents/context/CONVENTIONS.md` DoD section if it exists.
 
-For structured acceptance criteria (Truths / Artifacts / Key Links), verify each category mechanically:
-- **Truths**: Run the described command or check and confirm the output matches the stated behavior.
-- **Artifacts**: Confirm the file exists, has real implementation (not a placeholder or stub), and meets any minimum line count specified.
-- **Key Links**: Open the source file and confirm the stated import or reference is actually present.
+**4c — Code quality** (by complexity):
+- Low/Medium: spawn `code-reviewer` agent (model: sonnet)
+- High: spawn `code-reviewer` AND `staff-reviewer` in parallel (model: sonnet)
 
-#### 5b — Definition of Done
-If `.agents/context/CONVENTIONS.md` contains a `## Definition of Done` section, verify the code changes satisfy those global quality gates. Report unmet gates as blocking issues.
+### 5. Verdict
 
-#### 5c — Code quality (complexity-gated)
-Read the `**Complexity**` field from the spec header.
-- **Low / Medium / unset**: Spawn `code-reviewer` agent only via Agent tool (`model: sonnet`).
-- **High**: Spawn `code-reviewer` AND `staff-reviewer` agents in parallel via Agent tool (`model: sonnet`). Both must return PASS or CONCERNS.
-Pass the full spec content and branch name. Use each agent's verdict (PASS / CONCERNS / FAIL) and issue list as code quality input. Do NOT duplicate their analysis inline.
+**APPROVED** — All criteria met, agents returned PASS/CONCERNS:
+1. Status → `completed`, move to `specs/completed/`
+2. Proceed to Finishing Gate
 
-### 6. Verdict
+**CHANGES REQUESTED** — Agent FAIL or criteria not met:
+1. Add `## Review Feedback` with fix instructions, status → `in-progress`
 
-Present the review findings, then choose exactly one:
+**REJECTED** — Critical security/regression:
+1. Status → `blocked`, add feedback, suggest next steps
 
-**APPROVED** — All acceptance criteria met AND all review agents returned PASS or CONCERNS.
-1. Status → `completed`, move to `specs/completed/NNN-*.md`
-2. Report: "Spec NNN approved."
-3. Proceed to Phase 7: Finishing Gate.
+### 6. Finishing Gate (APPROVED only)
 
-**CHANGES REQUESTED** — Any review agent returned FAIL, or acceptance criteria not met.
-1. Add `## Review Feedback` with concrete issues and fix instructions
-2. Status → `in-progress`
-3. Report: "Run `/spec-work NNN` to address feedback, then `/spec-review NNN` again."
+Ask user via `AskUserQuestion`:
+1. **Merge to main** — `git checkout main && git merge BRANCH && git branch -d BRANCH`
+2. **Push and create PR** — `git push -u origin BRANCH && gh pr create`
+3. **Keep branch** — report name, no changes
+4. **Discard** — confirm first, then `git checkout main && git branch -D BRANCH`
 
-**REJECTED** — Critical security or regression issue found.
-1. Status → `blocked`, add `## Review Feedback` with rejection reason
-2. Report why and suggest next steps.
-
-### 7. Finishing Gate (APPROVED only)
-
-Only execute this phase if the verdict was APPROVED. Skip entirely for CHANGES REQUESTED or REJECTED.
-
-Detect the branch name from the spec header (`**Branch**` field). If no branch exists (value is `—`), skip git operations but still offer the Keep option.
-
-Use `AskUserQuestion` with these options:
-
-1. **Merge to main locally** — merge branch into main and delete it
-2. **Push and create PR** — push branch to remote and open a PR
-3. **Keep branch as-is** — do nothing, report branch name for reference
-4. **Discard branch and changes** — permanently delete the branch (requires confirmation)
-
-Execute based on the chosen option:
-
-**Option 1 — Merge:**
-```
-git checkout main
-git merge BRANCH
-git branch -d BRANCH
-```
-Then clean up worktree if one exists: `git worktree list` → if BRANCH has a worktree, run `git worktree remove PATH --force`.
-
-**Option 2 — Push and create PR:**
-```
-git push -u origin BRANCH
-gh pr create
-```
-Then clean up worktree if one exists (same as above).
-
-**Option 3 — Keep:**
-Report: "Branch BRANCH is ready. No changes made." Do not run any git commands.
-
-**Option 4 — Discard:**
-First use `AskUserQuestion` to confirm: "This permanently deletes branch BRANCH and all its changes. Are you sure?" with options Yes / No.
-- If No: abort, report "Discard cancelled."
-- If Yes:
-```
-git checkout main
-git branch -D BRANCH
-```
-Then clean up worktree if one exists (same as above).
+Clean up worktree after merge/push/discard if one exists.
 
 ## Rules
-- Do NOT make code changes. Only review and update spec status/feedback.
-- Read the actual code before commenting — never speculate.
-- Focus on what matters: spec compliance and bugs over style.
-- If the diff is empty (no changes found), report this and ask the user to verify.
-- Never push to remote or create PRs automatically — only on explicit user choice in Phase 7.
-
-## Next Step
-
-After spec review passes, run `/pr` to create a pull request, or `/spec-board` to pick the next spec to work on.
+- **Read-only** — no code changes, only spec status/feedback updates.
+- Read actual code before commenting — never speculate.
+- Focus on spec compliance and bugs over style.
+- Never push or create PRs without explicit user choice.

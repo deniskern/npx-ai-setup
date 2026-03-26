@@ -206,7 +206,7 @@ show_next_steps() {
 
   printf '  %bReference%b\n' "$TUI_BOLD" "$TUI_RESET"
   printf '   %b%-12s%b ' "$TUI_DIM" "Guide:" "$TUI_RESET"
-  tui_file_link "templates/claude/WORKFLOW-GUIDE.md" "WORKFLOW-GUIDE.md"
+  tui_file_link "templates/WORKFLOW-GUIDE.md" "WORKFLOW-GUIDE.md"
   printf '\n'
   printf '   %b%-12s%b %s\n' "$TUI_DIM" "Skills:" "$TUI_RESET" "https://skills.sh/"
   printf '   %b%-12s%b %s\n' "$TUI_DIM" "Docs:" "$TUI_RESET" "https://docs.anthropic.com/en/docs/claude-code"
@@ -219,7 +219,7 @@ show_update_next_steps() {
   echo ""
   printf '  %bReference%b\n' "$TUI_BOLD" "$TUI_RESET"
   printf '   %b%-12s%b ' "$TUI_DIM" "Commands:" "$TUI_RESET"
-  tui_file_link "templates/claude/WORKFLOW-GUIDE.md" "WORKFLOW-GUIDE.md"
+  tui_file_link "templates/WORKFLOW-GUIDE.md" "WORKFLOW-GUIDE.md"
   printf '\n'
   printf '   %b%-12s%b ' "$TUI_DIM" "Changelog:" "$TUI_RESET"
   tui_file_link "CHANGELOG.md"

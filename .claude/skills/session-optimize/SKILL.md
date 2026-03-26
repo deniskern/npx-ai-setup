@@ -41,7 +41,7 @@ Combine both data sources. Look for:
 - Model distribution: Opus/Sonnet used where Haiku would suffice (search/explore)
 - Sessions with 0 subagents but >200 tool calls — missing parallelization
 - High turn count relative to duration — indicates back-and-forth friction
-- Skill files over 5KB (`wc -c .claude/skills/*/SKILL.md | sort -rn | head -5`) — bloated skills load all tokens on trigger; flag any >200 lines as candidate for trimming
+- Skill files over 5KB (`wc -c .claude/skills/*/SKILL.md | sort -rn | head -5`) — bloated skills load all tokens on trigger; flag any >200 lines as candidate for trimming. **Quality gate**: For each trimming candidate, spawn a Haiku subagent (model: haiku) that reads the skill and lists its critical elements (decision tables, output format templates, agent spawn configs with model/tools, conditional logic with specific values, exact CLI flags/options). Include these in the finding as `**Critical elements:**` so the trimming spec knows what to preserve.
 
 **Q (Qualität):**
 - Skills invoked frequently that appear in failure observations
@@ -93,7 +93,8 @@ Sort by priority descending. Max 8 findings — cut noise below ⚪.
 - If a finding references a file, verify the issue still exists before including it.
 - If both data sources return nothing, report: "No signal in last 30 days — setup looks clean."
 - Read `.claude/findings-log.md` as pre-filter before Step 5 — drop any finding that matches an entry in `## Addressed`.
-- **Model routing**: Use `model: haiku` for all MCP searches (Steps 2–3). Use `model: sonnet` only for pattern synthesis (Step 4 onwards). Never use Opus in this skill.
+- **Model routing**: Use `model: haiku` for all MCP searches (Steps 2–3) and quality-gate subagents. Use `model: sonnet` only for pattern synthesis (Step 4 onwards). Never use Opus in this skill.
+- **Token savings ≠ quality loss**: Every trimming recommendation MUST include a `**Critical elements:**` list (from Haiku subagent analysis). Trimming without this list is incomplete — the downstream spec-work quality gate depends on it.
 
 ## Next Step
 
