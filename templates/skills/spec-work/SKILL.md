@@ -1,7 +1,6 @@
 ---
 name: spec-work
 description: Execute a single spec step by step. Triggers: /spec-work NNN, 'work on spec NNN', 'implement spec NNN', 'run spec NNN'. NNN is a 3-digit spec number.
-disable-model-invocation: true
 ---
 
 Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to implement a single approved spec.
@@ -58,6 +57,8 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     - **PASS**: continue.
     - **FAIL**: Spawn Haiku Investigator once (model: haiku, tools: Read/Glob/Grep/Bash read-only, no Write/Edit). Pass error output. Apply suggested fix, re-run verify-app once. Second FAIL → set `in-review`, stop.
 
+15a. **Test coverage check** (after verify-app PASS): Check if changed source files have corresponding test files. If coverage gaps exist, spawn `test-generator` agent (model: sonnet). Skip if spec is test-only or no test framework detected.
+
 16. **Optional cleanup**: Offer `/simplify` before review. Skip if user declines.
 
 17. **Update status**: Set `in-review` before spawning reviewers.
@@ -65,6 +66,9 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
 18. **Auto-review** (complexity-gated):
     - Low/Medium/unset: spawn `code-reviewer` only.
     - High: spawn `code-reviewer` + `staff-reviewer` in parallel.
+    - **Conditional reviewers** (spawn in parallel with code-reviewer if applicable):
+      - Spec touches auth, user input, API endpoints, or secrets → also spawn `security-reviewer`
+      - Spec touches DB queries, loops, rendering, data fetching, or bundle imports → also spawn `performance-reviewer`
     - FAIL → leave `in-review`, report issues. PASS/CONCERNS → set `completed`, move to `specs/completed/`.
 
 ## Skill-Trimming Quality Gate

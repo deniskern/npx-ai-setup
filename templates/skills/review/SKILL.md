@@ -160,6 +160,16 @@ Every finding must appear in this table. If a claim cannot be verified against a
 - Focus on what matters: bugs and security over style.
 - If no issues found, say so clearly.
 
+## Agent Dispatch (Mode B and C only)
+
+After the manual review, dispatch relevant agents in parallel for deeper analysis:
+
+- **Always**: Spawn `code-reviewer` agent (model: sonnet) with the diff summary
+- **If security-sensitive changes** (auth, user input, API endpoints, secrets): Also spawn `security-reviewer` agent (model: sonnet)
+- **If hot path changes** (DB queries, loops, data fetching, rendering): Also spawn `performance-reviewer` agent (model: sonnet)
+
+Merge agent findings into the final report. Deduplicate — if an agent finds the same issue you already reported, skip it.
+
 ## Next Step
 
 After addressing any review findings, run `/commit` to stage and commit changes, or `/pr` if the branch is ready for a pull request.

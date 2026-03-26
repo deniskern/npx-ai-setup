@@ -64,6 +64,9 @@ If **FAIL**: check for new errors vs same error:
   - New error: continue loop with next iteration
   - Same error after 2nd attempt: abort, report "Unfixable automatically — see error below."
 
+### 2e. Validate (after build passes)
+After build passes, spawn `build-validator` agent (model: haiku) to confirm the build is truly green and check for warnings that might indicate fragile fixes.
+
 ### 3. Report
 
 ```

@@ -1,6 +1,5 @@
 ---
 description: Run ai-setup from local dev repo (~/Sites/npx-ai-setup) and validate with /doctor. Use to test setup changes before publishing.
-disable-model-invocation: true
 ---
 
 Run ai-setup from local dev repo (~/Sites/npx-ai-setup) and validate with /doctor.

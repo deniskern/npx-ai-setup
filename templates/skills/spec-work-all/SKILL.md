@@ -1,7 +1,6 @@
 ---
 name: spec-work-all
 description: Execute all draft specs in parallel using isolated worktrees. Triggers: /spec-work-all, 'run all specs', 'implement everything', 'do all the drafts'.
-disable-model-invocation: true
 ---
 
 # Spec Work All — Batch Execute Draft Specs

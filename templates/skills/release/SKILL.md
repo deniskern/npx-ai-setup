@@ -1,7 +1,6 @@
 ---
 name: release
 description: Complete release workflow — version bump, CHANGELOG, docs sync, Slack. Triggers: 'release', 'ship', 'publish', '/release', version strings like 'v2.0.0'.
-disable-model-invocation: true
 ---
 
 # Release — Version Bump, Changelog, Docs Sync, Slack Message

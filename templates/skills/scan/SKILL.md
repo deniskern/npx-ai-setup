@@ -32,6 +32,13 @@ Scans project dependencies for security vulnerabilities. Uses `scan-prep.sh` to 
 - Do NOT re-run the scanner if prep script already ran.
 - Run in the project root.
 
+## Deep Analysis (CRITICAL/HIGH only)
+
+If the prep script reports CRITICAL or HIGH vulnerabilities:
+- Spawn `security-reviewer` agent (model: sonnet) with the vulnerability list and affected files
+- The agent checks whether the vulnerable code paths are actually reachable in this project
+- Report agent findings alongside the prep output — distinguishes "vulnerable dependency installed" from "vulnerability actively exploitable"
+
 ## Next Step
 
 After reviewing vulnerabilities, apply the suggested fix commands, then run `/test` to verify nothing broke, and `/commit` to checkpoint the fixes.

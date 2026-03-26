@@ -1,7 +1,6 @@
 ---
 name: spec-review
 description: Review a completed spec after implementation. Triggers: /spec-review NNN, 'review spec NNN', 'did we complete spec NNN', 'verify spec implementation'.
-disable-model-invocation: true
 ---
 
 Reviews spec $ARGUMENTS and its code changes against acceptance criteria. Use after spec-work to validate and close.
@@ -35,6 +34,10 @@ For structured criteria: verify Truths (run commands), Artifacts (file exists wi
 **4c — Code quality** (by complexity):
 - Low/Medium: spawn `code-reviewer` agent (model: sonnet)
 - High: spawn `code-reviewer` AND `staff-reviewer` in parallel (model: sonnet)
+
+**4d — Conditional reviewers** (spawn in parallel with 4c if applicable):
+- Spec touches auth, user input, API endpoints, or secrets → also spawn `security-reviewer`
+- Spec touches DB queries, loops, rendering, data fetching, or bundle imports → also spawn `performance-reviewer`
 
 ### 5. Verdict
 

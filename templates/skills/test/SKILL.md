@@ -36,6 +36,15 @@ Runs the project test suite and fixes failures in source code. Uses `test-prep.s
 - Do not install new dependencies without asking.
 - If no test framework is detected, tell the user and stop.
 
+## Coverage Gap Detection
+
+After all tests pass, check if the changes introduced new untested code:
+- Run `git diff --name-only` to identify changed source files
+- For each changed file, check if a corresponding test file exists
+- If test files are missing for changed source code, spawn `test-generator` agent (model: sonnet) to generate missing tests
+
+Skip this step if the user explicitly only asked to fix failing tests.
+
 ## Next Step
 
 After tests pass, run `/review` to check uncommitted changes, or `/commit` to stage and commit the fixes.

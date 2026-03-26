@@ -1,7 +1,6 @@
 ---
 name: spec-board
 description: Overview of all specs as Kanban board. Triggers: /spec-board, 'show specs', 'spec overview', 'what specs do we have', 'show me whats in progress'.
-disable-model-invocation: true
 ---
 
 Displays a Kanban board of all specs with status and step progress. Use for an overview of the current spec pipeline.
