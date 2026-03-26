@@ -8,6 +8,30 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 <!-- Entries are prepended below this line, newest first -->
 
+## [v2.0.4] — 2026-03-27
+
+### Subagent-Architektur optimiert
+
+**Globale Agents.** Universelle Agents (code-reviewer, security-reviewer, etc.) werden jetzt nach `~/.claude/agents/` installiert — verfügbar in allen Projekten ohne Projekt-Setup. Stack-spezifische Agents (liquid-linter, shopware-reviewer, storyblok-reviewer) kommen aus den Boilerplate-Repos.
+
+**Neuer Agent: backend-developer.** Konditionell deployed bei Node.js/Nuxt-Projekten. Fokus: API-Routes, Server-Middleware, Third-Party-Integrationen (Shopify, Storyblok, Klaviyo), Error Handling und Rate Limiting.
+
+**Skills dispatchen jetzt Agents.** `/review` spawnt code-reviewer + security-reviewer + performance-reviewer. `/test` spawnt test-generator bei Coverage-Lücken. `/scan` spawnt security-reviewer bei CRITICAL/HIGH. `/spec-work` dispatcht konditionell security-reviewer, performance-reviewer, test-generator, frontend-developer und backend-developer.
+
+**Model-Routing korrigiert.** verify-app von Sonnet auf Haiku (führt Commands aus, kein Code-Verständnis nötig). perf-reviewer umbenannt zu performance-reviewer.
+
+### Fixes
+
+- Smoke test crash bei Specs mit non-standard Status-Feldern
+- Template sync nach Migrations bei minor/patch Updates
+- Operator precedence in Shell Conditionals
+- Lint output suppression
+
+### Sonstiges
+
+- WORKFLOW-GUIDE ins Projekt-Root verschoben mit vollständiger Skill-Referenz
+- Boilerplate-Pull erweitert: fetcht jetzt auch `.claude/agents/*.md` aus Stack-Repos
+
 ## [v2.0.3] — 2026-03-26
 
 ### Was ist neu für dich
