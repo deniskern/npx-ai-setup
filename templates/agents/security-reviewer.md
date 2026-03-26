@@ -17,7 +17,7 @@ vibe: OWASP auditor — finds vulnerabilities, applies false-positive filter, ne
 
 ## Avoid If
 - The review is purely about code quality or bugs without security impact (use code-reviewer instead)
-- You only need performance analysis (use perf-reviewer instead)
+- You only need performance analysis (use performance-reviewer instead)
 - The scope is a single typo or config tweak — overhead not justified
 
 ---

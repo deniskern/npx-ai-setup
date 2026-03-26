@@ -107,6 +107,8 @@ Available in Claude Code and compatible clients. In Codex, use `$spec`, `$spec-w
 
 ## Subagents
 
+**Universal** (installed globally + per-project):
+
 | Agent | Purpose |
 |-------|---------|
 | `verify-app` | Run tests + build, report PASS/FAIL |
@@ -114,12 +116,25 @@ Available in Claude Code and compatible clients. In Codex, use `$spec`, `$spec-w
 | `code-reviewer` | HIGH/MEDIUM confidence review — PASS/CONCERNS/FAIL |
 | `code-architect` | Architectural assessment before implementation |
 | `staff-reviewer` | Skeptical staff engineer review |
-| `perf-reviewer` | Performance analysis — FAST/CONCERNS/SLOW |
+| `performance-reviewer` | Performance analysis — FAST/CONCERNS/SLOW |
 | `test-generator` | Generate missing tests for changed files |
 | `context-refresher` | Regenerate `.agents/context/` on `[CONTEXT STALE]` |
-| `frontend-developer` | React, Vue, Nuxt, Next.js specialist |
 | `security-reviewer` | OWASP Top 10 checks, secrets detection, pattern table |
+
+**Conditional** (installed when stack matches):
+
+| Agent | Purpose |
+|-------|---------|
+| `frontend-developer` | React, Vue, Nuxt, Next.js specialist |
+| `backend-developer` | Node.js server, API integrations, middleware |
+
+**Boilerplate** (pulled from stack-specific repos):
+
+| Agent | Purpose |
+|-------|---------|
 | `liquid-linter` | Validate Shopify Liquid templates |
+| `shopware-reviewer` | PHP, Twig, Shopware conventions |
+| `storyblok-reviewer` | Component schema + Vue integration review |
 
 ---
 

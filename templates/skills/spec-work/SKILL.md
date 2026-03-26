@@ -36,6 +36,11 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
     - `medium` or unset — spawn subagent with `model: sonnet`
     - `high` — spawn subagent with `model: opus`
 
+11b. **Specialist routing** (for implementation steps only):
+    - If step modifies Vue/React components, styling, or accessibility → spawn `frontend-developer` agent
+    - If step modifies API routes, server middleware, or third-party integrations → spawn `backend-developer` agent
+    - Only if the corresponding agent exists in `.claude/agents/`. Skip silently if not installed.
+
 12. **Execute each step**:
     - Implement the change
     - Check off in spec: `- [ ]` → `- [x]`

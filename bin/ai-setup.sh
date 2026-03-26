@@ -105,6 +105,7 @@ install_workflow_guide
 install_skills
 install_claude_scripts
 install_agents
+install_global_agents
 cleanup_orphans
 select_boilerplate_system
 customize_settings_for_stack

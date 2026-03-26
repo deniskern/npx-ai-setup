@@ -63,11 +63,11 @@
         "bash": true
       }
     },
-    "perf-reviewer": {
+    "performance-reviewer": {
       "description": "Reviews code changes for performance issues. Reports findings with HIGH/MEDIUM confidence and a FAST/CONCERNS/SLOW verdict.",
       "mode": "subagent",
       "model": "anthropic/claude-sonnet-4-6",
-      "prompt": "{file:.claude/agents/perf-reviewer.md}",
+      "prompt": "{file:.claude/agents/performance-reviewer.md}",
       "tools": {
         "read": true,
         "write": false,

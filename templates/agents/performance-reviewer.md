@@ -1,5 +1,5 @@
 ---
-name: perf-reviewer
+name: performance-reviewer
 description: Reviews code changes for performance issues. Reports findings with HIGH/MEDIUM confidence and a FAST/CONCERNS/SLOW verdict.
 tools: Read, Glob, Grep, Bash
 model: sonnet

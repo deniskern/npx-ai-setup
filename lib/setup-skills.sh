@@ -22,22 +22,62 @@ install_agents() {
   tui_step "Installing subagent templates"
   mkdir -p .claude/agents
 
-  # Detect frontend stack from package.json for conditional agent install
+  # Detect stack from project config for conditional agent install
   local _has_frontend=false
-  if [ -f "package.json" ] && grep -qE '"(react|vue|nuxt|next|svelte|astro)"' package.json 2>/dev/null; then
-    _has_frontend=true
+  local _has_backend=false
+  if [ -f "package.json" ]; then
+    grep -qE '"(react|vue|nuxt|next|svelte|astro)"' package.json 2>/dev/null && _has_frontend=true
+    # Backend: Nuxt/Next server, express, fastify, nitro, or server/ directory
+    if grep -qE '"(express|fastify|@hono|h3|nitro)"' package.json 2>/dev/null \
+       || [ -d "server" ] || ls nuxt.config.* 1>/dev/null 2>&1 || ls next.config.* 1>/dev/null 2>&1; then
+      _has_backend=true
+    fi
   fi
 
   while IFS= read -r -d '' _agent_path; do
     _agent_name="${_agent_path##*/}"
-    # frontend-developer agent: only install when a frontend framework is detected
+    # frontend-developer: only when frontend framework detected
     if [ "$_agent_name" = "frontend-developer.md" ] && [ "$_has_frontend" = "false" ]; then
       tui_info "frontend-developer agent skipped (no frontend stack detected)"
+      continue
+    fi
+    # backend-developer: only when backend/API framework detected
+    if [ "$_agent_name" = "backend-developer.md" ] && [ "$_has_backend" = "false" ]; then
+      tui_info "backend-developer agent skipped (no backend stack detected)"
       continue
     fi
     _install_or_update_file "$_agent_path" ".claude/agents/$_agent_name"
   done < <(find "$TPL/agents" -maxdepth 1 -type f -print0 | sort -z)
   _inject_agent_skills
+}
+
+# Install universal agents to ~/.claude/agents/ for cross-project availability.
+# Only copies agents that are NOT stack-specific (those come from boilerplate repos).
+install_global_agents() {
+  local global_dir="$HOME/.claude/agents"
+  mkdir -p "$global_dir"
+
+  tui_step "Installing global agents to ~/.claude/agents/"
+  local _count=0
+
+  while IFS= read -r -d '' _agent_path; do
+    _agent_name="${_agent_path##*/}"
+    [ "$_agent_name" = "README.md" ] && continue
+    # Conditional agents are project-specific, not global
+    [ "$_agent_name" = "frontend-developer.md" ] && continue
+    [ "$_agent_name" = "backend-developer.md" ] && continue
+
+    if [ ! -f "$global_dir/$_agent_name" ] || ! cmp -s "$_agent_path" "$global_dir/$_agent_name"; then
+      cp "$_agent_path" "$global_dir/$_agent_name"
+      _count=$((_count + 1))
+    fi
+  done < <(find "$TPL/agents" -maxdepth 1 -type f -name '*.md' -print0 | sort -z)
+
+  if [ "$_count" -gt 0 ]; then
+    tui_success "$_count global agent(s) installed/updated"
+  else
+    tui_info "Global agents already up to date"
+  fi
 }
 
 # Inject skills: field into agent YAML headers based on detected system.

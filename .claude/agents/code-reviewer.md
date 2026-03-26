@@ -16,7 +16,7 @@ vibe: Code auditor — one complete pass, evidence-based findings, no rubber sta
 - Validating bug fixes actually fix the root cause without introducing regressions
 
 ## Avoid If
-- The review is purely about performance (use perf-reviewer instead)
+- The review is purely about performance (use performance-reviewer instead)
 - The question is about architecture or design before implementation (use code-architect instead)
 - You need structural/production-readiness assessment (use staff-reviewer instead)
 

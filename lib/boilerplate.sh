@@ -133,6 +133,26 @@ pull_boilerplate_files() {
     done <<< "$rules_listing"
   fi
 
+  # --- Agents: .claude/agents/*.md ---
+  local agents_listing
+  agents_listing=$(gh api "repos/${repo}/contents/.claude/agents" --jq '.[].name' 2>/dev/null || true)
+
+  if [ -n "$agents_listing" ]; then
+    mkdir -p .claude/agents
+    while IFS= read -r agent_file; do
+      [[ "$agent_file" == *.md ]] || continue
+      [ "$agent_file" = "README.md" ] && continue
+      local local_agent=".claude/agents/${agent_file}"
+      if _gh_fetch_file "$repo" ".claude/agents/${agent_file}" "$local_agent"; then
+        tui_success "Agent: ${agent_file%.md}"
+        pulled=$((pulled + 1))
+      else
+        tui_warn "Agent fetch failed: ${agent_file}"
+        failed=$((failed + 1))
+      fi
+    done <<< "$agents_listing"
+  fi
+
   # --- MCP config: merge .mcp.json ---
   _merge_mcp_json "$repo"
 
@@ -154,6 +174,7 @@ _show_manual_instructions() {
     "    git clone --depth=1 https://github.com/${BOILERPLATE_ORG}/${repo_name}.git /tmp/${repo_name}" \
     "    cp -r /tmp/${repo_name}/.claude/skills/* .claude/skills/" \
     "    cp /tmp/${repo_name}/.claude/rules/${system}*.md .claude/rules/" \
+    "    cp /tmp/${repo_name}/.claude/agents/*.md .claude/agents/ 2>/dev/null" \
     "  Option B — Install gh CLI:" \
     "    brew install gh && gh auth login" \
     "    Then run the setup command again: npx @onedot/ai-setup"

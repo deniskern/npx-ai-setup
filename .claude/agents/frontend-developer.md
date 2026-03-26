@@ -44,4 +44,4 @@ For each deliverable, provide:
 
 - The task is backend API design, database schema, or infrastructure
 - The task requires Shopify Liquid — use `liquid-linter` agent instead
-- The task is a full performance audit — use `perf-reviewer` agent instead
+- The task is a full performance audit — use `performance-reviewer` agent instead
