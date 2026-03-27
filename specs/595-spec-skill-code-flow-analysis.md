@@ -16,7 +16,7 @@ Spec 594 hatte 3 Qualitätsprobleme: redundanter Step (Funktion setzt Variable s
 ## Steps
 - [x] Step 1: Phase 1d in `SKILL.md` — neuen Abschnitt "Code-Flow-Analyse" nach dem mentalen Sketch einfügen: Für jede betroffene Funktion den Call-Path tracen (wer ruft was, welche Guards/Conditions, welche Variablen werden gesetzt). Ergebnis als kurze Liste im Chat ausgeben.
 - [x] Step 2: Phase 1d in `SKILL.md` — Dedup-Check-Regel hinzufügen: "Jeder Step muss einen NEUEN Code-Change einführen. Wenn existierender Code das bereits tut → kein Step. Guards die den neuen Flow blockieren → eigener Step."
-- [ ] Step 3: Phase 2 Step 3 in `SKILL.md` — Step-Validierung nach Drafting: "Für jeden Step prüfen: Wird das nicht schon von existierendem Code erledigt? Fehlt ein Step für Guards/Conditions die den neuen Flow blockieren?"
+- [x] Step 3: Phase 2 Step 3 in `SKILL.md` — Step-Validierung nach Drafting: "Für jeden Step prüfen: Wird das nicht schon von existierendem Code erledigt? Fehlt ein Step für Guards/Conditions die den neuen Flow blockieren?"
 
 ## Acceptance Criteria
 

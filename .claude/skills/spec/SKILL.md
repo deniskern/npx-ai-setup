@@ -64,6 +64,11 @@ Translate Phase 1d sketch into spec steps with actual file paths. After drafting
 
 If either fires: split into two specs (NNN and NNN+1), cross-reference each, note dependencies. Otherwise write a single spec.
 
+**Step dedup validation** (after drafting): For each step, verify against the Code-Flow-Analyse from 1d:
+- Does existing code already do this? → remove step
+- Does a guard/condition block this flow? → add step for guard removal/bypass
+- Is an error/failure path unhandled? → add explicit step
+
 ### Step 4 — Present the spec
 Show spec to user for review and refinement.
 
