@@ -138,6 +138,18 @@ write_metadata() {
   local json
   json=$(_json_build_metadata "$version" "$install_time" "$timestamp")
 
+  # Persist boilerplate system if detected
+  if [ -n "${SELECTED_SYSTEM:-}" ]; then
+    json=$(echo "$json" | jq --arg sys "$SELECTED_SYSTEM" '. + {system: $sys}')
+  elif [ -f .ai-setup.json ] && command -v jq >/dev/null 2>&1; then
+    # Preserve existing system field on updates
+    local prev_sys
+    prev_sys=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
+    if [ -n "$prev_sys" ] && [ "$prev_sys" != "null" ]; then
+      json=$(echo "$json" | jq --arg sys "$prev_sys" '. + {system: $sys}')
+    fi
+  fi
+
   for mapping in "${TEMPLATE_MAP[@]}"; do
     local tpl="${mapping%%:*}"
     local target="${mapping#*:}"

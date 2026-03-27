@@ -21,7 +21,7 @@ Boilerplate-Skills/Agents/Rules werden bei `ai-setup update` automatisch re-sync
 - [x] Step 1: `detect_installed_system()` in `lib/boilerplate.sh` — System aus `.ai-setup.json` `.system` lesen, Fallback: Rule-Files Pattern-Match (`shopify*.md` → shopify). Returniert System-String oder leer.
 - [x] Step 2: `sync_boilerplate()` in `lib/boilerplate.sh` — liest System via `detect_installed_system()`, prüft `_gh_available` (graceful skip + Info-Meldung wenn nicht verfügbar), ruft `pull_boilerplate_files()` auf. Kein `has_system_config()` Guard — bei Updates muss Sync immer laufen.
 - [x] Step 3: `run_smart_update()` in `lib/update.sh` — `sync_boilerplate` nach Template-Sync aufrufen
-- [ ] Step 4: `write_metadata()` in `lib/core.sh` — `system` Feld in `.ai-setup.json` schreiben. `bin/ai-setup.sh` übergibt `SELECTED_SYSTEM` nach `select_boilerplate_system`.
+- [x] Step 4: `write_metadata()` in `lib/core.sh` — `system` Feld in `.ai-setup.json` schreiben. `bin/ai-setup.sh` übergibt `SELECTED_SYSTEM` nach `select_boilerplate_system`.
 
 ## Acceptance Criteria
 
