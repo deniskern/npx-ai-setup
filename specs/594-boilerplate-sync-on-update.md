@@ -1,6 +1,6 @@
 # Spec: Boilerplate-Sync bei ai-setup Update
 
-> **Spec ID**: 594 | **Created**: 2026-03-27 | **Status**: draft | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 594 | **Created**: 2026-03-27 | **Status**: in-progress | **Complexity**: medium | **Branch**: main
 
 ## Goal
 Boilerplate-Skills/Agents/Rules werden bei `ai-setup update` automatisch re-synced, nicht nur bei Erstinstallation.
@@ -8,20 +8,20 @@ Boilerplate-Skills/Agents/Rules werden bei `ai-setup update` automatisch re-sync
 ## Context
 `pull_boilerplate_files()` läuft nur bei Erstinstallation via `select_boilerplate_system`. Bei Updates werden nur ai-setup Templates gesynced. Boilerplate-Änderungen erreichen existierende Projekte nie.
 
-`select_boilerplate_system()` setzt bereits `SELECTED_SYSTEM`, aber der Wert wird nicht persistiert. Bei Updates ist unklar welches Boilerplate-System aktiv ist.
+`select_boilerplate_system()` setzt `SELECTED_SYSTEM` und pullt Boilerplate, aber `has_system_config()` (Zeile 203) returnt sofort wenn Rules vorhanden — bei Updates wird der Sync nie erreicht.
 
 ### Verified Assumptions
-- `select_boilerplate_system` setzt `SELECTED_SYSTEM` bereits — Evidence: `lib/boilerplate.sh:179` | Confidence: High
-- `.ai-setup.json` hat kein `system` Feld — Evidence: `lib/core.sh:123` | Confidence: High
-- `has_system_config()` prüft ob System-Rules existieren — Evidence: `lib/boilerplate.sh:164` | Confidence: High
+- `select_boilerplate_system` setzt `SELECTED_SYSTEM` + pullt via `pull_boilerplate_files` — Evidence: `lib/boilerplate.sh:199-230` | Confidence: High
+- `has_system_config()` blockt Re-Sync bei Updates (returniert 0 wenn Rules existieren) — Evidence: `lib/boilerplate.sh:185-194` | Confidence: High
+- `.ai-setup.json` hat kein `system` Feld — Evidence: `lib/core.sh` | Confidence: High
 - `run_smart_update()` ruft nie Boilerplate-Code auf — Evidence: `lib/update.sh` | Confidence: High
+- `_gh_available()` prüft gh CLI Verfügbarkeit — Evidence: `lib/boilerplate.sh` | Confidence: High
 
 ## Steps
-- [ ] Step 1: `write_metadata()` in `lib/core.sh` — `system` Feld aus `SELECTED_SYSTEM` in `.ai-setup.json` schreiben
-- [ ] Step 2: `detect_installed_system()` in `lib/boilerplate.sh` — System aus `.ai-setup.json` lesen, Fallback: aus vorhandenen Rule-Files erkennen (`shopify*.md` → shopify etc.)
-- [ ] Step 3: `sync_boilerplate()` in `lib/boilerplate.sh` — liest System via `detect_installed_system()`, prüft `_gh_available`, ruft `pull_boilerplate_files()` auf. Graceful skip wenn gh nicht verfügbar.
-- [ ] Step 4: `run_smart_update()` in `lib/update.sh` — `sync_boilerplate` nach Template-Sync aufrufen
-- [ ] Step 5: `bin/ai-setup.sh` — `SELECTED_SYSTEM` nach `select_boilerplate_system` an `write_metadata` übergeben
+- [x] Step 1: `detect_installed_system()` in `lib/boilerplate.sh` — System aus `.ai-setup.json` `.system` lesen, Fallback: Rule-Files Pattern-Match (`shopify*.md` → shopify). Returniert System-String oder leer.
+- [x] Step 2: `sync_boilerplate()` in `lib/boilerplate.sh` — liest System via `detect_installed_system()`, prüft `_gh_available` (graceful skip + Info-Meldung wenn nicht verfügbar), ruft `pull_boilerplate_files()` auf. Kein `has_system_config()` Guard — bei Updates muss Sync immer laufen.
+- [ ] Step 3: `run_smart_update()` in `lib/update.sh` — `sync_boilerplate` nach Template-Sync aufrufen
+- [ ] Step 4: `write_metadata()` in `lib/core.sh` — `system` Feld in `.ai-setup.json` schreiben. `bin/ai-setup.sh` übergibt `SELECTED_SYSTEM` nach `select_boilerplate_system`.
 
 ## Acceptance Criteria
 
@@ -40,10 +40,10 @@ Boilerplate-Skills/Agents/Rules werden bei `ai-setup update` automatisch re-sync
 - [ ] `lib/boilerplate.sh:sync_boilerplate` → `lib/boilerplate.sh:pull_boilerplate_files`
 
 ## Files to Modify
-- `lib/core.sh` — write_metadata() system Feld
 - `lib/boilerplate.sh` — detect_installed_system(), sync_boilerplate()
 - `lib/update.sh` — run_smart_update() Boilerplate-Sync
-- `bin/ai-setup.sh` — SELECTED_SYSTEM Persistierung
+- `lib/core.sh` — write_metadata() system Feld
+- `bin/ai-setup.sh` — SELECTED_SYSTEM an write_metadata übergeben
 
 ## Out of Scope
 - Manueller `--sync-boilerplate` Flag

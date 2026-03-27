@@ -180,6 +180,57 @@ _show_manual_instructions() {
     "    Then run the setup command again: npx @onedot/ai-setup"
 }
 
+# Detect the installed boilerplate system for an existing project.
+# Reads from .ai-setup.json first, falls back to rule-file pattern matching.
+# Prints the system name (shopify/shopware/nuxt/next/storyblok) or empty string.
+detect_installed_system() {
+  # Primary: read from metadata
+  if [ -f .ai-setup.json ] && command -v jq >/dev/null 2>&1; then
+    local sys
+    sys=$(jq -r '.system // empty' .ai-setup.json 2>/dev/null)
+    if [ -n "$sys" ] && [ "$sys" != "null" ]; then
+      echo "$sys"
+      return 0
+    fi
+  fi
+
+  # Fallback: detect from rule files
+  local rules_dir=".claude/rules"
+  if [ -d "$rules_dir" ]; then
+    for system_key in shopify shopware nuxt next storyblok; do
+      if ls "${rules_dir}/${system_key}"*.md 2>/dev/null | grep -q .; then
+        echo "$system_key"
+        return 0
+      fi
+    done
+  fi
+
+  echo ""
+  return 1
+}
+
+# Sync boilerplate files for the detected system.
+# Called during updates to re-pull latest skills/agents/rules from boilerplate repos.
+sync_boilerplate() {
+  local system
+  system=$(detect_installed_system) || true
+
+  if [ -z "$system" ]; then
+    return 0
+  fi
+
+  if ! _gh_available; then
+    tui_info "Skipping boilerplate sync (gh CLI not available)"
+    return 0
+  fi
+
+  tui_step "Syncing boilerplate for $system"
+  pull_boilerplate_files "$system"
+
+  # Persist system in SELECTED_SYSTEM for metadata write
+  SELECTED_SYSTEM="$system"
+}
+
 # Detect whether any system-specific config is already present.
 # Returns 0 if system config found (skip selector), 1 if fresh project.
 has_system_config() {
