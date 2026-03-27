@@ -285,19 +285,13 @@ _process_update_mappings() {
     stored_cs=$(jq -r --arg f "$target" '.files[$f] // empty' .ai-setup.json 2>/dev/null)
 
     if [ -n "$stored_cs" ] && [ "$stored_cs" != "$cur_cs" ]; then
-      # User modified — ask before overwriting
-      if ask_overwrite_modified "$target"; then
-        local bp
-        bp=$(backup_file "$target")
-        cp "$SCRIPT_DIR/$tpl" "$target"
-        [[ "$target" == *.sh ]] && chmod +x "$target"
-        echo "  ✅ $target (updated — backed up to $bp)"
-        UPD_BACKED_UP=$((UPD_BACKED_UP + 1))
-      else
-        echo "  ⏭️  $target (kept — user version preserved)"
-        UPD_SKIPPED=$((UPD_SKIPPED + 1))
-        continue
-      fi
+      # User modified — auto-overwrite with backup
+      local bp
+      bp=$(backup_file "$target")
+      cp "$SCRIPT_DIR/$tpl" "$target"
+      [[ "$target" == *.sh ]] && chmod +x "$target"
+      echo "  ✅ $target (updated — backed up to $bp)"
+      UPD_BACKED_UP=$((UPD_BACKED_UP + 1))
     else
       # Not modified by user — update
       cp "$SCRIPT_DIR/$tpl" "$target"
