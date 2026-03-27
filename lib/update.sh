@@ -384,6 +384,7 @@ run_smart_update() {
     tui_success "All template files are up to date - nothing to update"
     # Still check for obsolete files
     cleanup_obsolete_managed_files
+    cleanup_known_orphans
     write_metadata
   else
     # Ask which template categories to update (with change counts)
@@ -397,6 +398,9 @@ run_smart_update() {
 
     cleanup_obsolete_managed_files
   fi
+
+  # Always remove known obsolete files regardless of version or template changes
+  cleanup_known_orphans
 
   # Sync boilerplate files from stack-specific repos (if system detected)
   sync_boilerplate
@@ -490,6 +494,23 @@ run_clean_reinstall() {
   echo "   Clean slate ready. Running fresh install..."
   echo ""
   # Caller continues to normal setup
+}
+
+# Remove files that are known to be obsolete across all projects regardless of
+# their managed status. Called on every update — no version gating.
+cleanup_known_orphans() {
+  local -a orphans=(
+    ".agents/repomix-snapshot.xml"
+    ".agents/repomix-snapshot.md"
+    "repomix.config.json"
+    ".repomixignore"
+  )
+  for target in "${orphans[@]}"; do
+    [ -f "$target" ] || continue
+    rm -f "$target"
+    echo "  🧹 $target (obsolete — removed)"
+    UPD_REMOVED=$((UPD_REMOVED + 1))
+  done
 }
 
 # Remove files that were managed by an older ai-setup version but are no longer
