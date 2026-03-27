@@ -12,6 +12,8 @@ After completing work, suggest the logical next skill. Keep hints to one line.
 | `/commit` done | `/pr` wenn Feature-Branch, oder `/release` wenn main |
 | Bug investigation | `/debug` falls noch nicht geladen |
 | New feature request (3+ files) | `/spec` — erst planen, dann bauen |
+| Spec created (draft) | `/spec-validate NNN` — Draft-Qualität prüfen |
+| `/spec-work NNN` done | `/spec-review NNN` — Implementation reviewen |
 | Session start + `.continue-here.md` exists | `/resume` — State wiederherstellen |
 | Session >30 tool calls | `/reflect` — Learnings sichern, dann `/pause` |
 | Build failure | `/build-fix` — iterativ fixen |
