@@ -15,12 +15,6 @@ TRANSCRIPT_FILE="${CLAUDE_TRANSCRIPT:-}"
 MAX_MEMORY_FILES=50
 MAX_MEMORY_SIZE_KB=200
 
-# Guard: only run for substantial sessions
-message_count="${CLAUDE_MESSAGE_COUNT:-0}"
-if [ "$message_count" -lt 10 ]; then
-  exit 0
-fi
-
 # Guard: need transcript data
 if [ -z "$TRANSCRIPT_FILE" ] || [ ! -f "$TRANSCRIPT_FILE" ]; then
   # Try to read from stdin (Claude passes transcript via Stop hook)

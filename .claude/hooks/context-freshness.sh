@@ -1,12 +1,16 @@
 #!/bin/bash
 # context-freshness.sh — UserPromptSubmit hook
-# Warns when .agents/context/ files may be outdated (package.json or tsconfig changed)
+# 1. Resets circuit breaker on user message (acknowledges the loop)
+# 2. Warns when .agents/context/ files may be outdated
 # Silent pass when up-to-date or state file missing (~10ms runtime, no API calls)
-#
-# Cache note: Warning is injected as stderr output (shown as a system message in Claude's turn),
-# NOT by editing CLAUDE.md. This preserves the prompt cache prefix — editing static layers
-# mid-session would invalidate the cache for all subsequent turns.
 
+# --- Circuit breaker reset ---
+PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
+PROJ_HASH=$(echo "$PROJECT_ROOT" | shasum | cut -c1-8)
+CB_LOG="/tmp/claude-cb-${PROJ_HASH}.log"
+[ -f "$CB_LOG" ] && rm -f "$CB_LOG"
+
+# --- Context freshness check ---
 STATE_FILE=".agents/context/.state"
 [ ! -f "$STATE_FILE" ] && exit 0
 

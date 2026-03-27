@@ -73,8 +73,6 @@ for f in STACK.md ARCHITECTURE.md CONVENTIONS.md; do
   fi
 done
 
-if [ -n "$output" ]; then
-  # Escape for JSON
-  escaped=$(printf '%s' "$output" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g')
-  printf '{"additionalContext": "%s"}\n' "$escaped"
+if [ -n "$output" ] && command -v jq >/dev/null 2>&1; then
+  printf '%b' "$output" | jq -Rs '{"additionalContext": .}'
 fi
