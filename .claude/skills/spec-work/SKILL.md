@@ -39,7 +39,7 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
 12. **Execute each step**:
     - Implement the change
     - Check off in spec: `- [ ]` → `- [x]`
-    - Commit: `git add -u && git ls-files --others --exclude-standard | xargs -r git add && git commit -m "spec(NNN): step N — <title>"`
+    - **No commit** — spec-review is the gate before committing
     - If blocked/unclear: stop and ask
     - If a meaningful architectural/convention decision was made: append to `decisions.md`
     - **Context budget:** If compaction seems imminent, update spec progress markers before continuing
@@ -81,7 +81,7 @@ When a spec modifies SKILL.md files (trimming, condensing, refactoring): after a
 ## Rules
 - **ALWAYS update status and move the file when done.**
 - Follow the spec exactly — nothing outside Steps and scope.
-- Check off each step and commit after each (`spec(NNN): step N — <title>`).
+- Check off each step as completed. Do NOT commit — `/spec-review` is the gate before committing.
 - If blocked: leave unchecked, set `blocked`, ask user.
 - **Skill-First**: If a step references a skill, invoke via `Skill` tool.
 - `--complete` flag: skip steps 14–16, set `completed` directly.
