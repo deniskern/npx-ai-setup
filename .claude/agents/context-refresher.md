@@ -76,8 +76,9 @@ echo "GIT_HASH=$(git rev-parse HEAD 2>/dev/null)" >> .agents/context/.state
 ```
 
 ## Rules
-- Keep each file under 80 lines — terse and factual, no padding.
+- **Hard limit: each file ≤ 80 lines.** Count before writing. If over, cut: remove examples, shorten bullets, drop subsections with fewer than 3 items.
 - Write only what you observed, not what you assumed.
 - **Omit any section or subsection where no evidence was found.** Never write "Not determined", "Unknown", or placeholder text.
 - Overwrite existing files completely — do not append.
 - Do NOT read `.env` files.
+- **CRITICAL — Step 5 is mandatory.** After writing all 3 files, always run the `.state` update command. Never skip it — skipping causes stale-context warnings on every prompt.
