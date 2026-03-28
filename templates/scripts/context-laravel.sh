@@ -21,14 +21,14 @@ print(d.get('require', {}).get('laravel/framework', ''))
 fi
 
 # --- Routes ---
-route_count_web=$(grep -c "^Route::" "$PROJECT_DIR/routes/web.php" 2>/dev/null || echo 0)
-route_count_api=$(grep -c "^Route::" "$PROJECT_DIR/routes/api.php" 2>/dev/null || echo 0)
+route_count_web=$(grep -c "Route::" "$PROJECT_DIR/routes/web.php" 2>/dev/null || echo 0)
+route_count_api=$(grep -c "Route::" "$PROJECT_DIR/routes/api.php" 2>/dev/null || echo 0)
 extra_routes=$(find "$PROJECT_DIR/routes" -name "*.php" 2>/dev/null \
   | xargs -I{} basename {} .php | grep -vE "^(web|api|console|channels)$" | sort | tr '\n' ',' | sed 's/,$//')
 
 # --- Controllers ---
 controller_count=$(find "$PROJECT_DIR/app/Http/Controllers" -name "*.php" 2>/dev/null | wc -l | tr -d ' ')
-controllers=$(find "$PROJECT_DIR/app/Http/Controllers" -maxdepth 1 -name "*.php" 2>/dev/null \
+controllers=$(find "$PROJECT_DIR/app/Http/Controllers" -name "*.php" 2>/dev/null \
   | xargs -I{} basename {} .php | grep -v "^Controller$" | sort | tr '\n' ',' | sed 's/,$//')
 
 # --- Models ---

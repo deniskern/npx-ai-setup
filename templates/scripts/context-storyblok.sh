@@ -61,7 +61,9 @@ if [ -z "$space_id" ] && [ -f "$PROJECT_DIR/.env.example" ]; then
 fi
 
 # --- Build abstract ---
-abstract="Storyblok: ${sb_component_count} Vue components${sb_def_count:+ | ${sb_def_count} schema components}${space_id:+ | space ${space_id}}${sb_packages:+ | ${sb_packages}}"
+sb_def_label=""
+[ "${sb_def_count:-0}" -gt 0 ] && sb_def_label=" | ${sb_def_count} schema components"
+abstract="Storyblok: ${sb_component_count} Vue components${sb_def_label}${space_id:+ | space ${space_id}}${sb_packages:+ | ${sb_packages}}"
 
 # --- Write output ---
 mkdir -p "$(dirname "$OUTPUT")"
@@ -76,9 +78,9 @@ ${sb_packages:+Packages: ${sb_packages}}
 
 ## Vue Components (${sb_component_count})
 ${sb_components:-none}
-${sb_def_count:+
+$([ "${sb_def_count:-0}" -gt 0 ] && echo "
 ## Schema Components (Storyblok space)
-${sb_def_count} components defined — see ${sb_def_file##*/}}
+${sb_def_count} components defined — see ${sb_def_file##*/}" || true)
 ${sb_config_files:+
 ## .storyblok Config
 ${sb_config_files}}

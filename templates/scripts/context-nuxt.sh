@@ -18,7 +18,8 @@ COMPOSABLES_DIR="$PROJECT_DIR/composables"
 [ -d "$PROJECT_DIR/app/composables" ] && COMPOSABLES_DIR="$PROJECT_DIR/app/composables"
 LAYOUTS_DIR="$PROJECT_DIR/layouts"
 [ -d "$PROJECT_DIR/app/layouts" ] && LAYOUTS_DIR="$PROJECT_DIR/app/layouts"
-STORYBLOK_DIR="$PROJECT_DIR/app/storyblok"
+STORYBLOK_DIR=""
+[ -d "$PROJECT_DIR/app/storyblok" ] && STORYBLOK_DIR="$PROJECT_DIR/app/storyblok"
 [ -d "$PROJECT_DIR/storyblok" ] && STORYBLOK_DIR="$PROJECT_DIR/storyblok"
 
 # --- Pages ---
@@ -58,7 +59,8 @@ server_routes=$(find "$PROJECT_DIR/server/api" \( -name "*.ts" -o -name "*.js" \
   | sed "s|$PROJECT_DIR/server/api/||" | sed 's/\.\(ts\|js\)$//' | sort | tr '\n' ',' | sed 's/,$//')
 
 # --- Storyblok components ---
-storyblok_count=$(find "$STORYBLOK_DIR" -name "*.vue" 2>/dev/null | wc -l | tr -d ' ')
+storyblok_count=0
+[ -n "$STORYBLOK_DIR" ] && storyblok_count=$(find "$STORYBLOK_DIR" -name "*.vue" 2>/dev/null | wc -l | tr -d ' ')
 
 # --- Nuxt modules (from nuxt.config) ---
 nuxt_modules=""
@@ -101,9 +103,9 @@ ${middleware}}
 ${server_routes:+
 ## Server API Routes
 ${server_routes}}
-${storyblok_count:+
+$([ "${storyblok_count:-0}" -gt 0 ] && echo "
 ## Storyblok Components (${storyblok_count})
-See ${STORYBLOK_DIR##*/}/ — use /context-load for details}
+See ${STORYBLOK_DIR##*/}/ — use /context-load for details" || true)
 ${nuxt_modules:+
 ## Key Nuxt Modules
 ${nuxt_modules}}

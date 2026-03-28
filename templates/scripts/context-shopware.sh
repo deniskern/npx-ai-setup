@@ -28,7 +28,7 @@ plugin_count=$(echo "$plugin_dirs" | tr ',' '\n' | grep -c . 2>/dev/null || echo
 
 # --- Storefront theme ---
 theme_name=""
-theme_config=$(find "$PROJECT_DIR/src/Resources/theme.json" "$PROJECT_DIR/custom/plugins/*/src/Resources/theme.json" 2>/dev/null | head -1)
+theme_config=$(find "$PROJECT_DIR" -path "*/src/Resources/theme.json" 2>/dev/null | head -1)
 if [ -n "$theme_config" ] && command -v python3 >/dev/null 2>&1; then
   theme_name=$(python3 -c "
 import json
@@ -39,29 +39,23 @@ print(d.get('name', ''))
 fi
 
 # --- Storefront templates ---
-twig_count=$(find "$PROJECT_DIR/src/Resources/views" \
-  "$PROJECT_DIR/custom/plugins/*/src/Resources/views" \
-  -name "*.html.twig" 2>/dev/null | wc -l | tr -d ' ')
+twig_count=$(find "$PROJECT_DIR" -path "*/Resources/views/*.html.twig" 2>/dev/null | wc -l | tr -d ' ')
 
 # --- Admin components (Vue) ---
-admin_count=$(find "$PROJECT_DIR/src/Resources/app/administration" \
-  "$PROJECT_DIR/custom/plugins/*/src/Resources/app/administration" \
-  -name "*.js" -o -name "*.vue" 2>/dev/null | wc -l | tr -d ' ')
+admin_count=$(find "$PROJECT_DIR" -path "*/app/administration*" \( -name "*.js" -o -name "*.vue" \) 2>/dev/null | wc -l | tr -d ' ')
 
 # --- Migrations ---
-migration_count=$(find "$PROJECT_DIR/src/Migration" \
-  "$PROJECT_DIR/custom/plugins/*/src/Migration" \
-  -name "Migration*.php" 2>/dev/null | wc -l | tr -d ' ')
+migration_count=$(find "$PROJECT_DIR" -path "*/Migration/Migration*.php" 2>/dev/null | wc -l | tr -d ' ')
 
 # --- Entities ---
-entity_count=$(find "$PROJECT_DIR/src" "$PROJECT_DIR/custom/plugins" \
-  -name "*Definition.php" 2>/dev/null | wc -l | tr -d ' ')
+entity_count=$(find "$PROJECT_DIR" -name "*Definition.php" \
+  -not -path "*/vendor/*" -not -path "*/node_modules/*" 2>/dev/null | wc -l | tr -d ' ')
 
 # --- Key services (Controllers + Subscribers) ---
-controller_count=$(find "$PROJECT_DIR/src" "$PROJECT_DIR/custom/plugins" \
-  -name "*Controller.php" 2>/dev/null | wc -l | tr -d ' ')
-subscriber_count=$(find "$PROJECT_DIR/src" "$PROJECT_DIR/custom/plugins" \
-  -name "*Subscriber.php" 2>/dev/null | wc -l | tr -d ' ')
+controller_count=$(find "$PROJECT_DIR" -name "*Controller.php" \
+  -not -path "*/vendor/*" -not -path "*/node_modules/*" 2>/dev/null | wc -l | tr -d ' ')
+subscriber_count=$(find "$PROJECT_DIR" -name "*Subscriber.php" \
+  -not -path "*/vendor/*" -not -path "*/node_modules/*" 2>/dev/null | wc -l | tr -d ' ')
 
 # --- Build abstract ---
 abstract="Shopware${sw_version:+ ${sw_version}}: ${plugin_count} plugins${theme_name:+ | theme: ${theme_name}} | ${twig_count} twig templates | ${entity_count} entities | ${controller_count} controllers"
