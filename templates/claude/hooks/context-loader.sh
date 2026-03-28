@@ -9,9 +9,9 @@ CONTEXT_DIR="${CLAUDE_PROJECT_DIR:-.}/.agents/context"
 
 output=""
 
-for f in STACK.md ARCHITECTURE.md CONVENTIONS.md; do
-  filepath="$CONTEXT_DIR/$f"
-  [ ! -f "$filepath" ] && continue
+for filepath in $(find "$CONTEXT_DIR" -maxdepth 1 -name "*.md" 2>/dev/null | sort); do
+  f=$(basename "$filepath")
+  [ -f "$filepath" ] || continue
 
   # Check for YAML frontmatter
   first_line=$(head -1 "$filepath")
@@ -61,20 +61,12 @@ for f in STACK.md ARCHITECTURE.md CONVENTIONS.md; do
       if [ -n "$sections" ]; then
         output="$output\n$sections"
       fi
-    else
-      # Frontmatter but no abstract — fall back
-      content=$(head -20 "$filepath")
-      output="${output:+$output\n\n}=== $f ==\n$content"
     fi
-  else
-    # No frontmatter — fall back to head -20
-    content=$(head -20 "$filepath")
-    output="${output:+$output\n\n}=== $f ==\n$content"
+    # No abstract = skip silently (AUDIT.md, PATTERNS.md etc. are L2 — not L0)
   fi
+  # No frontmatter = skip silently
 done
 
-if [ -n "$output" ]; then
-  # Escape for JSON
-  escaped=$(printf '%s' "$output" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g')
-  printf '{"additionalContext": "%s"}\n' "$escaped"
+if [ -n "$output" ] && command -v jq >/dev/null 2>&1; then
+  printf '%b' "$output" | jq -Rs '{"additionalContext": .}'
 fi
