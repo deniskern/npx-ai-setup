@@ -8,7 +8,7 @@
 <!-- Add new findings here after each /session-optimize run -->
 <!-- Format: - [ ] [Category] Title — Fix applied: `file:line` or Spec NNN -->
 - [x] [T] sp-alpensattel-next CLAUDE.md + templates/CLAUDE.md: Sonnet als Default, Opus nur Architektur/ADR — direkt gefixt (2026-03-28)
-- [ ] [T] bash-defensive-patterns/SKILL.md 533 Zeilen (11.5KB) → trim auf ~60 Zeilen — `.claude/skills/bash-defensive-patterns/SKILL.md`
+- [x] [T] bash-defensive-patterns/SKILL.md 533 Zeilen → trim auf 64 Zeilen — commit 8f1fc5d (2026-03-28)
 - [ ] [T] reflect/SKILL.md 7.7KB bei 165 Zeilen — auf Beispiel-Outputs/Code-Blöcke prüfen, trim wenn möglich
 - [x] [T] spec-validate 6.1→2.2KB, spec-review 5.7→2.6KB, spec-work-all 5.5→2.0KB — Spec 588 (2026-03-26)
 - [x] [T] Model-Routing in Spec-Skills beim Trimming ergänzt (spec-review + spec-work-all) — Spec 589 (2026-03-26)
@@ -18,8 +18,10 @@
 - [ ] [T] Haiku 0% — Verifikation nach Spec 578 ausständig; Sonnet-Limit aktuell voll, Validierung ab ~2026-03-30 möglich
 - [ ] [T] Opus für Non-Code-Projekte (Obsidian, Finanzplanung) — Sonnet reicht für Markdown-Editing, 15x günstiger
 - [ ] [E] npx-ai-setup Sessions haben quasi keine Subagents (0-2) trotz 100+ Tool-Calls — Skills wie /analyze, /review nutzen
-- [ ] [T] Große Opus-Sessions ohne Parallelisierung (mcp-platform 226 Tools/2 SA, shop-force-os 212 Tools/5 SA)
+- [ ] [T] Große Opus-Sessions ohne Parallelisierung — sp-alpensattel a53d2ed8: 225min, 234 Tools, 88 Bash, 68 Read, 48 Grep, nur 3 SA
 - [ ] [E] Projekte ohne ai-setup haben 0 Subagents — crew-buddy, mcp-platform, Obsidian Vaults fehlt Parallelisierungs-Guidance
+- [ ] [T] sp-alpensattel: 0 Skills, 100% Opus — CLAUDE.md fehlt Model-Routing, kein boilerplate installiert (2026-03-28)
+- [ ] [T] -Users-deniskern: 100% Opus für Non-Code-Sessions — ~/.claude/CLAUDE.md braucht Default-Sonnet-Rule (2026-03-28)
 - [x] [T] Template CLAUDE.md fehlte Model-Routing-Sektion — 8 Zeilen ergänzt, templates/CLAUDE.md (2026-03-26)
 - [x] [T] spec-work SKILL.md 11.5KB → 4.4KB (62% Reduktion) — Verbose Erklärungen, Debugging-Discipline, Blockquotes kondensiert (2026-03-26)
 - [x] [T] apply-learnings Mapping für CLAUDE.md — bereits vorhanden (Zeile 19), stale Observation #25044 (2026-03-26)
