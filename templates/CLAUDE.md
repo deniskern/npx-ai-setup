@@ -13,7 +13,7 @@ For full details: `/context-load STACK.md` (or ARCHITECTURE.md, CONVENTIONS.md, 
 
 ## Model Routing
 
-**Session start:** Task-Typ bestimmt das Modell. CSS/Liquid-Fixes, Single-File-Edits: `claude --model haiku`. Feature-Dev: Default (opus). Wechsel im Chat via `/model`.
+**Session start:** Task-Typ bestimmt das Modell. CSS/Liquid-Fixes, Single-File-Edits, Explores: `claude --model haiku`. Feature-Dev, Spec-Work, Orchestrierung: `claude --model sonnet`. Architektur/ADR: `claude --model opus`. Wechsel im Chat via `/model`.
 
 Set `model:` explicitly on every subagent spawn. Default (no model set) inherits the parent model.
 
