@@ -14,6 +14,9 @@ Regenerates `.agents/context/` files and reliably updates `.state` so `context-f
 2. Detect project system and run the matching Bash scanner (zero LLM tokens):
    - `theme.liquid` exists → `bash .claude/scripts/context-shopify.sh`
    - `nuxt.config.*` exists → `bash .claude/scripts/context-nuxt.sh`
+   - `artisan` exists → `bash .claude/scripts/context-laravel.sh`
+   - `composer.json` contains `shopware/core` → `bash .claude/scripts/context-shopware.sh`
+   - `package.json` contains `@storyblok` → `bash .claude/scripts/context-storyblok.sh`
    - No match → skip (only standard 3 files)
 
 3. **Always** run this directly after agents and scripts complete:
