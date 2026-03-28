@@ -74,6 +74,8 @@ Neue Idee oder Feature?
 | `/spec "task"` | Komplexitaet einschaetzen, Implementation durchdenken, Spec erstellen |
 | `/spec-validate NNN` | Spec-Qualitaet scoren bevor sie ausgefuehrt wird |
 | `/spec-work NNN` | Spec Schritt fuer Schritt ausfuehren, nach jedem Schritt committen |
+| `/spec-run NNN` | Full Pipeline: validate → implement → review → commit (self-healing) |
+| `/spec-run-all` | Full Pipeline fuer alle Draft-Specs parallel in Git Worktrees |
 | `/spec-work-all` | Alle Draft-Specs parallel in isolierten Git Worktrees ausfuehren |
 | `/spec-review NNN` | Review gegen Acceptance Criteria + Finishing Gate |
 | `/spec-board` | Kanban-Board aller Specs |

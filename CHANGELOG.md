@@ -10,6 +10,39 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v2.0.6] — 2026-03-28
+
+<!-- slack-announcement -->
+:package: *@onedot/ai-setup v2.0.6*
+
+*Was ist neu:*
+:sparkles: *Skills* — `/spec-run`, `/spec-run-all` — Full Pipeline-Skills jetzt in Templates, erscheinen im `/`-Autocomplete
+:brain: *Context* — System-aware Bash Scanners fuer Nuxt, Laravel, Shopware, Storyblok + `sections:` im Scanner-Frontmatter
+:zap: *SessionStart* — `file-index.sh` Hook: Zero-Grep File Discovery beim Session-Start
+:gear: *Verbesserungen* — Update auto-overwrite ohne Prompt, Repomix-Orphan-Cleanup, context-freshness Hook
+
+*Zahlen:* 35 Skills | 12 Agents | 11 Hooks
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
+### Skills
+
+- **`/spec-run` + `/spec-run-all` in Templates** — Fehlten bisher in `templates/skills/`, damit unsichtbar im Slash-Autocomplete anderer Projekte. Beide jetzt eingepflegt.
+- **`/spec-run` + `/spec-run-all` in WORKFLOW-GUIDE + README** — Skills dokumentiert, Count 32 → 35.
+- **`/context-refresh` in README** — Bisher undokumentiert trotz Template-Skill.
+
+### Context-Scanner
+
+- **System-aware Scanners** — Nuxt, Laravel, Shopware, Storyblok Bash-Scanner fuer L0-Context-Abstracts (Spec 596).
+- **`sections:` Frontmatter** — Scanner koennen L0-Sections deklarieren; Glob-basierter Context-Loader fuer generische Stack-Erkennung.
+- **Shopify-Scanner** — System-aware Shopify Scanner + Glob Context-Loader.
+
+### Hooks & Update
+
+- **`file-index.sh` SessionStart Hook** — Indiziert Dateien beim Session-Start fuer Zero-Grep File Discovery.
+- **Update auto-overwrite** — `update.sh` ueberschreibt user-modifizierte Dateien ohne interaktiven Prompt.
+- **Repomix-Orphan-Cleanup** — Veraltete Repomix-Dateien werden bei jedem Update entfernt.
+
 ## [v2.0.5] — 2026-03-27
 
 <!-- slack-announcement -->
