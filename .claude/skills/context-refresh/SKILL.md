@@ -1,6 +1,6 @@
 ---
 name: context-refresh
-description: Regenerates .agents/context/ files (STACK.md, ARCHITECTURE.md, CONVENTIONS.md) and updates the .state hash. Triggers: /context-refresh, 'update context', 'context is stale', '[CONTEXT STALE]'.
+description: "Regenerates .agents/context/ files (STACK.md, ARCHITECTURE.md, CONVENTIONS.md) and updates the .state hash. Triggers: /context-refresh, 'update context', 'context is stale', '[CONTEXT STALE]'."
 ---
 
 # Context Refresh

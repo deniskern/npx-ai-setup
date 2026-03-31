@@ -232,3 +232,10 @@
 2026-03-31T05:04:32Z TOOL_FAIL tool=Read interrupt=false error=EISDIR: illegal operation on a directory, read '/Users/deniskern/Sites/npx-ai-setup/templates'
 2026-03-31T06:22:53Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 ok stash drop FAILED: git stash pop Fehler: Ihre lokalen Änderungen in den folgenden Dateien würden durch den Merge überschrieben werden: 	.claude/tool-failures.log Bitte committen oder stashen Sie Ihre Änderungen, bevor Sie mergen. Abbruch
 2026-03-31T06:49:52Z TOOL_FAIL tool=Glob interrupt=false error=ENOENT: no such file or directory, posix_spawn 'rg'
+2026-03-31T07:47:17Z TOOL_FAIL tool=Glob interrupt=false error=ENOENT: no such file or directory, posix_spawn 'rg'
+2026-03-31T07:58:33Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 No spec found matching specs/600-*.md
+2026-03-31T07:59:38Z TOOL_FAIL tool=Read interrupt=false error=File does not exist. Note: your current working directory is /Users/deniskern/Sites/npx-ai-setup.
+2026-03-31T07:59:46Z TOOL_FAIL tool=Glob interrupt=false error=ENOENT: no such file or directory, posix_spawn 'rg'
+2026-03-31T08:20:48Z TOOL_FAIL tool=Bash interrupt=false error=Exit code 1 (eval):1: no such user or named directory: 8..HEAD
+2026-03-31T08:21:14Z TOOL_FAIL tool=Read interrupt=false error=File content (10372 tokens) exceeds maximum allowed tokens (10000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.
+2026-03-31T08:56:31Z TOOL_FAIL tool=Glob interrupt=false error=ENOENT: no such file or directory, posix_spawn 'rg'

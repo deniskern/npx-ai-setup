@@ -21,6 +21,7 @@
     "test:smoke": "bash tests/smoke.sh",
     "test:integration": "bash tests/integration.sh",
     "test": "npm run test:smoke && npm run test:integration",
+    "routing-check": "bash tests/routing-check.sh",
     "hooks:install": "git config core.hooksPath .githooks",
     "hooks:status": "git config --get core.hooksPath"
   },

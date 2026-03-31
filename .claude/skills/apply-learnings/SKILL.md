@@ -1,6 +1,6 @@
 ---
 name: apply-learnings
-description: Applies pending learnings from LEARNINGS.md into the correct project context files. Marks applied entries so they are not processed again.
+description: "Applies pending learnings from LEARNINGS.md into the correct project context files. Marks applied entries so they are not processed again."
 model: sonnet
 allowed-tools: Read, Edit, Glob, Grep
 ---

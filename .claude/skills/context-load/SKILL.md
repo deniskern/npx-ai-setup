@@ -1,6 +1,6 @@
 ---
 name: context-load
-description: Load context files on demand — STACK.md, ARCHITECTURE.md, CONVENTIONS.md, decisions.md. Triggers: /context-load, 'load architecture', 'show stack details', 'load conventions'.
+description: "Load context files on demand — STACK.md, ARCHITECTURE.md, CONVENTIONS.md, decisions.md. Triggers: /context-load, 'load architecture', 'show stack details', 'load conventions'."
 ---
 
 # Context Load — On-Demand L2 Context

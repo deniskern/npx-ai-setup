@@ -1,6 +1,6 @@
 ---
 name: token-optimizer
-description: Token-Overhead auditieren: .claudeignore-Luecken, Setup (CLAUDE.md/Rules/Skills), Templates. Triggers: /token-optimizer, 'context tight', 'audit tokens', 'find ghost tokens'.
+description: "Token-Overhead auditieren: .claudeignore-Luecken, Setup (CLAUDE.md/Rules/Skills), Templates. Triggers: /token-optimizer, 'context tight', 'audit tokens', 'find ghost tokens'."
 ---
 
 # Token Optimizer — npx-ai-setup
