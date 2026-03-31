@@ -34,6 +34,7 @@ For structured criteria: verify Truths (run commands), Artifacts (file exists wi
 **4c — Code quality** (by complexity):
 - Low/Medium: spawn `code-reviewer` agent (model: sonnet)
 - High: spawn `code-reviewer` AND `staff-reviewer` in parallel (model: sonnet)
+- Review stays on Sonnet for all tiers; do not escalate to Opus for routine spec review.
 
 ### 5. Verdict
 
