@@ -33,7 +33,7 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
 
 11a. **Model routing**: Read `**Complexity**` field:
     - `low` — execute directly (no subagent)
-    - `medium` or unset — spawn subagent with `model: haiku` for bounded tasks (search, single-file edits, doc changes); `model: sonnet` only when ≥3 files are modified or test suites are generated
+    - `medium` or unset — spawn subagent with `model: haiku` for search/read/explore/config tasks; `model: sonnet` when the step requires writing correct logic, generating code, or producing test suites
     - `high` — spawn subagent with `model: opus`
 
 12. **Execute each step**:

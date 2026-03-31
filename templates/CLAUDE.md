@@ -20,7 +20,7 @@ Set `model:` explicitly on every subagent spawn. Default (no model set) inherits
 | Model | Use for |
 |-------|---------|
 | `haiku` | Explore agents, file search, codebase questions, grep/glob tasks |
-| `sonnet` | Multi-file implementation (≥3 files), full test suites |
+| `sonnet` | Writing correct logic, code generation, test suites |
 | `opus` | Architecture review, complex analysis, spec creation |
 
 ## Build Artifact Rules
