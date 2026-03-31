@@ -139,6 +139,44 @@ else
   fail "templates/skills/spec-work/SKILL.md missing validation gate"
 fi
 
+echo ""
+echo "--- Routing guidance ---"
+if grep -q 'Default: Haiku' CLAUDE.md 2>/dev/null; then
+  pass "CLAUDE.md sets Haiku as the routine default"
+else
+  fail "CLAUDE.md missing Haiku-default routing guidance"
+fi
+
+if grep -q 'Threshold: spawn agents only for tasks requiring ≥3 distinct tool calls' .claude/rules/agents.md 2>/dev/null; then
+  pass ".claude/rules/agents.md defines a concrete spawn threshold"
+else
+  fail ".claude/rules/agents.md missing concrete spawn threshold"
+fi
+
+if grep -q 'likely to exceed ~8 tool calls' .claude/rules/agents.md 2>/dev/null; then
+  pass ".claude/rules/agents.md adds an early parallelization threshold"
+else
+  fail ".claude/rules/agents.md missing early parallelization threshold"
+fi
+
+if grep -q 'crosses `>30` tool calls with no subagents' CLAUDE.md 2>/dev/null; then
+  pass "CLAUDE.md tells long sessions to reconsider delegation"
+else
+  fail "CLAUDE.md missing long-session delegation check"
+fi
+
+if grep -q 'model: haiku' .claude/skills/spec-work/SKILL.md 2>/dev/null; then
+  pass ".claude/skills/spec-work/SKILL.md uses Haiku-first routing for medium work"
+else
+  fail ".claude/skills/spec-work/SKILL.md missing Haiku-first medium routing"
+fi
+
+if grep -q 'Review stays on Sonnet for all tiers' .claude/skills/spec-review/SKILL.md 2>/dev/null; then
+  pass ".claude/skills/spec-review/SKILL.md keeps routine review on Sonnet"
+else
+  fail ".claude/skills/spec-review/SKILL.md missing explicit Sonnet-only review guidance"
+fi
+
 # Step 8: Verify Complexity field in spec template
 echo ""
 echo "--- Spec template Complexity field ---"

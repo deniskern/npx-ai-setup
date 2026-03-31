@@ -1,0 +1,55 @@
+{
+  "commands": [
+    {
+      "name": "ai-setup dev",
+      "keywords": ["ai-setup", "claude", "setup", "dev", "open"],
+      "cwd": ".",
+      "color": "#6C63FF",
+      "restart": "ignore",
+      "layout": {
+        "type": "split",
+        "direction": "right",
+        "position": 0.5,
+        "children": [
+          {
+            "type": "split",
+            "direction": "down",
+            "position": 0.5,
+            "children": [
+              {
+                "type": "pane",
+                "surfaces": [
+                  {
+                    "name": "claude",
+                    "type": "terminal",
+                    "command": "claude",
+                    "focus": true
+                  }
+                ]
+              },
+              {
+                "type": "pane",
+                "surfaces": [
+                  {
+                    "name": "claude #2",
+                    "type": "terminal",
+                    "command": "claude"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "pane",
+            "surfaces": [
+              {
+                "name": "shell",
+                "type": "terminal"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -86,7 +86,11 @@ After a fresh start, run `/resume` to restore state and route to the next action
 After sessions with >30 tool calls: run `/reflect` then `/commit` to capture learnings and checkpoint.
 
 ## Parallel Orchestration
-Use subagents by default. For direct agent coordination: set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use 3-5 teammates, clean up after.
+Use subagents by default when the work can be split into independent tracks.
+- If you expect `≥8` tool calls and can separate the task into search vs implementation or two file clusters, spawn `1-2` Haiku subagents.
+- If a session crosses `>30` tool calls with no subagents and the work is still branching, stop and reconsider delegation before continuing.
+- Keep direct tool use for tiny tasks (`<3` tool calls) or tightly coupled edits.
+For direct agent coordination: set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use 3-5 teammates, clean up after.
 
 ## Automation (Agent SDK CLI)
 For non-interactive runs, use `claude -p "<prompt>"`.
