@@ -10,13 +10,34 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
-- **Routing/Delegation**: Subagent-Delegationsschwellen — ab ≥8 Tool-Calls parallele Haiku-Tracks, Re-check-Regel ab >30 Tool-Calls, spec-review explizit auf Sonnet, 7 neue Smoke-Assertions (341 passed)
-- **Spec 601**: Metrics-Driven Routing Tightening — Haiku als expliziter Default in CLAUDE.md und agents.md, spec-work Haiku-first für bounded medium-Complexity, Smoke-Tests sichern Routing-Regeln ab
+## [v2.0.7] — 2026-03-31
+
+<!-- slack-announcement -->
+:package: *@onedot/ai-setup v2.0.7*
+
+*Was ist neu:*
+:zap: *Delegation* — Subagent-Spawning operationalisiert: ≥3 Tool-Calls + Write → Agent, ≥8 bereits gemacht → Delegation prüfen, >30 ohne Subagents → Re-check
+:brain: *Routing* — Haiku nur noch für dedizierte Explore-Agents, Sonnet bleibt Default für alle Implementierungs-Subagents. Kein Qualitätsverlust durch Downgrade.
+:wrench: *Setup* — Unsupported Flags schlagen fehl, jq-optional JSON-Fallback, stale --regenerate Hints entfernt
+:shield: *Sandbox* — Best-effort writes statt Abbruch bei LOCKED_HOME, hermetic Integration-Tests
+:sparkles: *Session Metrics* — session-extract.sh trennt aktive Arbeitszeit von Idle-Zeit
+:gear: *Verbesserungen* — bash-defensive-patterns 88% schlanker, Sonnet als Session-Default, mcp.md Rule, spec-validate-prep sucht in specs/completed/
+
+*Zahlen:* 35 Skills | 11 Agents | 11 Hooks | 8 Rules
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
+### Routing & Delegation
+- **Routing**: Haiku auf dedizierte Explore-Agents beschränkt — kein Downgrade bei Implementierungs-Subagents, Sonnet bleibt Standard für spec-work medium
+- **Delegation**: Spawn-Threshold ≥3 tool calls + write, Eskalation bei 8 Tool-Calls, Re-check bei >30 ohne Subagents
+- **Spec 601**: Routing-Regeln in CLAUDE.md, agents.md, spec-work dokumentiert und durch Smoke-Tests gesichert
+
+### Spec Implementations
 - **Spec 600**: Session Extract Active Duration — session-extract.sh trennt aktive Arbeitszeit von Idle-Zeit, Smoke-Test mit Fixture verifiziert Idle-Cap-Logik
 - **Spec 598**: Setup Consistency Hardening — unsupported Flags schlagen fehl, jq-optional JSON-Fallback, stale --regenerate Hints entfernt, Integration-Tests erweitert
 - **Spec 599**: Sandbox-Safe Global Side Effects — best-effort writes mit warn-on-failure, kein Abbruch bei LOCKED_HOME, hermetic Integration-Tests
-- **Spec 593**: Fix Hardcoded Opus Default — `claude-sonnet-4-6` als Session-Default in ~/.claude/settings.json, sp-alpensattel/.claude/settings.json und templates/claude/settings.json
-- **Spec 597**: bash-defensive-patterns/SKILL.md trimmen — 533 → 64 Zeilen (88% Reduktion), ~2.400 Token gespart pro Trigger, alle 8 kritischen Patterns erhalten
+- **Spec 593**: Fix Hardcoded Opus Default — `claude-sonnet-4-6` als Session-Default in ~/.claude/settings.json und templates
+- **Spec 597**: bash-defensive-patterns/SKILL.md trimmen — 533 → 64 Zeilen (88% Reduktion), ~2.400 Token gespart pro Trigger
 
 ## [v2.0.6] — 2026-03-28
 
