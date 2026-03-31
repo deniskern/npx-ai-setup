@@ -13,7 +13,7 @@ Always set `model:` when spawning subagents. Haiku is the default — Sonnet onl
 Before spawning: Can Haiku handle this? If yes, use Haiku. Sonnet is the scarcest budget.
 Prefer direct Glob/Grep/Read over agent spawns when < 3 tool calls needed.
 Threshold: spawn agents only for tasks requiring ≥3 distinct tool calls AND write operations or code generation. Read-only exploration → no agent, use tools directly.
-Escalation rule: if the session is likely to exceed ~8 tool calls and the work splits cleanly into independent tracks, delegate at least one bounded Haiku subagent instead of keeping everything serial.
+Escalation rule: if you have already made 8 tool calls and the task is not yet complete, check whether remaining work splits into independent tracks — if yes, delegate at least one bounded Haiku subagent instead of continuing serially.
 Re-check rule: if you have already crossed >30 tool calls with no subagents, pause and explicitly decide whether the remaining work can be parallelized.
 
 ## Agent Selection

@@ -44,7 +44,7 @@ Executes spec $ARGUMENTS step by step and verifies acceptance criteria. Use to i
 12. **Execute each step**:
     - Implement the change
     - Check off in spec: `- [ ]` → `- [x]`
-    - Commit: `git add -u && git ls-files --others --exclude-standard | xargs -r git add && git commit -m "spec(NNN): step N — <title>"`
+    - **No commit** — `/spec-review` is the gate before committing
     - If blocked/unclear: stop and ask
     - If a meaningful architectural/convention decision was made: append to `decisions.md`
     - **Context budget:** If compaction seems imminent, update spec progress markers before continuing

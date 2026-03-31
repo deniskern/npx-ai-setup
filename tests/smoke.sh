@@ -153,7 +153,7 @@ else
   fail ".claude/rules/agents.md missing concrete spawn threshold"
 fi
 
-if grep -q 'likely to exceed ~8 tool calls' .claude/rules/agents.md 2>/dev/null; then
+if grep -q 'already made 8 tool calls\|Escalation rule' .claude/rules/agents.md 2>/dev/null; then
   pass ".claude/rules/agents.md adds an early parallelization threshold"
 else
   fail ".claude/rules/agents.md missing early parallelization threshold"
