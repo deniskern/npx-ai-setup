@@ -10,20 +10,17 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
-- **Spec 602**: Routing Consistency Check Script — `tests/routing-check.sh` mit 11 Assertions prüft Routing-Konsistenz vor jedem Release; `npm run routing-check` als Pre-Release-Gate
-
 ## [v2.0.7] — 2026-03-31
 
 <!-- slack-announcement -->
 :package: *@onedot/ai-setup v2.0.7*
 
 *Was ist neu:*
-:zap: *Delegation* — Subagent-Spawning operationalisiert: ≥3 Tool-Calls + Write → Agent, ≥8 bereits gemacht → Delegation prüfen, >30 ohne Subagents → Re-check
-:brain: *Routing* — Haiku nur noch für dedizierte Explore-Agents, Sonnet bleibt Default für alle Implementierungs-Subagents. Kein Qualitätsverlust durch Downgrade.
-:wrench: *Setup* — Unsupported Flags schlagen fehl, jq-optional JSON-Fallback, stale --regenerate Hints entfernt
-:shield: *Sandbox* — Best-effort writes statt Abbruch bei LOCKED_HOME, hermetic Integration-Tests
+:brain: *Routing* — Haiku nur für dedizierte Explore-Agents, Sonnet Default für alle Implementierungs-Subagents. Kein Qualitätsverlust durch Downgrade.
+:zap: *Delegation* — Spawn-Threshold ≥3 Tool-Calls+Write → Agent, bei ≥8 gemachten Calls Delegation prüfen, bei >30 ohne Subagents Re-check.
+:shield: *Routing Guard* — `tests/routing-check.sh` mit 13 Assertions prüft Routing-Konsistenz vor jedem Commit und Release automatisch.
+:gear: *Setup* — Opus als Session-Default, bash-defensive-patterns 88% schlanker, spec-validate-prep sucht in specs/completed/
 :sparkles: *Session Metrics* — session-extract.sh trennt aktive Arbeitszeit von Idle-Zeit
-:gear: *Verbesserungen* — bash-defensive-patterns 88% schlanker, Sonnet als Session-Default, mcp.md Rule, spec-validate-prep sucht in specs/completed/
 
 *Zahlen:* 35 Skills | 11 Agents | 11 Hooks | 8 Rules
 *Update:* `npx github:onedot-digital-crew/npx-ai-setup`
@@ -35,11 +32,16 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 - **Spec 601**: Routing-Regeln in CLAUDE.md, agents.md, spec-work dokumentiert und durch Smoke-Tests gesichert
 
 ### Spec Implementations
-- **Spec 600**: Session Extract Active Duration — session-extract.sh trennt aktive Arbeitszeit von Idle-Zeit, Smoke-Test mit Fixture verifiziert Idle-Cap-Logik
-- **Spec 598**: Setup Consistency Hardening — unsupported Flags schlagen fehl, jq-optional JSON-Fallback, stale --regenerate Hints entfernt, Integration-Tests erweitert
-- **Spec 599**: Sandbox-Safe Global Side Effects — best-effort writes mit warn-on-failure, kein Abbruch bei LOCKED_HOME, hermetic Integration-Tests
-- **Spec 593**: Fix Hardcoded Opus Default — `claude-sonnet-4-6` als Session-Default in ~/.claude/settings.json und templates
+- **Spec 602**: Routing Consistency Check Script — `tests/routing-check.sh` mit 13 Assertions, Pre-commit Hook blockiert Commits bei Widersprüchen
+- **Spec 600**: Session Extract Active Duration — session-extract.sh trennt aktive Arbeitszeit von Idle-Zeit
+- **Spec 599**: Sandbox-Safe Global Side Effects — best-effort writes, kein Abbruch bei LOCKED_HOME
+- **Spec 598**: Setup Consistency Hardening — unsupported Flags schlagen fehl, jq-optional JSON-Fallback
 - **Spec 597**: bash-defensive-patterns/SKILL.md trimmen — 533 → 64 Zeilen (88% Reduktion), ~2.400 Token gespart pro Trigger
+
+### Fixes
+- **Opus als Session-Default** — `claude-opus-4-6` zurück in settings.json; Sonnet bleibt Default für Subagents
+- **agents.md**: Selbstwiderspruch "Haiku is the default" behoben
+- **Template-Skills**: `name:` Frontmatter-Feld in 19 Skills ergänzt
 
 ## [v2.0.6] — 2026-03-28
 

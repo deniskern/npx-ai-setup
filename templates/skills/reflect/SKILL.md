@@ -1,4 +1,5 @@
 ---
+name: reflect
 description: "Analyze the current session for corrections, architectural discoveries, and stack decisions — convert them into permanent learnings."
 model: sonnet
 mode: plan

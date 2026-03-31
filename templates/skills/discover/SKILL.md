@@ -1,4 +1,5 @@
 ---
+name: discover
 description: Reverse-engineers draft specs from an existing codebase. Use for legacy projects and onboarding — where code exists but specs don't.
 model: opus
 mode: plan

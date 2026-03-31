@@ -1,4 +1,5 @@
 ---
+name: challenge
 description: "Challenge and critically evaluate this feature idea before any implementation: **$ARGUMENTS**"
 model: sonnet
 allowed-tools: Read, Glob, Grep

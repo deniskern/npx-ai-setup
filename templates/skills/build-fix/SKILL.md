@@ -1,4 +1,5 @@
 ---
+name: build-fix
 description: "Active build-fixer: runs the build, parses the first error, applies a minimal fix, rebuilds — repeat until green or guard rails trigger."
 model: sonnet
 argument-hint: "[optional: build command override]"

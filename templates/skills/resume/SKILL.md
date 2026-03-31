@@ -1,4 +1,5 @@
 ---
+name: resume
 description: "Restores session state from `.continue-here.md` and routes to the next action. Run at the start of a new session."
 model: haiku
 allowed-tools: Read, Bash, Glob, Grep, AskUserQuestion

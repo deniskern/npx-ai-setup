@@ -1,4 +1,5 @@
 ---
+name: research
 description: "Deep-researches an external repository, tool, or pattern against the existing project's Claude Code setup. Produces a comprehensive brainstorm document with prioritized adoption candidates."
 model: opus
 mode: plan

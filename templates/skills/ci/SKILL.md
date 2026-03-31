@@ -1,4 +1,5 @@
 ---
+name: ci
 description: Checks CI status for the current branch — runs `gh pr checks` and `gh run list`, reports pass/fail, and suggests next steps.
 model: haiku
 allowed-tools: Bash

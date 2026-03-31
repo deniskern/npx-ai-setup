@@ -1,4 +1,5 @@
 ---
+name: pause
 description: "Captures current session state into `.continue-here.md` and commits it as a WIP checkpoint. Run before ending a session."
 model: haiku
 allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
