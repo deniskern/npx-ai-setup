@@ -148,6 +148,27 @@ else
   fail "specs/TEMPLATE.md missing Complexity field"
 fi
 
+echo ""
+echo "--- Spec validate prep ---"
+SPEC_PREP_OUTPUT=$(bash .claude/scripts/spec-validate-prep.sh 600 2>&1 || true)
+if printf '%s' "$SPEC_PREP_OUTPUT" | grep -q 'Status: completed'; then
+  pass "spec-validate-prep detects markdown status header"
+else
+  fail "spec-validate-prep did not detect markdown status header"
+fi
+
+if printf '%s' "$SPEC_PREP_OUTPUT" | grep -q 'Total steps:     6'; then
+  pass "spec-validate-prep counts completed steps correctly"
+else
+  fail "spec-validate-prep step counts are broken"
+fi
+
+if printf '%s' "$SPEC_PREP_OUTPUT" | grep -q 'Total criteria:     4'; then
+  pass "spec-validate-prep counts acceptance criteria correctly"
+else
+  fail "spec-validate-prep acceptance criteria counts are broken"
+fi
+
 # Step 9: Verify tracked repo-local scripts stay in sync with templates
 echo ""
 echo "--- Script source-of-truth parity ---"
@@ -232,6 +253,38 @@ else
   fail "lib/json.sh missing _json_merge"
 fi
 
+echo ""
+echo "--- Session extract active duration ---"
+SESSION_TMP=$(mktemp -d)
+SESSION_PROJECT_DIR="$SESSION_TMP/projects/demo-project"
+mkdir -p "$SESSION_PROJECT_DIR"
+cat > "$SESSION_PROJECT_DIR/demo-session.jsonl" <<'EOF'
+{"type":"user","timestamp":"2026-03-31T10:00:00Z"}
+{"type":"assistant","timestamp":"2026-03-31T10:01:00Z","message":{"model":"claude-sonnet-4-6","content":[{"type":"text","text":"ok"}]}}
+{"type":"assistant","timestamp":"2026-03-31T12:01:00Z","message":{"model":"claude-sonnet-4-6","content":[{"type":"text","text":"still here"}]}}
+EOF
+
+SESSION_OUTPUT=$(SESSION_EXTRACT_PROJECTS_DIR="$SESSION_TMP/projects" SESSION_IDLE_CAP_MINUTES=10 bash .claude/scripts/session-extract.sh demo-project --last 1 2>&1 || true)
+rm -rf "$SESSION_TMP"
+
+if printf '%s' "$SESSION_OUTPUT" | grep -q '11min active / 121min wall'; then
+  pass "session-extract caps idle gaps in active duration"
+else
+  fail "session-extract did not report capped active duration"
+fi
+
+if printf '%s' "$SESSION_OUTPUT" | grep -q 'Tools: 0 calls'; then
+  pass "session-extract fixture output stays readable"
+else
+  fail "session-extract fixture output missing expected summary lines"
+fi
+
+if grep -q 'LOCAL FALLBACK' .claude/skills/session-optimize/SKILL.md 2>/dev/null; then
+  pass "session-optimize documents local fallback mode"
+else
+  fail "session-optimize missing local fallback documentation"
+fi
+
 echo "--- Stack-aware sandbox permissions ---"
 # Simulate: write template settings.json, set framework, run customize, verify deny list
 SANDBOX_TMP=$(mktemp -d)
@@ -310,6 +363,33 @@ for spec_file in specs/completed/[0-9]*.md; do
     *) fail "$spec_name has status=$spec_status (expected completed or superseded)" ;;
   esac
 done
+
+# Routing guidance assertions
+echo ""
+echo "--- Model routing rules ---"
+if grep -q 'Default: Haiku\|Default.*haiku\|haiku.*default' CLAUDE.md 2>/dev/null; then
+  pass "CLAUDE.md documents Haiku as default model"
+else
+  fail "CLAUDE.md missing Haiku-default model routing guidance"
+fi
+
+if grep -q 'haiku' .claude/rules/agents.md 2>/dev/null; then
+  pass ".claude/rules/agents.md contains haiku as default model label"
+else
+  fail ".claude/rules/agents.md missing haiku default model label"
+fi
+
+if grep -q 'medium.*haiku\|haiku.*bounded' .claude/skills/spec-work/SKILL.md 2>/dev/null; then
+  pass "spec-work/SKILL.md uses haiku for bounded medium-complexity tasks"
+else
+  fail "spec-work/SKILL.md missing haiku routing for medium-complexity tasks"
+fi
+
+if grep -q 'medium.*haiku\|haiku.*bounded' templates/skills/spec-work/SKILL.md 2>/dev/null; then
+  pass "templates/skills/spec-work/SKILL.md uses haiku for bounded medium-complexity tasks"
+else
+  fail "templates/skills/spec-work/SKILL.md missing haiku routing for medium-complexity tasks"
+fi
 
 # Summary
 echo ""

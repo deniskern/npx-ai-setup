@@ -40,6 +40,16 @@ fi
 section() { printf "\n## %s\n\n" "$1"; }
 hr()      { printf '%s\n' "---"; }
 
+extract_status() {
+  local file="$1"
+  python3 - "$file" <<'PYEOF'
+import re, sys
+text = open(sys.argv[1], encoding="utf-8").read()
+m = re.search(r'\*\*Status\*\*:\s*([^|\n]+)', text)
+print(m.group(1).strip() if m else "")
+PYEOF
+}
+
 count_section_lines() {
   local file="$1" heading="$2"
   # Count lines from the heading until the next ## heading or EOF
@@ -67,10 +77,10 @@ hr
 # Status detection
 # ---------------------------------------------------------------------------
 section "Status"
-STATUS_LINE="$(grep -m1 'Status:' "$SPEC_FILE" 2>/dev/null || echo "")"
-if [ -n "$STATUS_LINE" ]; then
-  printf "%s\n" "$STATUS_LINE"
-  if printf '%s' "$STATUS_LINE" | grep -qi 'in-progress\|in-review\|completed'; then
+STATUS_VALUE="$(extract_status "$SPEC_FILE")"
+if [ -n "$STATUS_VALUE" ]; then
+  printf "Status: %s\n" "$STATUS_VALUE"
+  if printf '%s' "$STATUS_VALUE" | grep -qi 'in-progress\|in-review\|completed'; then
     printf "\n> WARNING: Spec is not in draft status — validation may be advisory only.\n"
   fi
 else
@@ -111,9 +121,8 @@ printf "\nTotal spec lines: %s\n" "$TOTAL_LINES"
 # Step count
 # ---------------------------------------------------------------------------
 section "Step Analysis"
-
-STEP_COUNT="$(grep -cE '^\s*-\s+\[[ x]\]\s+Step\s+[0-9]' "$SPEC_FILE" 2>/dev/null || echo 0)"
-STEP_DONE="$(grep -cE '^\s*-\s+\[x\]\s+Step\s+[0-9]' "$SPEC_FILE" 2>/dev/null || echo 0)"
+STEP_COUNT="$(awk '/^[[:space:]]*-[[:space:]]+\[[ x]\][[:space:]]+Step[[:space:]]+[0-9]/{count++} END{print count+0}' "$SPEC_FILE")"
+STEP_DONE="$(awk '/^[[:space:]]*-[[:space:]]+\[x\][[:space:]]+Step[[:space:]]+[0-9]/{count++} END{print count+0}' "$SPEC_FILE")"
 STEP_TODO="$((STEP_COUNT - STEP_DONE))"
 
 printf "Total steps:     %s\n" "$STEP_COUNT"
@@ -132,8 +141,8 @@ fi
 section "Acceptance Criteria Analysis"
 
 # Match checkbox lines inside the Acceptance Criteria section
-AC_COUNT="$(awk '/^## Acceptance Criteria/{found=1; next} found && /^## /{exit} found && /^\s*-\s+\[/{count++} END{print count+0}' "$SPEC_FILE")"
-AC_DONE="$(awk '/^## Acceptance Criteria/{found=1; next} found && /^## /{exit} found && /^\s*-\s+\[x\]/{count++} END{print count+0}' "$SPEC_FILE")"
+AC_COUNT="$(awk '/^## Acceptance Criteria/{found=1; next} found && /^## /{exit} found && /^[[:space:]]*-[[:space:]]+\[/{count++} END{print count+0}' "$SPEC_FILE")"
+AC_DONE="$(awk '/^## Acceptance Criteria/{found=1; next} found && /^## /{exit} found && /^[[:space:]]*-[[:space:]]+\[x\]/{count++} END{print count+0}' "$SPEC_FILE")"
 
 printf "Total criteria:     %s\n" "$AC_COUNT"
 printf "Completed criteria: %s\n" "$AC_DONE"

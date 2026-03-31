@@ -9,7 +9,7 @@
 <!-- Format: - [ ] [Category] Title — Fix applied: `file:line` or Spec NNN -->
 - [x] [T] sp-alpensattel-next CLAUDE.md + templates/CLAUDE.md: Sonnet als Default, Opus nur Architektur/ADR — direkt gefixt (2026-03-28)
 - [x] [T] bash-defensive-patterns/SKILL.md 533 Zeilen → trim auf 64 Zeilen — commit 8f1fc5d (2026-03-28)
-- [ ] [T] reflect/SKILL.md 7.7KB bei 165 Zeilen — auf Beispiel-Outputs/Code-Blöcke prüfen, trim wenn möglich
+- [ ] [T] spec/SKILL.md should stay lean; avoid reintroducing unconditional broad skill scans or excessive AskUserQuestion loops
 - [x] [T] spec-validate 6.1→2.2KB, spec-review 5.7→2.6KB, spec-work-all 5.5→2.0KB — Spec 588 (2026-03-26)
 - [x] [T] Model-Routing in Spec-Skills beim Trimming ergänzt (spec-review + spec-work-all) — Spec 589 (2026-03-26)
 - [x] [Q] apply-learnings Mapping für Process/CLI → CLAUDE.md war bereits vorhanden (Zeile 19) — Spec 590 (2026-03-26)
@@ -40,6 +40,11 @@
 
 <!-- Move items here once fixed. Keep for 30 days, then delete. -->
 
+- [x] [Q] session-extract duration used first→last timestamp and overstated active session time on idle sessions — fixed via active/wall duration split, Spec 600 (2026-03-31)
+- [x] [T] session-optimize lacked a documented fallback when claude-mem MCP was unavailable — local fallback mode documented (2026-03-31)
+- [x] [Q] spec-validate-prep.sh step counting and markdown status detection were brittle — shell-safe counts and explicit status extraction added (2026-03-31)
+- [x] [T] reflect/SKILL.md trimmed to reduce token load while preserving approval gate, smart-merge, and claude-mem save rules (2026-03-31)
+- [x] [T] spec/SKILL.md trimmed to reduce front-loaded scans and clarification loops while preserving complexity gate, code-flow analysis, and auto-split rules (2026-03-31)
 - [x] [E] session-optimize repeated same findings — findings-log.md als Pre-Filter eingebaut, Spec 584 (2026-03-25)
 - [x] [T] spec-review Agent-Spawns ohne explizites Model — `model: sonnet` ergänzt, Spec 583 (2026-03-25)
 - [x] [T] techdebt verify-app ohne Model → Sonnet-Vererbung — `model: haiku` gesetzt (2026-03-25)

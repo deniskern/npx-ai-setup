@@ -12,6 +12,7 @@ Always set `model:` when spawning subagents. Haiku is the default — Sonnet onl
 
 Before spawning: Can Haiku handle this? If yes, use Haiku. Sonnet is the scarcest budget.
 Prefer direct Glob/Grep/Read over agent spawns when < 3 tool calls needed.
+Threshold: spawn agents only for tasks requiring ≥3 distinct tool calls AND write operations or code generation. Read-only exploration → no agent, use tools directly.
 
 ## Agent Selection
 

@@ -10,6 +10,10 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 601**: Metrics-Driven Routing Tightening — Haiku als expliziter Default in CLAUDE.md und agents.md, spec-work Haiku-first für bounded medium-Complexity, Smoke-Tests sichern Routing-Regeln ab
+
+## [Unreleased]
+
 - **Spec 593**: Fix Hardcoded Opus Default — `claude-sonnet-4-6` als Session-Default in ~/.claude/settings.json, sp-alpensattel/.claude/settings.json und templates/claude/settings.json
 
 ## [Unreleased]

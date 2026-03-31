@@ -7,25 +7,21 @@ Creates a structured spec for the task: $ARGUMENTS. Use before implementing any 
 
 ## Phase 1 — Triage & Think Through
 
-Before writing anything: triage the idea, then think the implementation completely through. Present findings in the chat.
+Before writing anything: triage the idea, think through the implementation, then present findings in chat.
 
-### 1a — Load Skills
-If `.claude/skills/` exists, glob all skill directories and read each `SKILL.md` (first 5 lines only). Apply their guidance throughout.
+### 1a — Detect Input Type & Clarify
 
-### 1b — Detect Input Type & Clarify
+- If `$ARGUMENTS` is an existing `.md` file: read it, ask only for missing implementation details, then continue.
+- If `$ARGUMENTS` is plain text: ask 1-3 focused questions only if ambiguity blocks a good spec.
 
-**If `$ARGUMENTS` is an existing `.md` file** → Draft Interview Mode: read the draft, ask exhaustive `AskUserQuestion` rounds (min 3) covering technical impl, edge cases, tradeoffs, dependencies, UX — only gaps not already answered in the draft. Update draft with insights, then continue with 1c.
-
-**If `$ARGUMENTS` is plain text** → ask 1-3 focused questions if ambiguous. Skip if clear.
-
-### 1c — Quick Triage
+### 1b — Quick Triage
 
 Read `.agents/context/CONCEPT.md` if it exists → REJECT if clearly misaligned with core principles.
 
 **Complexity check**: If >5 files touched, new dep/system, or architectural change → `AskUserQuestion`: "Hohe Komplexitaet ([reason]). Empfehlung: /challenge zuerst." Options: "Weiter mit Spec", "Erst /challenge", "Scope reduzieren". Stop if /challenge chosen; ask clarifying questions if scope reduction chosen.
 
-### 1d — Think It Through
-Sketch full implementation mentally before writing. Use `AskUserQuestion` at any decision point.
+### 1c — Think It Through
+Sketch the full implementation before writing. Use `AskUserQuestion` only at real decision points.
 - Files/systems touched; exact change in each
 - Integration path; data/state flow; what calls what
 - Edge cases; failure behavior; recoverability
@@ -42,20 +38,20 @@ Present as a short list in the chat (max 5 functions). This prevents redundant s
 
 **Scope guardrail**: Spec boundary is FIXED once defined. New capabilities → "That belongs in its own spec."
 
-### 1e — Surface Assumptions
-Scan 3-5 relevant source files. For each implicit assumption: **Statement** / **Evidence** (file path) / **Confidence** (High/Med/Low) / **If Wrong** (consequence). Present via `AskUserQuestion` for confirmation. Add confirmed assumptions to spec's Context as "Verified Assumptions".
+### 1d — Surface Assumptions
+Scan 3-5 relevant source files. For each implicit assumption capture **Statement / Evidence / Confidence / If Wrong**. Only ask for confirmation when the assumption materially changes scope or implementation.
 
 ---
 
 ## Phase 2 — Write the Spec
 
-Only proceed if Phase 1c did not REJECT and user confirmed to continue.
+Only proceed if triage did not reject the task.
 
 ### Step 1 — Determine spec number
 Scan `specs/` (including `specs/completed/`) for existing `NNN-*.md` files, find the highest number, increment by 1. Use 3-digit zero-padded numbers.
 
 ### Step 2 — Analyze the task
-Read the 2-3 most relevant source files. Use the Phase 1d sketch — do not re-analyze from scratch. List relevant installed skills in the spec Context section.
+Read the 2-3 most relevant source files. Use the Phase 1 sketch — do not restart analysis. Mention only directly relevant skills in Context.
 
 ### Step 3 — Create the spec file (with auto-split check)
 Translate Phase 1d sketch into spec steps with actual file paths. After drafting, check auto-split triggers:

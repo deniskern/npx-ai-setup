@@ -13,6 +13,7 @@ set -euo pipefail
 ALL_PROJECTS=false
 SLUG="-Users-deniskern-Sites-npx-ai-setup"
 LAST=5
+SESSION_IDLE_CAP_MINUTES="${SESSION_IDLE_CAP_MINUTES:-10}"
 
 # Parse args
 while [[ $# -gt 0 ]]; do
@@ -23,7 +24,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-PROJECTS_DIR="$HOME/.claude/projects"
+PROJECTS_DIR="${SESSION_EXTRACT_PROJECTS_DIR:-$HOME/.claude/projects}"
 
 if $ALL_PROJECTS; then
   DIRS=()
@@ -59,12 +60,17 @@ for SESSION_DIR in "${DIRS[@]}"; do
   echo "=== PROJECT: $PROJECT_LABEL (last $LAST) ==="
   echo ""
 
-  python3 - "${SESSION_FILES[@]}" <<'PYEOF'
+  python3 - "$SESSION_IDLE_CAP_MINUTES" "${SESSION_FILES[@]}" <<'PYEOF'
 import json, sys, os
 from datetime import datetime
 from collections import Counter
 
-files = sys.argv[1:]
+try:
+    idle_cap_minutes = max(float(sys.argv[1]), 0.0)
+except Exception:
+    idle_cap_minutes = 10.0
+
+files = sys.argv[2:]
 
 for filepath in files:
     session_id = os.path.basename(filepath).replace('.jsonl', '')
@@ -87,22 +93,41 @@ for filepath in files:
     assistant_msgs = [e for e in entries if e.get('type') == 'assistant']
     progress_msgs = [e for e in entries if e.get('type') == 'progress']
 
-    # Timestamps
+    # Timestamps: report both wall time and "active" time with idle gaps capped.
     timestamps = [e.get('timestamp') for e in entries if e.get('timestamp')]
     if timestamps:
         first_ts = min(timestamps)
         last_ts = max(timestamps)
-        # Parse ISO timestamps
+        wall_duration_min = 0
+        active_duration_min = 0
         try:
             t1 = datetime.fromisoformat(first_ts.replace('Z', '+00:00'))
             t2 = datetime.fromisoformat(last_ts.replace('Z', '+00:00'))
-            duration_min = (t2 - t1).total_seconds() / 60
+            wall_duration_min = max((t2 - t1).total_seconds() / 60, 0)
             start_str = t1.strftime('%Y-%m-%d %H:%M')
+
+            parsed_times = []
+            for ts in sorted(timestamps):
+                try:
+                    parsed_times.append(datetime.fromisoformat(ts.replace('Z', '+00:00')))
+                except Exception:
+                    pass
+
+            if len(parsed_times) <= 1:
+                active_duration_min = wall_duration_min
+            else:
+                idle_cap_seconds = idle_cap_minutes * 60
+                for prev, curr in zip(parsed_times, parsed_times[1:]):
+                    gap_seconds = max((curr - prev).total_seconds(), 0)
+                    active_duration_min += min(gap_seconds, idle_cap_seconds)
+                active_duration_min /= 60
         except:
-            duration_min = 0
+            wall_duration_min = 0
+            active_duration_min = 0
             start_str = first_ts[:16]
     else:
-        duration_min = 0
+        wall_duration_min = 0
+        active_duration_min = 0
         start_str = '?'
 
     # Model used
@@ -173,7 +198,7 @@ for filepath in files:
             branches.add(b)
 
     # Print session summary
-    print(f"--- {session_id[:8]}... | {start_str} | {duration_min:.0f}min ---")
+    print(f"--- {session_id[:8]}... | {start_str} | {active_duration_min:.0f}min active / {wall_duration_min:.0f}min wall ---")
     print(f"  Turns: {user_turns} user / {len(assistant_msgs)} assistant")
     print(f"  Tools: {total_tools} calls — {', '.join(f'{n}:{c}' for n,c in tool_counts.most_common(5))}")
     print(f"  Skills: {', '.join(skills) if skills else 'none'}")

@@ -50,6 +50,14 @@ Never read or search inside build output directories (dist/, .output/, .nuxt/, .
 - **Defuddle** (`defuddle parse <url> --md`) replaces WebFetch for web pages — strips noise, saves ~80% tokens.
 - See `.claude/docs/token-optimization.md` for the full guide.
 
+## Model Routing
+
+**Default: Haiku** for exploration, search, file reads, single-file edits, and config work.
+**Sonnet** only for multi-file implementation (≥3 files) or full test suites.
+**Opus** requires explicit escalation — architecture decisions, spec creation, complex analysis.
+
+Before every subagent spawn: can Haiku handle this? If yes, use Haiku.
+
 ## Task Complexity Routing
 Before starting, classify and state the task tier:
 
