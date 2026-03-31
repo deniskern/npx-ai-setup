@@ -11,24 +11,14 @@
 - `! command` — run a bash command instantly without token overhead
 - `@path/to/file` — import file contents compactly into context
 - One task per conversation — prevents context bleed
-- `Esc Esc` — rewind or summarize the last response to recover tokens
-- `/rename` + `/resume` — rename session for easy retrieval, restore later
-- Commit after each completed task — creates a checkpoint you can revert to
 
 ## MCP Servers
 
-Each MCP server adds its tools to every request — only enable servers actively used in this project.
-
-```bash
-claude mcp list                 # show configured servers and status
-claude mcp disable <name>       # deactivate without removing from .mcp.json
-claude mcp enable <name>        # reactivate when needed
-```
+Each MCP server adds tools to every request — only enable servers actively used. Use `claude mcp list/enable/disable`.
 
 ## Communication Protocol
-No small talk. Just do it.
-Confirmations one word (Done, Fixed). Show code changes as diff only.
-If you edit the same file 3+ times without progress, stop and ask for guidance.
+No small talk. Just do it. Confirmations one word (Done, Fixed). Diff only.
+If you edit the same file 3+ times without progress, stop and ask.
 
 ## Project Context (tiered loading)
 SessionStart automatically injects L0 abstracts from `.agents/context/` (~400 tokens).
@@ -52,11 +42,7 @@ Never read or search inside build output directories (dist/, .output/, .nuxt/, .
 
 ## Model Routing
 
-**Haiku** for direct tool use (Glob/Grep/Read) and dedicated explore agents — never for implementation subagents.
-**Sonnet** for all implementation subagents (spec execution, code generation, test suites, reviews).
-**Opus** requires explicit escalation — architecture decisions, spec creation, complex analysis.
-
-Real savings come from avoiding unnecessary subagent spawns, not from downgrading models on execution tasks.
+See `.claude/rules/agents.md` for model routing rules (Haiku/Sonnet/Opus).
 
 ## Task Complexity Routing
 Before starting, classify and state the task tier:
@@ -76,31 +62,11 @@ Never say "should work" or "probably passes" — those mean you skipped verifica
 Required: automated checks pass + "Verification complete: [what was checked]".
 
 ## Context Management
-Auto-compact triggers at 80% context (`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`).
-- `/compact Focus on <topic>` — targeted compaction, preserves what matters
-- `/rewind` or `Esc+Esc` — rewind to a previous checkpoint (code + conversation)
-- `/btw <question>` — side question that never enters context
-- `/clear` — reset between unrelated tasks; use `/rename` first to save session
-Before ending a session, run `/pause` — captures state into `.continue-here.md`.
-After a fresh start, run `/resume` to restore state and route to the next action.
-After sessions with >30 tool calls: first check if delegation is still viable (see Parallel Orchestration), then run `/reflect` and `/commit`.
+Auto-compact at 80%. Use `/compact Focus on <topic>` for targeted compaction.
+Before ending: `/pause`. After fresh start: `/resume`.
+After sessions with >30 tool calls: `/reflect` and `/commit`.
 
 ## Parallel Orchestration
-Use subagents by default when the work can be split into independent tracks.
-- If you expect `≥8` tool calls and can separate the task into search vs implementation or two file clusters, spawn `1-2` Haiku subagents.
-- If a session crosses `>30` tool calls with no subagents and the work is still branching, stop and reconsider delegation before continuing.
-- Keep direct tool use for tiny tasks (`<3` tool calls) or tightly coupled edits.
-For direct agent coordination: set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use 3-5 teammates, clean up after.
 
-## Automation (Agent SDK CLI)
-For non-interactive runs, use `claude -p "<prompt>"`.
-For CI-safe output, use `--output-format json` and parse structured fields.
-Constrain execution with `--allowedTools` instead of broad permissions.
+See `.claude/rules/agents.md` for agent delegation thresholds and orchestration rules.
 
-## Spec-Driven Development
-Specs live in `specs/` — structured task plans created before coding.
-
-**When to suggest a spec:** Changes across 3+ files, new features, architectural changes, ambiguous requirements.
-**Skip specs for:** Single-file fixes, typos, config changes.
-
-See `specs/README.md` for details.
