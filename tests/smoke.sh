@@ -435,6 +435,18 @@ else
   fail ".claude/rules/agents.md missing haiku-for-explore-only restriction"
 fi
 
+if [ -f tests/routing-check.sh ]; then
+  pass "tests/routing-check.sh exists"
+else
+  fail "tests/routing-check.sh missing"
+fi
+
+if bash -n tests/routing-check.sh 2>/dev/null; then
+  pass "tests/routing-check.sh syntax valid"
+else
+  fail "tests/routing-check.sh has syntax errors"
+fi
+
 # Summary
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed"

@@ -10,6 +10,8 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 602**: Routing Consistency Check Script — `tests/routing-check.sh` mit 11 Assertions prüft Routing-Konsistenz vor jedem Release; `npm run routing-check` als Pre-Release-Gate
+
 ## [v2.0.7] — 2026-03-31
 
 <!-- slack-announcement -->

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ "${SKIP_PRECOMMIT_ROUTING:-0}" = "1" ]; then
+  echo "Skipping routing check (SKIP_PRECOMMIT_ROUTING=1)."
+  exit 0
+fi
+
+bash tests/routing-check.sh
