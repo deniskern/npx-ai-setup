@@ -93,7 +93,7 @@ _install_or_update_file() {
     else
       stored_cs=$(node - "$target" <<'NODESCRIPT' 2>/dev/null
         try{const d=JSON.parse(require('fs').readFileSync('.ai-setup.json','utf8'));
-        const v=(d.files||{})[process.argv[1]];if(v)process.stdout.write(v);}catch(e){}
+        const v=(d.files||{})[process.argv[2]];if(v)process.stdout.write(v);}catch(e){}
 NODESCRIPT
       )
     fi
@@ -453,8 +453,8 @@ customize_settings_for_stack() {
   else
     node - "$settings" "$remove_patterns" <<'NODESCRIPT' 2>/dev/null || { rm -f "$tmp"; return 1; }
       const fs = require('fs');
-      const settings = process.argv[1];
-      const patterns = process.argv[2].split('|');
+      const settings = process.argv[2];
+      const patterns = process.argv[3].split('|');
       const cfg = JSON.parse(fs.readFileSync(settings, 'utf8'));
       if (cfg.permissions && cfg.permissions.deny) {
         cfg.permissions.deny = cfg.permissions.deny.filter(d => !patterns.includes(d));

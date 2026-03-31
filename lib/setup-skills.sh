@@ -56,6 +56,7 @@ install_agents() {
 install_global_agents() {
   local global_dir="$HOME/.claude/agents"
   local warned=false
+  local skipped="no"
   local _count=0
 
   if ! mkdir -p "$global_dir" 2>/dev/null; then
@@ -80,6 +81,7 @@ install_global_agents() {
           tui_warn "Global agents skipped: cannot write to $global_dir"
           warned=true
         fi
+        skipped="yes"
       fi
     fi
   done < <(find "$TPL/agents" -maxdepth 1 -type f -name '*.md' -print0 | sort -z)
@@ -90,6 +92,8 @@ install_global_agents() {
 
   if [ "$_count" -gt 0 ]; then
     tui_success "$_count global agent(s) installed/updated"
+  elif [ "$skipped" = "yes" ]; then
+    tui_warn "Global agents skipped (unable to write to ${global_dir})"
   else
     tui_info "Global agents already up to date"
   fi

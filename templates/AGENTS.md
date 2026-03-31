@@ -15,7 +15,7 @@ Read before multi-file edits, architectural changes, or release-impacting update
 
 ## Project Context
 For full detail: `.agents/context/STACK.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`
-If missing: `npx @onedot/ai-setup --regenerate`
+If missing: run the setup again and choose Regenerate from the interactive update menu.
 
 ## Verification
 Run lint, tests, and build before marking work complete.

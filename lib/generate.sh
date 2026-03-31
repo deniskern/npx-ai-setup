@@ -13,7 +13,7 @@ count_generated_context_files() {
 }
 
 # Main generation orchestrator
-# Called by both normal setup (Auto-Init) and --regenerate mode.
+# Called by both normal setup (Auto-Init) and the interactive Regenerate flow.
 # Requires: claude CLI is available
 run_generation() {
   # Disable errexit — background processes, wait, and command substitutions
@@ -313,7 +313,7 @@ EOF
       echo ""
       if [ "$EXIT_CM" -eq 143 ]; then
         tui_warn "CLAUDE.md generation timed out (>180s)"
-        tui_info "Fix: re-run: npx @onedot/ai-setup --regenerate"
+        tui_info "Fix: open the update flow and choose Regenerate"
       else
         tui_warn "CLAUDE.md was not updated (exit code $EXIT_CM)"
         if [ -s "$ERR_CM" ]; then
@@ -343,7 +343,7 @@ EOF
       echo ""
       if [ "$EXIT_AM" -eq 143 ]; then
         tui_warn "AGENTS.md generation timed out (>180s)"
-        tui_info "Fix: re-run: npx @onedot/ai-setup --regenerate"
+        tui_info "Fix: open the update flow and choose Regenerate"
       else
         tui_warn "AGENTS.md was not updated (exit code $EXIT_AM)"
         if [ -s "$ERR_AM" ]; then
@@ -384,7 +384,7 @@ EOF
       if [ -s "$ERR_CTX" ]; then
         echo "  Output: $(tail -5 "$ERR_CTX")"
       fi
-      tui_info "Fix: check 'claude' works, then run: npx @onedot/ai-setup --regenerate"
+      tui_info "Fix: check 'claude' works, then open the update flow and choose Regenerate"
     fi
     fi
 

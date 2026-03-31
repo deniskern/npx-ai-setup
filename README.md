@@ -149,7 +149,9 @@ npx github:onedot-digital-crew/npx-ai-setup [flags]
 --patch <pattern>         # Fast sync: copy only templates matching pattern (e.g. --patch spec-work)
 ```
 
-Unsupported flags fail fast instead of being ignored. Framework-specific boilerplate is selected interactively during setup. Regeneration is available from the update flow instead of a standalone flag.
+`--patch` is the only supported flag. Other historical flags are intentionally unsupported and exit with an error.
+
+Framework-specific boilerplate is selected interactively during setup. Regeneration is available from the update flow instead of a standalone flag.
 
 ### Project-local vs global
 

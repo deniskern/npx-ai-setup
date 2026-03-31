@@ -277,7 +277,9 @@ tui_section() {
   echo ""
   printf ' %b%s%b %b%s%b\n' "$accent" "$TUI_ARROW" "$TUI_RESET" "$TUI_BOLD" "$title" "$TUI_RESET"
   tui_divider
-  [ -n "$subtitle" ] && printf '   %s\n' "$subtitle"
+  if [ -n "$subtitle" ]; then
+    printf '   %s\n' "$subtitle"
+  fi
   return 0
 }
 

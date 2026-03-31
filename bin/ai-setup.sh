@@ -32,16 +32,16 @@ while [[ $# -gt 0 ]]; do
         exit 1
       fi
       PATCH_PATTERN="$2"; shift 2 ;;
-    --reset|--system|--regenerate|--force-skills|--audit)
-      echo "❌ Flag '$1' has been removed. Use the Reset option in the interactive menu instead."
+    --reset|--system|--regenerate|--audit|--force-skills)
+      echo "❌ Flag '$1' is not supported. Use the interactive setup/update flow instead."
       exit 1
       ;;
     --*)
-      echo "❌ Unsupported flag: $1"
+      echo "❌ Unsupported flag '$1'. Supported flags: --patch <pattern>"
       exit 1
       ;;
     *)
-      echo "❌ Unsupported argument: $1"
+      echo "❌ Unexpected argument '$1'. Supported flags: --patch <pattern>"
       exit 1
       ;;
   esac
@@ -171,6 +171,7 @@ if [ "$statusline_configured" = "false" ] && [ -t 0 ]; then
     install_statusline_project
   fi
 fi
+unset _statusline_config
 
 # Optional context generation
 tui_section "Finish Setup" "Optionally generate project-specific docs and context with Claude"
