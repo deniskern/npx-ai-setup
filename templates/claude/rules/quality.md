@@ -34,3 +34,16 @@
 - No dead code, no magic numbers without named constants
 - Logic is self-explanatory or has a comment explaining *why*
 - Keep functions under ~40 lines; inject dependencies for testability
+
+## Debugging
+
+**Revert-First**: When something breaks during implementation, simplify — don't add more code.
+1. Revert the breaking change. Clean state.
+2. Can the broken thing be deleted entirely?
+3. One-liner minimal targeted fix only.
+3+ failed fixes = architectural problem — question the approach, not the fix.
+
+**Systematic phases**: Root Cause → Pattern Analysis → Hypothesis (specific, falsifiable) → Implement.
+Treat your own code as foreign. Your mental model is a guess — the code's behavior is truth.
+
+**Constraint Classification**: Hard (non-negotiable), Soft (negotiable if stated), Ghost (past constraints that no longer apply). Ghost constraints lock out options nobody knows are available — ask "why can't we do X?"

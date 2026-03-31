@@ -184,6 +184,15 @@
             "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/circuit-breaker.sh"
           }
         ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/tool-redirect.sh"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
