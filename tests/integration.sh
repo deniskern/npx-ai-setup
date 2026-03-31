@@ -8,6 +8,7 @@ TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/ai-setup-integration.XXXXXX")"
 BIN_DIR="$TMP_ROOT/bin"
 WRITABLE_PROJECT="$TMP_ROOT/project-writable"
 LOCKED_PROJECT="$TMP_ROOT/project-locked"
+FLAG_PROJECT="$TMP_ROOT/project-flag"
 WRITABLE_HOME="$TMP_ROOT/home-writable"
 LOCKED_HOME="$TMP_ROOT/home-locked"
 
@@ -145,11 +146,48 @@ check_project_artifacts() {
   assert_path_exists "$project_dir/specs/completed/.gitkeep" "specs/completed/.gitkeep created"
 }
 
+check_unsupported_flag_rejection() {
+  local project_dir="$1"
+  local home_dir="$2"
+  local log_file="$3"
+
+  prepare_project "$project_dir"
+
+  local status=0
+  (
+    cd "$project_dir"
+    HOME="$home_dir" PATH="$BIN_DIR" /bin/bash "$ROOT_DIR/bin/ai-setup.sh" --audit >"$log_file" 2>&1 </dev/null
+  ) || status=$?
+
+  if [ "$status" -ne 0 ]; then
+    pass "unsupported flag exits non-zero"
+  else
+    fail "unsupported flag exits non-zero"
+  fi
+
+  assert_log_contains "$log_file" "is not supported" "unsupported flag message is clear"
+
+  if [ ! -e "$project_dir/.ai-setup.json" ]; then
+    pass "unsupported flag stops before install flow"
+  else
+    fail "unsupported flag stops before install flow"
+  fi
+}
+
 echo "=== Integration test: fresh offline install ==="
 
 require_tool node
 write_toolchain
 
+# --- Scenario 1: flag rejection ---
+echo ""
+echo "--- Scenario: unsupported flag rejection ---"
+FLAG_LOG="$TMP_ROOT/flag.log"
+check_unsupported_flag_rejection "$FLAG_PROJECT" "$WRITABLE_HOME" "$FLAG_LOG"
+
+# --- Scenario 2: writable home (normal install) ---
+echo ""
+echo "--- Scenario: writable home ---"
 prepare_project "$WRITABLE_PROJECT"
 mkdir -p "$WRITABLE_HOME"
 mkdir -p "$WRITABLE_HOME/.claude"
@@ -161,6 +199,9 @@ run_install "$WRITABLE_PROJECT" "$WRITABLE_HOME" "$WRITABLE_LOG"
 check_project_artifacts "$WRITABLE_PROJECT"
 assert_log_contains "$WRITABLE_LOG" "Node.js JSON fallback active" "Node fallback used without jq"
 
+# --- Scenario 3: locked home (hermetic — global writes must be best-effort) ---
+echo ""
+echo "--- Scenario: locked home (read-only global dir) ---"
 prepare_project "$LOCKED_PROJECT"
 mkdir -p "$LOCKED_HOME"
 mkdir -p "$LOCKED_HOME/.claude"

@@ -159,10 +159,11 @@ install_statusline_project() {
     return 0
   fi
 
-  if ! cp "$src" "$dest" 2>/dev/null || ! chmod +x "$dest" 2>/dev/null; then
+  if ! cp "$src" "$dest" 2>/dev/null; then
     tui_warn "Statusline skipped: cannot write ${dest}"
     return 0
   fi
+  chmod +x "$dest" 2>/dev/null || true
 
   # Register in settings.json
   if [ -f "$settings" ] && command -v node &>/dev/null; then

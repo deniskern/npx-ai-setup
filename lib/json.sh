@@ -19,8 +19,8 @@ _json_read() {
     keys=$(echo "$path" | sed 's/^\.//' | tr '.' ' ')
     node - "$file" "$keys" <<'NODESCRIPT' 2>/dev/null
       try {
-        let d = JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));
-        for (const k of process.argv[2].split(' ').filter(Boolean)) d = d?.[k];
+        let d = JSON.parse(require('fs').readFileSync(process.argv[2],'utf8'));
+        for (const k of process.argv[3].split(' ').filter(Boolean)) d = d?.[k];
         if (d != null) process.stdout.write(String(d));
       } catch(e) {}
 NODESCRIPT
@@ -34,7 +34,7 @@ _json_valid() {
     jq -e . "$file" >/dev/null 2>&1
   else
     node - "$file" <<'NODESCRIPT' 2>/dev/null
-      try{JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));process.exit(0);}
+      try{JSON.parse(require('fs').readFileSync(process.argv[2],'utf8'));process.exit(0);}
       catch(e){process.exit(1);}
 NODESCRIPT
   fi
@@ -50,7 +50,7 @@ _json_merge() {
   else
     node - "$target" "$merge" <<'NODESCRIPT' 2>/dev/null || return 1
       const fs=require('fs');
-      const target=process.argv[1], merge=JSON.parse(process.argv[2]);
+      const target=process.argv[2], merge=JSON.parse(process.argv[3]);
       const deep=(a,b)=>typeof b!=='object'||Array.isArray(b)?b:Object.fromEntries(
         [...new Set([...Object.keys(a||{}),...Object.keys(b)])].map(k=>[k,k in b?
         (typeof b[k]==='object'&&!Array.isArray(b[k])&&k in (a||{})?deep(a[k],b[k]):b[k]):a[k]]));
@@ -70,7 +70,7 @@ _json_build_metadata() {
   else
     node - "$ver" "$inst" "$upd" <<'NODESCRIPT'
       process.stdout.write(JSON.stringify(
-        {version:process.argv[1],installed_at:process.argv[2],updated_at:process.argv[3],files:{}},null,2));
+        {version:process.argv[2],installed_at:process.argv[3],updated_at:process.argv[4],files:{}},null,2));
 NODESCRIPT
   fi
 }

@@ -13,8 +13,7 @@ For detailed project context, read:
 - `.agents/context/ARCHITECTURE.md` - structure, entry points, boundaries, and data flow
 - `.agents/context/CONVENTIONS.md` - coding conventions, testing patterns, and Definition of Done
 
-If these files are missing or stale, regenerate with:
-`npx @onedot/ai-setup --regenerate`
+If these files are missing or stale, run the setup again and choose Regenerate from the interactive update menu.
 
 ## Architecture Summary
 <!-- Auto-Init populates this -->
