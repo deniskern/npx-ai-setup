@@ -55,10 +55,15 @@ install_agents() {
 # Only copies agents that are NOT stack-specific (those come from boilerplate repos).
 install_global_agents() {
   local global_dir="$HOME/.claude/agents"
-  mkdir -p "$global_dir"
+  local warned=false
+  local _count=0
+
+  if ! mkdir -p "$global_dir" 2>/dev/null; then
+    tui_warn "Global agents skipped: cannot create $global_dir"
+    return 0
+  fi
 
   tui_step "Installing global agents to ~/.claude/agents/"
-  local _count=0
 
   while IFS= read -r -d '' _agent_path; do
     _agent_name="${_agent_path##*/}"
@@ -68,16 +73,28 @@ install_global_agents() {
     [ "$_agent_name" = "backend-developer.md" ] && continue
 
     if [ ! -f "$global_dir/$_agent_name" ] || ! cmp -s "$_agent_path" "$global_dir/$_agent_name"; then
-      cp "$_agent_path" "$global_dir/$_agent_name"
-      _count=$((_count + 1))
+      if cp "$_agent_path" "$global_dir/$_agent_name" 2>/dev/null; then
+        _count=$((_count + 1))
+      else
+        if [ "$warned" = "false" ]; then
+          tui_warn "Global agents skipped: cannot write to $global_dir"
+          warned=true
+        fi
+      fi
     fi
   done < <(find "$TPL/agents" -maxdepth 1 -type f -name '*.md' -print0 | sort -z)
+
+  if [ "$warned" = "true" ] && [ "$_count" -eq 0 ]; then
+    return 0
+  fi
 
   if [ "$_count" -gt 0 ]; then
     tui_success "$_count global agent(s) installed/updated"
   else
     tui_info "Global agents already up to date"
   fi
+
+  return 0
 }
 
 # Inject skills: field into agent YAML headers based on detected system.

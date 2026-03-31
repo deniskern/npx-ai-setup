@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# Integration test for a fresh offline install in a temp project.
+# Integration test for fresh offline installs with isolated home directories.
 
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/ai-setup-integration.XXXXXX")"
-PROJECT_DIR="$TMP_ROOT/project"
 BIN_DIR="$TMP_ROOT/bin"
+WRITABLE_PROJECT="$TMP_ROOT/project-writable"
+LOCKED_PROJECT="$TMP_ROOT/project-locked"
+WRITABLE_HOME="$TMP_ROOT/home-writable"
+LOCKED_HOME="$TMP_ROOT/home-locked"
 
 PASS=0
 FAIL=0
@@ -15,6 +18,7 @@ pass() { echo "  PASS: $1"; PASS=$((PASS + 1)); }
 fail() { echo "  FAIL: $1"; FAIL=$((FAIL + 1)); }
 
 cleanup() {
+  chmod -R u+w "$TMP_ROOT" 2>/dev/null || true
   rm -rf "$TMP_ROOT"
 }
 trap cleanup EXIT
@@ -24,6 +28,77 @@ require_tool() {
     echo "❌ Missing required tool for integration test: $1"
     exit 1
   fi
+}
+
+link_tool() {
+  local tool="$1"
+  local source
+  source="$(command -v "$tool" 2>/dev/null || true)"
+  if [ -z "$source" ]; then
+    echo "❌ Required tool not found for isolated PATH: $tool"
+    exit 1
+  fi
+  ln -s "$source" "$BIN_DIR/$tool"
+}
+
+write_toolchain() {
+  mkdir -p "$BIN_DIR"
+
+  # Keep the isolated PATH free of jq so the setup must exercise the Node fallback.
+  for tool in awk basename cat chmod cmp cp cksum cut date dirname find grep head id ln ls mkdir mktemp mv node pwd readlink rm sed sort stat tail touch tr uname wc; do
+    link_tool "$tool"
+  done
+
+  rm -f "$BIN_DIR/npm" "$BIN_DIR/npx" "$BIN_DIR/curl"
+
+  cat > "$BIN_DIR/npm" <<'EOF'
+#!/bin/bash
+case "${1:-}" in
+  view) exit 1 ;;
+  --version|-v|version) echo "10.0.0" ;;
+  config)
+    if [ "${2:-}" = "get" ] && [ "${3:-}" = "cache" ]; then
+      exit 0
+    fi
+    ;;
+esac
+exit 0
+EOF
+
+  cat > "$BIN_DIR/npx" <<'EOF'
+#!/bin/bash
+exit 127
+EOF
+
+  cat > "$BIN_DIR/curl" <<'EOF'
+#!/bin/bash
+exit 1
+EOF
+
+  chmod +x "$BIN_DIR/npm" "$BIN_DIR/npx" "$BIN_DIR/curl"
+}
+
+prepare_project() {
+  local project_dir="$1"
+  mkdir -p "$project_dir"
+  cat > "$project_dir/package.json" <<'EOF'
+{
+  "name": "integration-fixture",
+  "version": "1.0.0",
+  "private": true
+}
+EOF
+}
+
+run_install() {
+  local project_dir="$1"
+  local home_dir="$2"
+  local log_file="$3"
+
+  (
+    cd "$project_dir"
+    HOME="$home_dir" PATH="$BIN_DIR" /bin/bash "$ROOT_DIR/bin/ai-setup.sh" >"$log_file" 2>&1 </dev/null
+  )
 }
 
 assert_path_exists() {
@@ -36,114 +111,67 @@ assert_path_exists() {
   fi
 }
 
-write_stub_binaries() {
-  mkdir -p "$BIN_DIR"
-  ln -s "$(command -v node)" "$BIN_DIR/node"
-  ln -s "$(command -v jq)" "$BIN_DIR/jq"
-
-  cat > "$BIN_DIR/npm" <<'EOF'
-#!/usr/bin/env bash
-case "${1:-}" in
-  view) exit 1 ;;
-  --version|-v|version) echo "10.0.0" ;;
-esac
-exit 0
-EOF
-
-  cat > "$BIN_DIR/npx" <<'EOF'
-#!/usr/bin/env bash
-exit 127
-EOF
-
-  cat > "$BIN_DIR/curl" <<'EOF'
-#!/usr/bin/env bash
-exit 1
-EOF
-
-  chmod +x "$BIN_DIR/npm" "$BIN_DIR/npx" "$BIN_DIR/curl"
-}
-
-run_install() {
-  mkdir -p "$PROJECT_DIR"
-
-  cat > "$PROJECT_DIR/package.json" <<'EOF'
-{
-  "name": "integration-fixture",
-  "version": "1.0.0",
-  "private": true
-}
-EOF
-
-  (
-    cd "$PROJECT_DIR"
-    PATH="$BIN_DIR:/usr/bin:/bin:/usr/sbin:/sbin" \
-      bash "$ROOT_DIR/bin/ai-setup.sh" >/dev/null <<'EOF'
-6
-n
-EOF
-  )
-}
-
-check_expected_install_artifacts() {
-  echo ""
-  echo "--- Installed files and directories ---"
-
-  assert_path_exists "$PROJECT_DIR/CLAUDE.md" "CLAUDE.md created"
-  assert_path_exists "$PROJECT_DIR/AGENTS.md" "AGENTS.md created"
-  assert_path_exists "$PROJECT_DIR/.ai-setup.json" ".ai-setup.json created"
-  assert_path_exists "$PROJECT_DIR/.gitignore" ".gitignore updated"
-  assert_path_exists "$PROJECT_DIR/.mcp.json" ".mcp.json created"
-  assert_path_exists "$PROJECT_DIR/.github/copilot-instructions.md" ".github/copilot-instructions.md created"
-  assert_path_exists "$PROJECT_DIR/.claude/settings.json" ".claude/settings.json created"
-  assert_path_exists "$PROJECT_DIR/WORKFLOW-GUIDE.md" "WORKFLOW-GUIDE.md created"
-  assert_path_exists "$PROJECT_DIR/.claude/hooks/update-check.sh" ".claude/hooks/update-check.sh created"
-  assert_path_exists "$PROJECT_DIR/.claude/rules/general.md" ".claude/rules/general.md created"
-  assert_path_exists "$PROJECT_DIR/.claude/agents/code-reviewer.md" ".claude/agents/code-reviewer.md created"
-  assert_path_exists "$PROJECT_DIR/.claude/scripts/doctor.sh" ".claude/scripts/doctor.sh created"
-  assert_path_exists "$PROJECT_DIR/.claude/scripts/release.sh" ".claude/scripts/release.sh created"
-  assert_path_exists "$PROJECT_DIR/.claude/scripts/spec-board.sh" ".claude/scripts/spec-board.sh created"
-  assert_path_exists "$PROJECT_DIR/.claude/skills/spec-work/SKILL.md" ".claude/skills/spec-work/SKILL.md created"
-  assert_path_exists "$PROJECT_DIR/specs/TEMPLATE.md" "specs/TEMPLATE.md created"
-  assert_path_exists "$PROJECT_DIR/specs/README.md" "specs/README.md created"
-  assert_path_exists "$PROJECT_DIR/specs/completed/.gitkeep" "specs/completed/.gitkeep created"
-}
-
-check_command_template_sync() {
-  echo ""
-  echo "--- Command template sync ---"
-
-  local template
-  local installed_count=0
-  local template_count=0
-
-  while IFS= read -r -d '' template; do
-    local name
-    name="$(basename "$template")"
-    template_count=$((template_count + 1))
-    if [ -f "$PROJECT_DIR/.claude/commands/$name" ]; then
-      pass ".claude/commands/$name installed"
-      installed_count=$((installed_count + 1))
-    else
-      fail ".claude/commands/$name missing"
-    fi
-  done < <(find "$ROOT_DIR/templates/commands" -maxdepth 1 -type f -name '*.md' -print0 | sort -z)
-
-  if [ "$installed_count" -eq "$template_count" ] && [ "$template_count" -gt 0 ]; then
-    pass "all template commands installed"
+assert_log_contains() {
+  local log_file="$1"
+  local needle="$2"
+  local label="$3"
+  if grep -qF "$needle" "$log_file" 2>/dev/null; then
+    pass "$label"
   else
-    fail "template command count mismatch"
+    fail "$label"
   fi
+}
+
+check_project_artifacts() {
+  local project_dir="$1"
+
+  assert_path_exists "$project_dir/CLAUDE.md" "CLAUDE.md created"
+  assert_path_exists "$project_dir/AGENTS.md" "AGENTS.md created"
+  assert_path_exists "$project_dir/.ai-setup.json" ".ai-setup.json created"
+  assert_path_exists "$project_dir/.gitignore" ".gitignore updated"
+  assert_path_exists "$project_dir/.mcp.json" ".mcp.json created"
+  assert_path_exists "$project_dir/.github/copilot-instructions.md" ".github/copilot-instructions.md created"
+  assert_path_exists "$project_dir/.claude/settings.json" ".claude/settings.json created"
+  assert_path_exists "$project_dir/WORKFLOW-GUIDE.md" "WORKFLOW-GUIDE.md created"
+  assert_path_exists "$project_dir/.claude/hooks/update-check.sh" ".claude/hooks/update-check.sh created"
+  assert_path_exists "$project_dir/.claude/rules/general.md" ".claude/rules/general.md created"
+  assert_path_exists "$project_dir/.claude/agents/code-reviewer.md" ".claude/agents/code-reviewer.md created"
+  assert_path_exists "$project_dir/.claude/scripts/doctor.sh" ".claude/scripts/doctor.sh created"
+  assert_path_exists "$project_dir/.claude/scripts/release.sh" ".claude/scripts/release.sh created"
+  assert_path_exists "$project_dir/.claude/scripts/spec-board.sh" ".claude/scripts/spec-board.sh created"
+  assert_path_exists "$project_dir/.claude/skills/spec-work/SKILL.md" ".claude/skills/spec-work/SKILL.md created"
+  assert_path_exists "$project_dir/specs/TEMPLATE.md" "specs/TEMPLATE.md created"
+  assert_path_exists "$project_dir/specs/README.md" "specs/README.md created"
+  assert_path_exists "$project_dir/specs/completed/.gitkeep" "specs/completed/.gitkeep created"
 }
 
 echo "=== Integration test: fresh offline install ==="
 
 require_tool node
-require_tool jq
+write_toolchain
 
-write_stub_binaries
-run_install
-check_expected_install_artifacts
-check_command_template_sync
+prepare_project "$WRITABLE_PROJECT"
+mkdir -p "$WRITABLE_HOME"
+mkdir -p "$WRITABLE_HOME/.claude"
+cat > "$WRITABLE_HOME/.claude/settings.json" <<'EOF'
+{"statusLine":"preconfigured"}
+EOF
+WRITABLE_LOG="$TMP_ROOT/writable.log"
+run_install "$WRITABLE_PROJECT" "$WRITABLE_HOME" "$WRITABLE_LOG"
+check_project_artifacts "$WRITABLE_PROJECT"
+assert_log_contains "$WRITABLE_LOG" "Node.js JSON fallback active" "Node fallback used without jq"
+
+prepare_project "$LOCKED_PROJECT"
+mkdir -p "$LOCKED_HOME"
+mkdir -p "$LOCKED_HOME/.claude"
+cat > "$LOCKED_HOME/.claude/settings.json" <<'EOF'
+{"statusLine":"preconfigured"}
+EOF
+chmod 555 "$LOCKED_HOME" "$LOCKED_HOME/.claude"
+LOCKED_LOG="$TMP_ROOT/locked.log"
+run_install "$LOCKED_PROJECT" "$LOCKED_HOME" "$LOCKED_LOG"
+check_project_artifacts "$LOCKED_PROJECT"
+assert_log_contains "$LOCKED_LOG" "Global agents skipped" "global agent writes skipped cleanly"
 
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed"

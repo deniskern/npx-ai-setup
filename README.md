@@ -146,12 +146,16 @@ Available in Claude Code and compatible clients. In Codex, use `$spec`, `$spec-w
 ```bash
 npx github:onedot-digital-crew/npx-ai-setup [flags]
 
---force-skills            # Re-run skill discovery even if skills already exist
---audit                   # Run audit mode for managed-file drift checks
 --patch <pattern>         # Fast sync: copy only templates matching pattern (e.g. --patch spec-work)
 ```
 
-Framework-specific boilerplate is selected interactively during setup. Regeneration is available from the update flow instead of a standalone flag.
+Unsupported flags fail fast instead of being ignored. Framework-specific boilerplate is selected interactively during setup. Regeneration is available from the update flow instead of a standalone flag.
+
+### Project-local vs global
+
+Core setup writes project-local files inside the repository: `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.github/`, `specs/`, and related managed files.
+
+Optional convenience steps write to your home directory, such as `~/.claude/agents/` and the optional statusline config under `~/.claude/`. If those locations are read-only in CI, a sandbox, or another restricted environment, setup keeps going and prints a warning instead of aborting the install.
 
 ---
 
@@ -206,6 +210,8 @@ Run local smoke checks before publishing:
 ```bash
 npm test
 ```
+
+`npm test` runs both `tests/smoke.sh` and `tests/integration.sh`. The integration check redirects `HOME` to a temp fixture so the fresh-install path stays hermetic and does not touch the host home directory.
 
 `templates/scripts/` is the canonical source for tracked repo-local shell scripts. The matching files in `.claude/scripts/` are installed copies for this repository and must stay byte-identical.
 

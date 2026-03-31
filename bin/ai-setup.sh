@@ -32,11 +32,18 @@ while [[ $# -gt 0 ]]; do
         exit 1
       fi
       PATCH_PATTERN="$2"; shift 2 ;;
-    --reset|--system|--regenerate)
+    --reset|--system|--regenerate|--force-skills|--audit)
       echo "❌ Flag '$1' has been removed. Use the Reset option in the interactive menu instead."
       exit 1
       ;;
-    *) shift ;;
+    --*)
+      echo "❌ Unsupported flag: $1"
+      exit 1
+      ;;
+    *)
+      echo "❌ Unsupported argument: $1"
+      exit 1
+      ;;
   esac
 done
 
@@ -75,7 +82,7 @@ tui_brand_banner_once "Install project rules, workflow files, and helper tools"
 # ==============================================================================
 # AUTO-DETECT: UPDATE / REINSTALL / FRESH INSTALL
 # ==============================================================================
-if [ -f .ai-setup.json ] && jq -e . .ai-setup.json >/dev/null 2>&1; then
+if [ -f .ai-setup.json ] && _json_valid .ai-setup.json; then
   handle_version_check
 fi
 
@@ -118,6 +125,7 @@ else
 fi
 install_claude_scripts
 install_agents
+tui_section "Global Convenience" "Optional cross-project agents and statusline"
 install_global_agents
 cleanup_orphans
 select_boilerplate_system
@@ -137,14 +145,23 @@ show_plugin_summary
 
 # Global skills (stack-specific skills come from boilerplate or /find-skills)
 if [ "$SKIP_SKILLS" != "true" ]; then
-  run_skill_installation
+  if ! run_skill_installation; then
+    tui_warn "Shared skill installation completed with warnings"
+  fi
 fi
 
 # OpenCode compatibility (generates opencode.json from .mcp.json)
 generate_opencode_config
 
 # Statusline (global install — only if not already configured in ~/.claude/settings.json)
-if ! jq -e '.statusLine' "$HOME/.claude/settings.json" >/dev/null 2>&1; then
+statusline_settings="$HOME/.claude/settings.json"
+statusline_configured=false
+if [ -f "$statusline_settings" ] && _json_valid "$statusline_settings"; then
+  if [ -n "$(_json_read "$statusline_settings" '.statusLine' 2>/dev/null)" ]; then
+    statusline_configured=true
+  fi
+fi
+if [ "$statusline_configured" = "false" ] && [ -t 0 ]; then
   tui_section "Statusline" "Optional global Claude Code status line"
   if ask_yes_no_menu \
     "Install the optional Claude Code statusline?" \

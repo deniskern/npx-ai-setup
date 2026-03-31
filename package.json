@@ -18,7 +18,9 @@
     "onedot"
   ],
   "scripts": {
-    "test": "bash tests/smoke.sh",
+    "test": "bash tests/smoke.sh && bash tests/integration.sh",
+    "test:smoke": "bash tests/smoke.sh",
+    "test:integration": "bash tests/integration.sh",
     "hooks:install": "git config core.hooksPath .githooks",
     "hooks:status": "git config --get core.hooksPath"
   },

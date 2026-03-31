@@ -259,6 +259,7 @@ EOF
   tui_center_line "AI Setup" "$TUI_DIM"
   [ -n "$subtitle" ] && tui_center_line "$subtitle" "$TUI_DIM"
   echo ""
+  return 0
 }
 
 tui_brand_banner_once() {
@@ -277,6 +278,7 @@ tui_section() {
   printf ' %b%s%b %b%s%b\n' "$accent" "$TUI_ARROW" "$TUI_RESET" "$TUI_BOLD" "$title" "$TUI_RESET"
   tui_divider
   [ -n "$subtitle" ] && printf '   %s\n' "$subtitle"
+  return 0
 }
 
 tui_step() {

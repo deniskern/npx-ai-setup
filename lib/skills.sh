@@ -65,34 +65,11 @@ run_skill_installation() {
 
   echo ""
   tui_step "Installing skills"
-
-  # Install in parallel; tally results after all complete
-  local tmpdir
-  tmpdir=$(mktemp -d)
-  local pids=()
-
   for skill_id in "${GLOBAL_SKILLS[@]}"; do
-    (
-      install_skill "$skill_id"
-      echo $? > "$tmpdir/$(printf '%s' "$skill_id" | tr -cd 'a-zA-Z0-9_-').exit"
-    ) &
-    pids+=($!)
-  done
-
-  for pid in "${pids[@]}"; do
-    wait "$pid" 2>/dev/null || true
-  done
-
-  for skill_id in "${GLOBAL_SKILLS[@]}"; do
-    local safe_id
-    safe_id=$(printf '%s' "$skill_id" | tr -cd 'a-zA-Z0-9_-')
-    local exit_code
-    exit_code=$(cat "$tmpdir/${safe_id}.exit" 2>/dev/null || echo "1")
-    if [ "$exit_code" = "0" ]; then
+    if install_skill "$skill_id"; then
       INSTALLED=$((INSTALLED + 1))
     fi
   done
-  rm -rf "$tmpdir"
 
   tui_hint \
     "Run /find-skills in Claude Code to discover skills matched to your project" \

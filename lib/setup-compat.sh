@@ -147,19 +147,26 @@ install_claudeignore() {
 install_statusline_project() {
   local src="$TPL/scripts/statusline.sh"
   local dest="${CLAUDE_HOME}/statusline.sh"
+  local settings="${CLAUDE_HOME}/settings.json"
 
   if [ ! -f "$src" ]; then
     tui_warn "statusline template not found: $src"
-    return 1
+    return 0
   fi
 
-  mkdir -p "${CLAUDE_HOME}"
-  cp "$src" "$dest" && chmod +x "$dest"
+  if ! mkdir -p "${CLAUDE_HOME}" 2>/dev/null; then
+    tui_warn "Statusline skipped: cannot create ${CLAUDE_HOME}"
+    return 0
+  fi
+
+  if ! cp "$src" "$dest" 2>/dev/null || ! chmod +x "$dest" 2>/dev/null; then
+    tui_warn "Statusline skipped: cannot write ${dest}"
+    return 0
+  fi
 
   # Register in settings.json
-  local settings="${CLAUDE_HOME}/settings.json"
   if [ -f "$settings" ] && command -v node &>/dev/null; then
-    node - "$settings" "$dest" <<'NODESCRIPT'
+    if ! node - "$settings" "$dest" <<'NODESCRIPT'
 const fs = require('fs');
 const cfg_path = process.argv[2];
 const script = process.argv[3];
@@ -168,7 +175,11 @@ try { cfg = JSON.parse(fs.readFileSync(cfg_path, 'utf8')); } catch(e) { process.
 cfg.statusLine = script;
 fs.writeFileSync(cfg_path, JSON.stringify(cfg, null, 2) + '\n');
 NODESCRIPT
+    then
+      tui_warn "Statusline installed, but could not update ${settings}"
+    fi
   fi
 
   tui_success "Statusline installed -> ${dest}"
+  return 0
 }

@@ -14,8 +14,11 @@ install_claude_mem() {
     # Merge extraKnownMarketplaces + enabledPlugins into .claude/settings.json
     if [ -f .claude/settings.json ]; then
       CLAUDE_MEM_MERGE='{"extraKnownMarketplaces":{"thedotmack":{"source":{"source":"github","repo":"thedotmack/claude-mem"}}},"enabledPlugins":{"claude-mem@thedotmack":true}}'
-      _json_merge .claude/settings.json "$CLAUDE_MEM_MERGE"
-      echo "  🧠 Claude-Mem marketplace registered in .claude/settings.json"
+      if _json_merge .claude/settings.json "$CLAUDE_MEM_MERGE"; then
+        echo "  🧠 Claude-Mem marketplace registered in .claude/settings.json"
+      else
+        echo "  ⚠️  Claude-Mem marketplace registration skipped (could not update .claude/settings.json)"
+      fi
     fi
 
     # Try CLI install (works if claude is available)
