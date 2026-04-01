@@ -21,8 +21,10 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 :shield: *Routing Guard* — `tests/routing-check.sh` mit 13 Assertions prüft Routing-Konsistenz vor jedem Commit und Release automatisch.
 :gear: *Setup* — Opus als Session-Default, bash-defensive-patterns 88% schlanker, spec-validate-prep sucht in specs/completed/
 :sparkles: *Session Metrics* — session-extract.sh trennt aktive Arbeitszeit von Idle-Zeit
+:shield: *Quality Hooks* — TDD-Checker warnt bei Code ohne Tests, Stop-Guard blockt bei aktiver Spec, Auto-Compact sichert Spec-State
+:page_facing_up: *Rules* — testing.md mit TDD-Zyklus + Anti-Patterns, quality.md mit Debugging-Patterns, code-review-reception.md neu
 
-*Zahlen:* 35 Skills | 11 Agents | 11 Hooks | 8 Rules
+*Zahlen:* 35 Skills | 11 Agents | 15 Hooks | 9 Rules
 *Update:* `npx github:onedot-digital-crew/npx-ai-setup`
 <!-- /slack-announcement -->
 
@@ -37,6 +39,16 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 - **Spec 599**: Sandbox-Safe Global Side Effects — best-effort writes, kein Abbruch bei LOCKED_HOME
 - **Spec 598**: Setup Consistency Hardening — unsupported Flags schlagen fehl, jq-optional JSON-Fallback
 - **Spec 597**: bash-defensive-patterns/SKILL.md trimmen — 533 → 64 Zeilen (88% Reduktion), ~2.400 Token gespart pro Trigger
+
+### Quality Enforcement (pilot-shell Research)
+- **Spec 605**: TDD Enforcement Hook — `tdd-checker.sh` warnt bei Code-Edits ohne passende Testdatei (Py/TS/JS/Go), non-blocking
+- **Spec 606**: Spec Stop Guard — `spec-stop-guard.sh` blockt Stop bei aktiver Spec, 60s Cooldown verhindert Loops
+- **Spec 607**: Auto Compact State — `pre-compact-state.sh` + `post-compact-restore.sh` sichern Spec-State automatisch ueber Compaction
+- **Hook**: `tool-redirect.sh` — WebFetch→defuddle Redirect wenn verfuegbar (~80% Token-Savings)
+- **Rule**: `testing.md` — TDD-Zyklus (RED→VERIFY→GREEN→VERIFY→REFACTOR), Mock-Audit, Anti-Patterns, Zero-Tolerance
+- **Rule**: `quality.md` — Debugging-Sektion (Revert-First, Ghost Constraints, systematische Phasen)
+- **Rule**: `code-review-reception.md` — strukturiertes Review-Feedback-Handling (neu)
+- **Decision D4**: Hook > Regel — kritisches Verhalten wird per Hook erzwungen, nicht nur empfohlen
 
 ### Fixes
 - **Opus als Session-Default** — `claude-opus-4-6` zurück in settings.json; Sonnet bleibt Default für Subagents
