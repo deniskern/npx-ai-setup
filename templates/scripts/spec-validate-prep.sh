@@ -18,8 +18,8 @@ SPEC_FILE=""
 
 # If argument looks like a number, find the matching spec
 if printf '%s' "$SPEC_ARG" | grep -qE '^[0-9]+$'; then
-  # Zero-pad to 3 digits and glob
-  PADDED="$(printf '%03d' "$SPEC_ARG")"
+  # Zero-pad to 3 digits and glob (strip leading zeros to prevent octal interpretation)
+  PADDED="$(printf '%03d' "$((10#$SPEC_ARG))")"
   for _f in specs/${PADDED}-*.md specs/completed/${PADDED}-*.md; do
     [ -f "$_f" ] && SPEC_FILE="$_f" && break
   done
