@@ -24,8 +24,8 @@ Stages changes and creates a conventional commit message. Uses `commit-prep.sh` 
 
 ## Post-Commit
 
-After a successful commit, suggest:
-> "Run `/reflect` to capture any learnings from this session before they leave context."
+After a successful commit, suggest the next delivery step based on branch:
+> "Feature branch: run `/pr` to prepare push + draft PR. Main branch: run `/release` when this change should ship."
 
 ## Rules
 - Never stage `.env`, credentials, or large binaries.

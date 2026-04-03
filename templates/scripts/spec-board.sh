@@ -5,6 +5,7 @@
 set -euo pipefail
 
 SPECS_DIR="${1:-specs}"
+COMPLETED_LIMIT=10
 
 if [ ! -d "$SPECS_DIR" ]; then
   echo "No specs directory found at: $SPECS_DIR"
@@ -18,21 +19,13 @@ parse_spec() {
   local in_steps=0
 
   while IFS= read -r line; do
-    # Frontmatter: Spec ID
+    # Metadata row: Spec ID, Status, Branch
     case "$line" in
-      *"Spec ID"*) id="${line##*Spec ID**: }" ; id="${id%%|*}" ; id="${id// /}" ;;
-    esac
-    # Frontmatter: Status (anchored to blockquote prefix to avoid false matches)
-    case "$line" in
-      "> "*"Status"*"draft"*) status="draft" ;;
-      "> "*"Status"*"in-progress"*) status="in-progress" ;;
-      "> "*"Status"*"in-review"*) status="in-review" ;;
-      "> "*"Status"*"blocked"*) status="blocked" ;;
-      "> "*"Status"*"completed"*) status="completed" ;;
-    esac
-    # Frontmatter: Branch
-    case "$line" in
-      *"Branch"*) branch="${line##*Branch**: }" ; branch="${branch%%|*}" ; branch="${branch// /}" ;;
+      "> **Spec ID**:"*)
+        id="$(printf '%s\n' "$line" | sed -n 's/^> \*\*Spec ID\*\*: \([^|]*\).*/\1/p' | tr -d ' ')"
+        status="$(printf '%s\n' "$line" | sed -n 's/.*\*\*Status\*\*: \([^|]*\).*/\1/p' | tr -d ' ')"
+        branch="$(printf '%s\n' "$line" | sed -n 's/.*\*\*Branch\*\*: \(.*\)$/\1/p' | sed 's/[[:space:]]*$//')"
+        ;;
     esac
     # Title from heading
     case "$line" in
@@ -65,14 +58,43 @@ parse_spec() {
   echo "${id}|${title}|${status}|${branch}|${done}|${total}"
 }
 
+# Collect files for the board.
+collect_open_specs() {
+  find "$SPECS_DIR" -maxdepth 1 -name "*.md" | sort
+}
+
+collect_recent_completed_specs() {
+  local completed_dir="${SPECS_DIR}/completed"
+
+  if [ ! -d "$completed_dir" ]; then
+    return 0
+  fi
+
+  find "$completed_dir" -maxdepth 1 -name "*.md" \
+    | awk -F/ '
+        {
+          file=$NF
+          id=file
+          sub(/-.*/, "", id)
+          if (id ~ /^[0-9]+$/) {
+            printf "%09d %s\n", id, $0
+          }
+        }
+      ' \
+    | sort \
+    | tail -n "$COMPLETED_LIMIT" \
+    | sed 's/^[0-9][0-9]* //'
+}
+
 # Bucket arrays
 declare -a BACKLOG=() INPROG=() REVIEW=() BLOCKED=() DONE=()
 
-# Process all spec files
-while IFS= read -r f; do
+process_spec_file() {
+  local f="$1"
+  local base row status_field
   base="$(basename "$f")"
   # Skip non-spec files
-  case "$base" in README.md|TEMPLATE.md|template.md) continue ;; esac
+  case "$base" in README.md|TEMPLATE.md|template.md) return 0 ;; esac
   row="$(parse_spec "$f")"
   status_field="$(echo "$row" | cut -d'|' -f3)"
   case "$status_field" in
@@ -82,7 +104,17 @@ while IFS= read -r f; do
     blocked)     BLOCKED+=("$row") ;;
     completed)   DONE+=("$row") ;;
   esac
-done < <(find "$SPECS_DIR" -maxdepth 2 -name "*.md" | sort)
+}
+
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  process_spec_file "$f"
+done < <(collect_open_specs)
+
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  process_spec_file "$f"
+done < <(collect_recent_completed_specs)
 
 # Formatting helpers
 fmt_entry() {
@@ -117,10 +149,10 @@ print_column "BACKLOG"     "${BACKLOG[@]+"${BACKLOG[@]}"}"
 print_column "IN PROGRESS" "${INPROG[@]+"${INPROG[@]}"}"
 print_column "REVIEW"      "${REVIEW[@]+"${REVIEW[@]}"}"
 print_column "BLOCKED"     "${BLOCKED[@]+"${BLOCKED[@]}"}"
-print_column "DONE"        "${DONE[@]+"${DONE[@]}"}"
+print_column "DONE (latest 10)" "${DONE[@]+"${DONE[@]}"}"
 
 # Summary
 total_all=$(( ${#BACKLOG[@]} + ${#INPROG[@]} + ${#REVIEW[@]} + ${#BLOCKED[@]} + ${#DONE[@]} ))
 echo ""
 echo "---"
-echo "Total: ${total_all} specs | ${#BACKLOG[@]} backlog, ${#INPROG[@]} in-progress, ${#REVIEW[@]} in-review, ${#BLOCKED[@]} blocked, ${#DONE[@]} done"
+echo "Total shown: ${total_all} specs | ${#BACKLOG[@]} backlog, ${#INPROG[@]} in-progress, ${#REVIEW[@]} in-review, ${#BLOCKED[@]} blocked, ${#DONE[@]} done (latest ${COMPLETED_LIMIT})"

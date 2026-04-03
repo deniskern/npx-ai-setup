@@ -47,13 +47,16 @@ Draft the PR title (short, under 70 chars) and body (`## Summary` with 2-3 bulle
 
 ### 6. Show Commands
 
-Show the user the PR details and the commands to run:
+Show the user the PR details and the preferred commands to run:
 ```
 git push -u origin <branch>
 gh pr create --title "..." --body "..."
 ```
 
-Do NOT push or create the PR — the user does this manually.
+Explain the publish boundary explicitly:
+- This command drafts PR metadata only.
+- The user still confirms the actual `git push` and `gh pr create` step.
+- Prefer `gh pr create` over manual browser entry when `gh` is installed.
 
 ## Post-PR
 

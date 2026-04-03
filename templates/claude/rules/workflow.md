@@ -9,7 +9,7 @@ After completing work, suggest the logical next skill. Keep hints to one line.
 | Code changes (edit/write) | `/test` — Tests laufen lassen |
 | `/test` passes | `/review` — Changes reviewen |
 | `/review` passes | `/commit` — Stagen + committen |
-| `/commit` done | `/pr` wenn Feature-Branch, oder `/release` wenn main |
+| `/commit` done | `/pr` auf Feature-Branches, oder `/release` auf `main` / `master` |
 | Bug investigation | `/debug` falls noch nicht geladen |
 | New feature request (3+ files) | `/spec` — erst planen, dann bauen |
 | Session start + `.continue-here.md` exists | `/resume` — State wiederherstellen |

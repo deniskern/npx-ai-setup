@@ -237,6 +237,15 @@ Temporary bypass (only if needed):
 SKIP_PREPUSH_TESTS=1 git push
 ```
 
+Recommended day-to-day Git flow:
+
+1. Review and validate changes locally.
+2. Commit locally with `git add <files>` and `git commit` or the `/commit` workflow.
+3. Push a feature branch such as `feat/*`, `fix/*`, `chore/*`, `docs/*`, or `spec/*`.
+4. Create the PR with `gh pr create` when GitHub CLI is available.
+
+`gh` is the preferred tool for PR creation, not for replacing normal local `git commit` / `git push`.
+
 ---
 
 ## GitHub Releases (Slack-ready)

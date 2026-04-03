@@ -3,7 +3,7 @@ name: spec-board
 description: "Overview of all specs as Kanban board. Triggers: /spec-board, 'show specs', 'spec overview', 'what specs do we have', 'show me whats in progress'."
 ---
 
-Displays a Kanban board of all specs with status and step progress. Use for an overview of the current spec pipeline.
+Displays a Kanban board of active specs plus only the latest 10 completed specs. Use for an overview of the current spec pipeline without scanning the full completed archive.
 
 ## Step 1: Show board (zero tokens)
 
@@ -11,11 +11,11 @@ Displays a Kanban board of all specs with status and step progress. Use for an o
 
 ## Step 2: Consistency Check + Repair
 
-After the board output above, scan the specs listed for inconsistencies:
+After the board output above, scan only the specs shown on the board for inconsistencies:
 
 **Type A — Stale in-progress**: spec has all steps `- [x]` but status is still `in-progress` or `in-review` (not moved to `specs/completed/`).
 
-**Type B — Wrong location**: spec has status `completed` but file is still in `specs/` (not in `specs/completed/`).
+**Type B — Wrong location**: a shown spec has status `completed` but file is still in `specs/` (not in `specs/completed/`).
 
 **Type C — Stale in-review**: spec has status `in-review` but 0 steps are checked `- [x]`. Indicates a verify-fail abort or manual status change without implementation. Needs investigation.
 
@@ -46,6 +46,7 @@ C) Skip — leave as is
 ## Rules
 - Only write or move files during step 2 and only after user confirms.
 - If `specs/` does not exist or has no spec files, report "No specs found" and stop.
+- The default board is intentionally windowed: all open specs + latest 10 completed specs only.
 
 ## Next Step
 
