@@ -10,6 +10,42 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v2.0.8] — 2026-04-03
+
+<!-- slack-announcement -->
+:rocket: *@onedot/ai-setup v2.0.8*
+
+*Was ist neu:*
+:sparkles: *Skills* — Workflow-Hints in allen 35 Skills, `model:` Frontmatter für explizites Model-Routing — kein teures Opus-Erbe mehr
+:wrench: *Neue Tools* — `subagent-start.sh` / `subagent-stop.sh` — strukturiertes Subagent-Logging mit Dauer und Token-Tracking
+:zap: *Token-Optimierung* — `model:` in jedem Skill-Spawn gesetzt — verhindert ungewollte Opus-Vererbung (bis zu 5x Kosteneinsparung)
+:gear: *CLI Tools* — Auto-Update bei jedem Setup-Run, Doctor erkennt veraltete Packages
+:shield: *Hooks* — 21 aktive Hooks (Circuit-Breaker, Permission-Log, Context-Reinforcement, MCP-Health, CLI-Health u.a.)
+:page_facing_up: *Docs* — Hook-Zahl von 11 → 25 korrigiert, Template-Parity durchgesetzt
+
+*Zahlen:* 35 Skills | 11 Agents | 25 Hooks | 9 Rules
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
+### Skills & Workflow Hints
+- **Skills**: `## Next Step` Hints in allen 35 deployed Skills — Nutzer weiß immer was nach `/spec-work`, `/commit`, `/review` etc. kommt
+- **Model Routing**: Explizites `model:` Frontmatter in allen Skills (haiku/sonnet/opus) — kein teures Opus-Erbe bei Skill-Spawns
+- **Template Parity**: `templates/skills/spec/SKILL.md` auf Stand des deployed Skills gebracht (Code-Flow-Analyse, Step-Dedup-Check)
+
+### Neue Hooks & Infrastruktur
+- **`subagent-start.sh`** + **`subagent-stop.sh`** — strukturiertes Logging aller Subagent-Starts mit Model, Typ und Dauer
+- **`permission-denied-log.sh`** — loggt alle Sandbox-Denials zur Analyse
+- **Hook-Konsolidierung**: 21 aktive Hooks in deployed Setup, 25 in Templates (inkl. circuit-breaker, context-reinforcement, mcp-health, cli-health, tool-redirect)
+- **`tests/claude-runtime.sh`** — Runtime-Validation für Claude Code Hooks und Settings
+
+### CLI Tools
+- **Auto-Update**: `lib/setup.sh` prüft und aktualisiert externe CLI-Tools (rtk, defuddle, claude) bei jedem Setup-Run
+- **Doctor**: Version-Freshness-Check für CLI-Tools — warnt bei veralteten Packages
+
+### Fixes
+- **fix(spec-validate-prep)**: Octal-Interpretation von 3-stelligen Spec-IDs verhindert
+- **refactor**: 8 Hook- und Governance-Specs mit defensiven Implementierungen abgeschlossen
+
 ## [v2.0.7] — 2026-03-31
 
 <!-- slack-announcement -->

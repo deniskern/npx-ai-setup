@@ -3,7 +3,7 @@
 Dieses Setup macht Claude Code zum strukturierten Entwicklungswerkzeug statt einer Chat-Box. Statt "mach mal Feature X" gibt es einen klaren Prozess: Idee bewerten, Plan erstellen, ausfuehren, reviewen, committen. Jeder Schritt ist ein Slash-Command, jede Aenderung nachvollziehbar.
 
 **Was laeuft automatisch im Hintergrund:**
-- **11 Hooks** verhindern typische Fehler — Endlosschleifen (Circuit-Breaker nach 3 Edits), Lock-File-Edits, Build-Output-Aenderungen
+- **25 Hooks** verhindern typische Fehler — Endlosschleifen (Circuit-Breaker nach 3 Edits), Lock-File-Edits, Build-Output-Aenderungen
 - **Context-Dateien** geben Claude sofort Wissen ueber Stack, Architektur und Conventions — ohne jedes Mal erklaeren zu muessen
 - **Prep-Scripts** sammeln Daten in Shell bevor Claude sie sieht — spart 60-90% Tokens
 
