@@ -108,6 +108,11 @@ Available in Claude Code and compatible clients. In Codex, use `$spec`, `$spec-w
 | `/token-optimizer` | Sonnet | Audit token usage and find optimization opportunities |
 | `/orchestrate` | Sonnet | Delegate task to Gemini or Codex CLI |
 
+Terminal catalogs:
+
+- `bash .claude/scripts/spec-board.sh` — visual spec overview
+- `npm run skills:catalog` — terminal catalog of skills by category, model, and availability
+
 ## Subagents
 
 **Universal** (installed globally + per-project):
