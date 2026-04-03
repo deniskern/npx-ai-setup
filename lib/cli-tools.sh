@@ -48,6 +48,20 @@ _tool_prereqs_met() {
   return 0
 }
 
+# Returns 0 if an npm package has a newer version available
+_tool_outdated() {
+  local package="$1"
+  local pm="$2"
+
+  [ "$pm" = "npm" ] || return 1
+
+  # npm outdated -g returns non-zero if package is outdated
+  local outdated_output
+  outdated_output=$(npm outdated -g "$package" 2>/dev/null)
+  [ -n "$outdated_output" ] && return 0
+  return 1
+}
+
 # Install a single tool via its package manager
 _install_tool() {
   local name="$1"
@@ -56,7 +70,7 @@ _install_tool() {
 
   case "$pm" in
     npm)
-      npm install -g "$package" --quiet 2>&1 | tail -5 >&2
+      npm install -g "$package@latest" --quiet 2>&1 | tail -5 >&2
       [ "${PIPESTATUS[0]}" -eq 0 ] && return 0 || return 1
       ;;
     cargo)
@@ -85,7 +99,11 @@ check_cli_tools() {
     IFS=: read -r name pm package tier description <<< "$entry"
 
     if _tool_installed "$name"; then
-      tui_success "$name"
+      if _tool_outdated "$package" "$pm"; then
+        tui_warn "$name (update available)"
+      else
+        tui_success "$name"
+      fi
     else
       if [ "$tier" = "required" ]; then
         tui_error "$name (missing - required)"
@@ -113,15 +131,26 @@ check_cli_tools() {
 # ==============================================================================
 install_cli_tools() {
   local installed=0
+  local updated=0
   local skipped=0
   local failed=0
 
   for entry in "${CLI_TOOL_REGISTRY[@]}"; do
     IFS=: read -r name pm package tier description <<< "$entry"
 
-    # Already installed — skip
+    # Already installed — check for updates
     if _tool_installed "$name"; then
-      tui_success "$name (already installed)"
+      if _tool_outdated "$package" "$pm"; then
+        tui_spinner_start "Updating ${name}"
+        if _install_tool "$name" "$pm" "$package"; then
+          tui_spinner_stop ok "${name} updated to latest"
+          updated=$((updated + 1))
+        else
+          tui_spinner_stop warn "${name} update failed (keeping current)"
+        fi
+      else
+        tui_success "$name (up to date)"
+      fi
       continue
     fi
 
@@ -158,7 +187,7 @@ install_cli_tools() {
   done
 
   echo ""
-  tui_info "Installed: $installed | Skipped: $skipped | Failed: $failed"
+  tui_info "Installed: $installed | Updated: $updated | Skipped: $skipped | Failed: $failed"
 
   # Ensure RTK hooks are active (idempotent — safe to re-run)
   if command -v rtk &>/dev/null; then

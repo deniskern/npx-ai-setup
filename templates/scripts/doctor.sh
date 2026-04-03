@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
-# doctor.sh — Health check for Claude Code AI setup (12 checks)
+# doctor.sh — Health check for Claude Code AI setup (15 checks)
 # Usage: bash .claude/scripts/doctor.sh
 # Requires: bash 3.2+, git
+# Repo-local model-version warning until a template-distributed doctor script exists.
 set -euo pipefail
 
 PASS="[OK]"
 FAIL="[FAIL]"
 WARN="[WARN]"
+
+SETTINGS_FILE=".claude/settings.json"
+KNOWN_CURRENT_MODELS="
+claude-opus-4-6
+claude-sonnet-4-6
+claude-haiku-4-6
+"
 
 ok=0
 fail=0
@@ -21,6 +29,61 @@ add_row() {
     "$FAIL") fail=$((fail + 1)) ;;
     "$WARN") warn=$((warn + 1)) ;;
   esac
+}
+
+is_known_current_model() {
+  local candidate="$1"
+  local known_model
+
+  while IFS= read -r known_model; do
+    [ -z "$known_model" ] && continue
+    if [ "$candidate" = "$known_model" ]; then
+      return 0
+    fi
+  done <<EOF
+$KNOWN_CURRENT_MODELS
+EOF
+
+  return 1
+}
+
+check_model_version() {
+  local model=""
+
+  if [ ! -f "$SETTINGS_FILE" ]; then
+    add_row "$WARN" "Model version" "settings.json missing — skipping model freshness check"
+    return 0
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    if model="$(python3 -c 'import json,sys; path=sys.argv[1]; data=json.load(open(path)); print(data.get("model",""))' "$SETTINGS_FILE" 2>/dev/null)"; then
+      :
+    else
+      add_row "$WARN" "Model version" "Cannot read model from settings.json — invalid JSON"
+      return 0
+    fi
+  elif command -v jq >/dev/null 2>&1; then
+    if model="$(jq -r '.model // empty' "$SETTINGS_FILE" 2>/dev/null)"; then
+      :
+    else
+      add_row "$WARN" "Model version" "Cannot read model from settings.json"
+      return 0
+    fi
+  else
+    add_row "$WARN" "Model version" "Cannot inspect model — python3 and jq both missing"
+    return 0
+  fi
+
+  if [ -z "$model" ]; then
+    add_row "$WARN" "Model version" "No model configured in settings.json"
+    return 0
+  fi
+
+  if is_known_current_model "$model"; then
+    add_row "$PASS" "Model version" "$model recognized as current"
+  else
+    add_row "$WARN" "Model version" "$model is not in KNOWN_CURRENT_MODELS"
+  fi
 }
 
 # 1. Hooks directory exists
@@ -47,15 +110,15 @@ if [ -d ".claude/hooks" ]; then
 fi
 
 # 3. settings.json valid JSON
-if [ -f ".claude/settings.json" ]; then
+if [ -f "$SETTINGS_FILE" ]; then
   if command -v python3 >/dev/null 2>&1; then
-    if python3 -c "import json,sys; json.load(open('.claude/settings.json'))" 2>/dev/null; then
+    if python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$SETTINGS_FILE" 2>/dev/null; then
       add_row "$PASS" "settings.json"    "Valid JSON"
     else
-      add_row "$FAIL" "settings.json"    "Invalid JSON — run: python3 -m json.tool .claude/settings.json"
+      add_row "$FAIL" "settings.json"    "Invalid JSON — run: python3 -m json.tool $SETTINGS_FILE"
     fi
   elif command -v jq >/dev/null 2>&1; then
-    if jq empty .claude/settings.json 2>/dev/null; then
+    if jq empty "$SETTINGS_FILE" 2>/dev/null; then
       add_row "$PASS" "settings.json"    "Valid JSON"
     else
       add_row "$FAIL" "settings.json"    "Invalid JSON"
@@ -64,10 +127,13 @@ if [ -f ".claude/settings.json" ]; then
     add_row "$WARN" "settings.json"    "Cannot validate — python3 and jq both missing"
   fi
 else
-  add_row "$FAIL" "settings.json"      ".claude/settings.json not found"
+  add_row "$FAIL" "settings.json"      "$SETTINGS_FILE not found"
 fi
 
-# 4. CLAUDE.md present
+# 4. Model version
+check_model_version
+
+# 5. CLAUDE.md present
 if [ -f "CLAUDE.md" ]; then
   lines="$(wc -l < CLAUDE.md | tr -d ' ')"
   add_row "$PASS" "CLAUDE.md"           "Present (${lines} lines)"
@@ -75,7 +141,7 @@ else
   add_row "$FAIL" "CLAUDE.md"           "CLAUDE.md not found"
 fi
 
-# 5. CLAUDE.md size guard (>200 lines is a smell)
+# 6. CLAUDE.md size guard (>200 lines is a smell)
 if [ -f "CLAUDE.md" ]; then
   lines="$(wc -l < CLAUDE.md | tr -d ' ')"
   if [ "$lines" -gt 200 ]; then
@@ -85,7 +151,7 @@ if [ -f "CLAUDE.md" ]; then
   fi
 fi
 
-# 6. Context files
+# 7. Context files
 context_found=0
 for f in STACK.md ARCHITECTURE.md CONVENTIONS.md; do
   [ -f ".agents/context/$f" ] && context_found=$((context_found + 1))
@@ -98,14 +164,14 @@ else
   add_row "$WARN" "Context files"       "None found in .agents/context/ — run the update flow and choose Regenerate"
 fi
 
-# 7. .mcp.json present
+# 8. .mcp.json present
 if [ -f ".mcp.json" ]; then
   add_row "$PASS" "MCP config"          ".mcp.json found"
 else
   add_row "$WARN" "MCP config"          ".mcp.json not found (optional)"
 fi
 
-# 8. Skills directory
+# 9. Skills directory
 if [ -d ".claude/skills" ]; then
   skills_list="$(find .claude/skills -name "*.md" 2>/dev/null)"
   count="$(printf '%s\n' "$skills_list" | grep -c '.' 2>/dev/null || echo 0)"
@@ -118,7 +184,31 @@ else
   add_row "$WARN" "Skills"              "No skills found in .claude/skills/"
 fi
 
-# 9. Claude scripts directory
+# 10. Skills YAML frontmatter validation
+if [ -d ".claude/skills" ]; then
+  yaml_errors=0
+  yaml_details=""
+  while IFS= read -r skill_file; do
+    [ -z "$skill_file" ] && continue
+    skill_name="$(basename "$(dirname "$skill_file")")"
+    # Check for description field
+    if ! grep -q '^description:' "$skill_file" 2>/dev/null; then
+      yaml_errors=$((yaml_errors + 1))
+      yaml_details="${yaml_details}${skill_name}(no description) "
+    # Check for unquoted colons in description value
+    elif grep -q '^description: [^"].*:' "$skill_file" 2>/dev/null; then
+      yaml_errors=$((yaml_errors + 1))
+      yaml_details="${yaml_details}${skill_name}(unquoted colon) "
+    fi
+  done < <(find .claude/skills -name "SKILL.md" 2>/dev/null)
+  if [ "$yaml_errors" -eq 0 ]; then
+    add_row "$PASS" "Skills YAML"          "All skill frontmatter valid"
+  else
+    add_row "$FAIL" "Skills YAML"          "${yaml_errors} issue(s): ${yaml_details}"
+  fi
+fi
+
+# 11. Claude scripts directory
 if [ -d ".claude/scripts" ]; then
   count="$(find .claude/scripts -name "*.sh" 2>/dev/null | wc -l | tr -d ' ')"
   add_row "$PASS" "Claude scripts"      "${count} script(s) in .claude/scripts/"
@@ -126,7 +216,7 @@ else
   add_row "$WARN" "Claude scripts"      ".claude/scripts/ not present"
 fi
 
-# 10. git config user.email set
+# 12. git config user.email set
 if command -v git >/dev/null 2>&1; then
   git_email="$(git config user.email 2>/dev/null || true)"
   if [ -n "$git_email" ]; then
@@ -138,7 +228,7 @@ else
   add_row "$FAIL" "git"                 "git not found in PATH"
 fi
 
-# 11. .ai-setup.json metadata present
+# 13. .ai-setup.json metadata present
 if [ -f ".ai-setup.json" ]; then
   if command -v jq >/dev/null 2>&1; then
     ver="$(jq -r '.version // "?"' .ai-setup.json 2>/dev/null || echo "?")"
@@ -152,7 +242,33 @@ else
   add_row "$WARN" "Setup metadata"      ".ai-setup.json missing — run npx @onedot/ai-setup"
 fi
 
-# 12. specs/ directory
+# 14. CLI tools version freshness
+cli_outdated=0
+cli_outdated_names=""
+cli_tools_checked=0
+# Registry: name:package (npm only)
+CLI_TOOLS_TO_CHECK="rtk:@onedot/rtk defuddle:defuddle agent-browser:agent-browser"
+for entry in $CLI_TOOLS_TO_CHECK; do
+  tool_name="${entry%%:*}"
+  tool_pkg="${entry#*:}"
+  if command -v "$tool_name" >/dev/null 2>&1; then
+    cli_tools_checked=$((cli_tools_checked + 1))
+    outdated_output="$(npm outdated -g "$tool_pkg" 2>/dev/null || true)"
+    if [ -n "$outdated_output" ]; then
+      cli_outdated=$((cli_outdated + 1))
+      cli_outdated_names="${cli_outdated_names}${tool_name} "
+    fi
+  fi
+done
+if [ "$cli_tools_checked" -eq 0 ]; then
+  add_row "$WARN" "CLI tools" "No CLI tools installed to check"
+elif [ "$cli_outdated" -eq 0 ]; then
+  add_row "$PASS" "CLI tools" "${cli_tools_checked} tool(s) up to date"
+else
+  add_row "$WARN" "CLI tools" "${cli_outdated} outdated: ${cli_outdated_names}— run ai-setup to update"
+fi
+
+# 15. specs/ directory
 if [ -d "specs" ]; then
   count="$(find specs -maxdepth 1 -name "*.md" ! -name "README.md" ! -name "TEMPLATE.md" 2>/dev/null | wc -l | tr -d ' ')"
   add_row "$PASS" "Specs"               "${count} open spec(s) in specs/"
