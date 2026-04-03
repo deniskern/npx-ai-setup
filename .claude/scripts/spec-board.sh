@@ -51,10 +51,13 @@ parse_spec() {
         branch="$(printf '%s\n' "$line" | sed -n 's/.*\*\*Branch\*\*: \(.*\)$/\1/p' | sed 's/[[:space:]]*$//')"
         ;;
     esac
-    # Title from heading
-    case "$line" in
-      "# Spec: "*) title="${line#\# Spec: }" ;;
-    esac
+    # Title from heading (supports "# Spec: ..." and "# Brainstorm: ...")
+    if [ -z "$title" ]; then
+      case "$line" in
+        "# Spec: "*)       title="${line#\# Spec: }" ;;
+        "# Brainstorm: "*) title="${line#\# Brainstorm: }" ;;
+      esac
+    fi
     # Steps section toggle
     case "$line" in
       "## Steps"*) in_steps=1 ;;
@@ -179,77 +182,151 @@ while IFS= read -r f; do
   process_spec_file "$f"
 done < <(collect_recent_completed_specs)
 
-# Formatting helpers
-fmt_entry() {
-  local row="$1"
-  local id title status branch done total
-  local marker=""
-  local color="$C_HEAD"
-  IFS='|' read -r id title status branch done total <<< "$row"
+# ── Kanban rendering ────────────────────────────────────────────
+# Compact side-by-side layout using temp files (no eval).
+# Only non-empty columns are rendered; empty ones show in the footer.
 
-  case "$status" in
-    draft)
-      marker="◻"
-      color="$C_BACKLOG"
-      printf '  %s%s %-4s%s %s\n' "$color" "$marker" "#${id}" "$C_RESET" "$title"
-      ;;
-    in-progress)
-      marker="▶"
-      color="$C_PROGRESS"
-      printf '  %s%s %-4s%s %s\n' "$color" "$marker" "#${id}" "$C_RESET" "$title"
-      printf '     %s%s %s/%s%s' "$C_DIM" "$(progress_bar "$done" "$total")" "$done" "$total" "$C_RESET"
-      if [ -n "$branch" ] && [ "$branch" != "—" ]; then
-        printf ' %s(%s)%s' "$C_DIM" "$branch" "$C_RESET"
-      fi
-      printf '\n'
-      ;;
-    in-review)
-      marker="●"
-      color="$C_REVIEW"
-      printf '  %s%s %-4s%s %s\n' "$color" "$marker" "#${id}" "$C_RESET" "$title"
-      printf '     %s%s %s/%s%s' "$C_DIM" "$(progress_bar "$done" "$total")" "$done" "$total" "$C_RESET"
-      if [ -n "$branch" ] && [ "$branch" != "—" ]; then
-        printf ' %s(%s)%s' "$C_DIM" "$branch" "$C_RESET"
-      fi
-      printf '\n'
-      ;;
-    blocked)
-      marker="✖"
-      color="$C_BLOCKED"
-      printf '  %s%s %-4s%s %s\n' "$color" "$marker" "#${id}" "$C_RESET" "$title"
-      ;;
-    completed)
-      marker="✓"
-      color="$C_DONE"
-      printf '  %s%s %-4s%s %s\n' "$color" "$marker" "#${id}" "$C_RESET" "$title"
-      ;;
-  esac
-}
+TERM_WIDTH="${COLUMNS:-$(tput cols 2>/dev/null || echo 120)}"
+TMPBASE="${TMPDIR:-/tmp}/specboard.$$"
+trap 'rm -f "${TMPBASE}".col_* 2>/dev/null' EXIT
 
-print_column() {
-  local label="$1"
-  local color="$2"
-  local glyph="$3"
-  shift 3
-  local count=$#
-  echo ""
-  printf '%s%s %s (%d)%s\n' "$color" "$glyph" "$label" "$count" "$C_RESET"
-  printf '  %s%s%s\n' "$C_DIM" "$(repeat_char '─' 24)" "$C_RESET"
+strip_ansi() { sed $'s/\033\\[[0-9;]*m//g'; }
+
+# Write one column to a temp file. Each line is padded to COL_W visible chars.
+# Usage: write_col FILENAME LABEL COLOR GLYPH COL_W row1 row2 ...
+write_col() {
+  local outfile="$1" label="$2" color="$3" glyph="$4" col_w="$5"
+  shift 5
+  local count=$# inner=$((col_w - 4))
+  [ "$inner" -lt 10 ] && inner=10
+
+  # Helper: write a padded line (content + right-fill to col_w visible chars)
+  _wline() {
+    local text="$1"
+    local vis
+    vis="$(printf '%s' "$text" | strip_ansi)"
+    local pad=$((col_w - ${#vis}))
+    [ "$pad" -lt 0 ] && pad=0
+    printf '%s%*s\n' "$text" "$pad" "" >> "$outfile"
+  }
+
+  : > "$outfile"
+  # Header (no separator line — keeps output compact)
+  _wline "${color}${glyph} ${label} (${count})${C_RESET}"
+
   for row in "$@"; do
-    fmt_entry "$row"
+    local id title status branch done_n total marker="" mc=""
+    IFS='|' read -r id title status branch done_n total <<< "$row"
+    case "$status" in
+      draft)       marker="◻"; mc="$C_BACKLOG" ;;
+      in-progress) marker="▶"; mc="$C_PROGRESS" ;;
+      in-review)   marker="●"; mc="$C_REVIEW" ;;
+      blocked)     marker="✖"; mc="$C_BLOCKED" ;;
+      completed)   marker="✓"; mc="$C_DONE" ;;
+    esac
+    local max_t=$((inner - 2))
+    [ "$max_t" -lt 4 ] && max_t=4
+    if [ ${#title} -gt "$max_t" ]; then
+      title="${title:0:$((max_t - 2))}.."
+    fi
+    _wline " ${mc}${marker} #${id}${C_RESET} ${title}"
+    if [ "$status" = "in-progress" ] || [ "$status" = "in-review" ]; then
+      _wline "   ${C_DIM}$(progress_bar "$done_n" "$total") ${done_n}/${total}${C_RESET}"
+    fi
   done
 }
 
-echo "${C_HEAD}# Spec Board${C_RESET}"
-echo ""
-print_column "BACKLOG" "$C_BACKLOG" "◻" "${BACKLOG[@]+"${BACKLOG[@]}"}"
-print_column "IN PROGRESS" "$C_PROGRESS" "▶" "${INPROG[@]+"${INPROG[@]}"}"
-print_column "REVIEW" "$C_REVIEW" "●" "${REVIEW[@]+"${REVIEW[@]}"}"
-print_column "BLOCKED" "$C_BLOCKED" "✖" "${BLOCKED[@]+"${BLOCKED[@]}"}"
-print_column "DONE (recent ${COMPLETED_LIMIT})" "$C_DONE" "✓" "${DONE[@]+"${DONE[@]}"}"
+# Determine which columns have items
+declare -a COL_FILES=()
+declare -a EMPTY_NAMES=()
 
-# Summary
-total_all=$(( ${#BACKLOG[@]} + ${#INPROG[@]} + ${#REVIEW[@]} + ${#BLOCKED[@]} + ${#DONE[@]} ))
+maybe_col() {
+  local name="$1" label="$2" color="$3" glyph="$4"
+  shift 4
+  if [ $# -gt 0 ]; then
+    local f="${TMPBASE}.col_${name}"
+    COL_FILES+=("$f")
+    write_col "$f" "$label" "$color" "$glyph" "0" "$@"  # col_w set after count
+  else
+    EMPTY_NAMES+=("${glyph} ${label}")
+  fi
+}
+
+# Count non-empty columns first
+n_active=0
+[ ${#BACKLOG[@]} -gt 0 ] && n_active=$((n_active + 1))
+[ ${#INPROG[@]}  -gt 0 ] && n_active=$((n_active + 1))
+[ ${#REVIEW[@]}  -gt 0 ] && n_active=$((n_active + 1))
+[ ${#BLOCKED[@]} -gt 0 ] && n_active=$((n_active + 1))
+[ ${#DONE[@]}    -gt 0 ] && n_active=$((n_active + 1))
+
+if [ "$n_active" -eq 0 ]; then
+  printf '%sSpec Board%s  —  no specs\n' "$C_HEAD" "$C_RESET"
+  exit 0
+fi
+
+# Column width: divide terminal by active columns, with 2-char gap
+COL_W=$(( (TERM_WIDTH - (n_active - 1) * 2) / n_active ))
+[ "$COL_W" -lt 26 ] && COL_W=26
+
+# Now build columns with correct width
+COL_FILES=()
+EMPTY_NAMES=()
+
+_build_if() {
+  local name="$1" label="$2" color="$3" glyph="$4"
+  shift 4
+  if [ $# -gt 0 ]; then
+    local f="${TMPBASE}.col_${name}"
+    COL_FILES+=("$f")
+    write_col "$f" "$label" "$color" "$glyph" "$COL_W" "$@"
+  else
+    EMPTY_NAMES+=("${glyph} ${label}")
+  fi
+}
+
+_build_if backlog  "BACKLOG"     "$C_BACKLOG"  "◻" ${BACKLOG[@]+"${BACKLOG[@]}"}
+_build_if progress "IN PROGRESS" "$C_PROGRESS" "▶" ${INPROG[@]+"${INPROG[@]}"}
+_build_if review   "REVIEW"      "$C_REVIEW"   "●" ${REVIEW[@]+"${REVIEW[@]}"}
+_build_if blocked  "BLOCKED"     "$C_BLOCKED"  "✖" ${BLOCKED[@]+"${BLOCKED[@]}"}
+_build_if done     "DONE"        "$C_DONE"     "✓" ${DONE[@]+"${DONE[@]}"}
+
+# Find max line count across column files
+max_lines=0
+for cf in "${COL_FILES[@]}"; do
+  n="$(wc -l < "$cf")"
+  [ "$n" -gt "$max_lines" ] && max_lines="$n"
+done
+
+# Pad all files to same line count
+for cf in "${COL_FILES[@]}"; do
+  n="$(wc -l < "$cf")"
+  while [ "$n" -lt "$max_lines" ]; do
+    printf '%*s\n' "$COL_W" "" >> "$cf"
+    n=$((n + 1))
+  done
+done
+
+# Merge columns side by side using paste
+if [ ${#COL_FILES[@]} -eq 1 ]; then
+  cat "${COL_FILES[0]}"
+else
+  paste -d$'\t' "${COL_FILES[@]}" | while IFS=$'\t' read -r line; do
+    printf '%s\n' "$line"
+  done
+fi
+
+# Footer (no blank line — keeps output compact for CLI collapse threshold)
+open_count=$(( ${#BACKLOG[@]} + ${#INPROG[@]} + ${#REVIEW[@]} + ${#BLOCKED[@]} ))
+printf '%s' "Open: ${open_count} | Done: ${#DONE[@]}"
+if [ ${#EMPTY_NAMES[@]} -gt 0 ]; then
+  printf '  %s(' "$C_DIM"
+  first=1
+  for el in "${EMPTY_NAMES[@]}"; do
+    [ "$first" -eq 1 ] || printf '  '
+    printf '%s 0' "$el"
+    first=0
+  done
+  printf ')%s' "$C_RESET"
+fi
 echo ""
-echo "---"
-echo "Open: $(( ${#BACKLOG[@]} + ${#INPROG[@]} + ${#REVIEW[@]} + ${#BLOCKED[@]} )) | Done shown: ${#DONE[@]} | Total shown: ${total_all}"
