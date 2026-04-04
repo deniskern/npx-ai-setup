@@ -73,6 +73,12 @@ show_cli_update_notice() {
 # Handle version check and route to update, reinstall, or exit
 # Called when .ai-setup.json exists. May exit the script.
 handle_version_check() {
+  # Run Claude Code install method and version checks (same as fresh install)
+  if command -v claude &>/dev/null; then
+    _check_claude_code_install_method
+    _check_claude_code_version
+  fi
+
   INSTALLED_VERSION=$(get_installed_version)
   PACKAGE_VERSION=$(get_package_version)
   local update_rc=0
