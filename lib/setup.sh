@@ -210,42 +210,69 @@ check_requirements() {
   fi
 }
 
-# Detect Homebrew-installed Claude Code and offer npm migration
+# Detect non-native Claude Code installations and offer migration to native installer.
+# Native installer auto-updates and requires no dependencies (npm is deprecated).
 _check_claude_code_install_method() {
   local claude_path
   claude_path=$(command -v claude 2>/dev/null) || return 0
 
-  # Check if installed via brew cask
-  local is_brew=false
-  if brew list --cask claude-code &>/dev/null 2>&1; then
-    is_brew=true
-  elif [[ "$claude_path" == */homebrew/* ]] || [[ "$claude_path" == */Caskroom/* ]]; then
-    is_brew=true
-  fi
-  [ "$is_brew" = "true" ] || return 0
+  local install_method=""
 
-  tui_warn "Claude Code ist via Homebrew installiert (eingeschraenkte Update-Kontrolle)"
-  tui_info "npm-Installation empfohlen: volle Versionskontrolle, schnellere Updates"
+  # Check if installed via Homebrew
+  if command -v brew &>/dev/null; then
+    if brew list --cask claude-code &>/dev/null 2>&1; then
+      install_method="brew"
+    elif [[ "$claude_path" == */homebrew/* ]] || [[ "$claude_path" == */Caskroom/* ]]; then
+      install_method="brew"
+    fi
+  fi
+
+  # Check if installed via npm (deprecated)
+  if [ -z "$install_method" ]; then
+    local npm_root
+    npm_root=$(npm root -g 2>/dev/null) || true
+    if [ -n "$npm_root" ] && [ -d "$npm_root/@anthropic-ai/claude-code" ]; then
+      install_method="npm"
+    elif [[ "$claude_path" == */node_modules/* ]] || [[ "$claude_path" == */npm/* ]]; then
+      install_method="npm"
+    fi
+  fi
+
+  # Native install — nothing to do
+  [ -n "$install_method" ] || return 0
+
+  local label
+  case "$install_method" in
+    brew) label="Homebrew" ;;
+    npm)  label="npm (deprecated)" ;;
+  esac
+
+  tui_warn "Claude Code ist via ${label} installiert (kein Auto-Update)"
+  tui_info "Native Installation empfohlen: Auto-Updates, keine Dependencies"
   if ask_yes_no_menu \
-    "Zu npm-Installation wechseln?" \
-    "Ja" "brew uninstall claude-code && npm i -g @anthropic-ai/claude-code" \
-    "Nein" "Weiter mit Homebrew-Installation" \
+    "Zu nativer Installation wechseln?" \
+    "Ja" "curl -fsSL https://claude.ai/install.sh | bash" \
+    "Nein" "Weiter mit ${label}-Installation" \
     "yes"; then
-    tui_step "Wechsel zu npm..."
-    local _brew_out
-    if _brew_out=$(brew uninstall --cask claude-code 2>&1); then
-      echo "$_brew_out" | tail -3
-      local _npm_out
-      if _npm_out=$(npm install -g @anthropic-ai/claude-code@latest 2>&1); then
-        echo "$_npm_out" | tail -3
-        tui_success "Claude Code via npm installiert"
-      else
-        echo "$_npm_out" | tail -3
-        tui_warn "npm-Installation fehlgeschlagen. Manuell: npm i -g @anthropic-ai/claude-code@latest"
-      fi
+    tui_step "Installiere native Claude Code Binary..."
+    local _install_out
+    if _install_out=$(curl -fsSL https://claude.ai/install.sh | bash 2>&1); then
+      echo "$_install_out" | tail -5
+      # Remove old installation
+      case "$install_method" in
+        brew)
+          tui_step "Entferne Homebrew-Installation..."
+          brew uninstall --cask claude-code 2>&1 | tail -3 || true
+          ;;
+        npm)
+          tui_step "Entferne npm-Installation..."
+          npm uninstall -g @anthropic-ai/claude-code 2>&1 | tail -3 || true
+          ;;
+      esac
+      tui_success "Claude Code nativ installiert (Auto-Updates aktiv)"
     else
-      echo "$_brew_out" | tail -3
-      tui_warn "Brew-Deinstallation fehlgeschlagen. Manuell: brew uninstall --cask claude-code"
+      echo "$_install_out" | tail -5
+      tui_warn "Installation fehlgeschlagen. Manuell: curl -fsSL https://claude.ai/install.sh | bash"
     fi
   fi
 }
@@ -274,15 +301,15 @@ _check_claude_code_version() {
 
   tui_warn "Claude Code v${cc_version} ist veraltet (Hooks benötigen >= v${MIN_CC_VERSION})"
   tui_step "Updating Claude Code..."
-  local _npm_out
-  if _npm_out=$(npm install -g @anthropic-ai/claude-code@latest 2>&1); then
-    echo "$_npm_out" | tail -3
+  local _update_out
+  if _update_out=$(claude update 2>&1); then
+    echo "$_update_out" | tail -5
     local new_version
     new_version=$(claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
     tui_success "Claude Code aktualisiert auf v${new_version:-latest}"
   else
-    echo "$_npm_out" | tail -3
-    tui_warn "Update fehlgeschlagen. Manuell: npm i -g @anthropic-ai/claude-code@latest"
+    echo "$_update_out" | tail -5
+    tui_warn "Update fehlgeschlagen. Manuell: claude update"
   fi
 }
 
