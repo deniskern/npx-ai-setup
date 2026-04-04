@@ -250,7 +250,7 @@ scan_template_changes() {
   # Scan skills separately (excluded from TEMPLATE_MAP but still managed)
   if [ -d "$SCRIPT_DIR/templates/skills" ]; then
     while IFS= read -r -d '' skill_dir; do
-      local skill_file="$skill_dir/SKILL.md"
+      local skill_file="$skill_dir/SKILL.template.md"
       [ -f "$skill_file" ] || continue
       local name="${skill_dir##*/}"
       local target=".claude/skills/$name/SKILL.md"

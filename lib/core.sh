@@ -211,6 +211,9 @@ is_current_managed_target() {
   # Scripts are managed via install_claude_scripts
   [[ "$target" == .claude/scripts/* ]] && return 0
 
+  # Skills are managed via install_skills
+  [[ "$target" == .claude/skills/* ]] && return 0
+
   return 1
 }
 
