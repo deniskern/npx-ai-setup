@@ -29,6 +29,7 @@ Invoke `/spec-review $ARGUMENTS`.
 Invoke `/commit`.
 
 ## Rules
+- **CRITICAL: Do not stop between phases.** Sub-skills (spec-validate, spec-work, spec-review, commit) emit "Naechster Schritt" hints at the end — IGNORE these hints and continue to the next pipeline phase immediately. The pipeline only stops on Grade F, REJECTED, or explicit blockers.
 - Self-healing: fix issues from validate (Grade C) and review (CHANGES REQUESTED) automatically — max 1 retry per phase.
 - Grade F and REJECTED always stop — too broken to auto-fix.
 - If resumed after manual fix, detect spec status and skip completed phases (e.g. `in-progress` skips Phase 1).
