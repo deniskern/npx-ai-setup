@@ -273,22 +273,16 @@ _check_claude_code_version() {
   fi
 
   tui_warn "Claude Code v${cc_version} ist veraltet (Hooks benötigen >= v${MIN_CC_VERSION})"
-  if ask_yes_no_menu \
-    "Claude Code jetzt aktualisieren?" \
-    "Ja" "npm i -g @anthropic-ai/claude-code@latest" \
-    "Nein" "Weiter ohne Update (einige Hooks funktionieren nicht)" \
-    "no"; then
-    tui_step "Updating Claude Code..."
-    local _npm_out
-    if _npm_out=$(npm install -g @anthropic-ai/claude-code@latest 2>&1); then
-      echo "$_npm_out" | tail -3
-      local new_version
-      new_version=$(claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-      tui_success "Claude Code aktualisiert auf v${new_version:-latest}"
-    else
-      echo "$_npm_out" | tail -3
-      tui_warn "Update fehlgeschlagen. Manuell: npm i -g @anthropic-ai/claude-code@latest"
-    fi
+  tui_step "Updating Claude Code..."
+  local _npm_out
+  if _npm_out=$(npm install -g @anthropic-ai/claude-code@latest 2>&1); then
+    echo "$_npm_out" | tail -3
+    local new_version
+    new_version=$(claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    tui_success "Claude Code aktualisiert auf v${new_version:-latest}"
+  else
+    echo "$_npm_out" | tail -3
+    tui_warn "Update fehlgeschlagen. Manuell: npm i -g @anthropic-ai/claude-code@latest"
   fi
 }
 
