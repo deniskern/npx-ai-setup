@@ -11,7 +11,7 @@ After completing work, suggest the logical next skill. Keep hints to one line.
 | `/review` passes | 📦 `/commit` — Stagen + committen |
 | `/commit` done | 📤 `gh pr create` auf Feature-Branches, oder `/release` auf `main` / `master` |
 | Bug investigation | 🐛 `/debug` falls noch nicht geladen |
-| New feature request (3+ files) | 📋 `/spec` — erst planen, dann bauen |
+| Multi-file changes (3+ files, incl. config/rules) | 📋 `/spec` — erst planen, dann bauen |
 | Spec created (draft) | ✅ `/spec-validate NNN` — Draft prüfen, oder ⚡ `/spec-run NNN` — validate, implement, review, commit |
 | `/spec-validate` passes | ⚡ `/spec-run NNN` — validate, implement, review, commit in einem Durchlauf |
 | `/spec-work NNN` done | ☑️ `/spec-review NNN` — Acceptance Criteria prüfen, dann `/commit` |
