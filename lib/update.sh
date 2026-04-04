@@ -386,6 +386,7 @@ run_smart_update() {
     ensure_skills_alias
   fi
   command -v ensure_codex_skills_alias >/dev/null 2>&1 && ensure_codex_skills_alias
+  command -v ensure_gemini_skills_alias >/dev/null 2>&1 && ensure_gemini_skills_alias
   command -v ensure_opencode_skills_alias >/dev/null 2>&1 && ensure_opencode_skills_alias
   command -v install_skills >/dev/null 2>&1 && install_skills
 
@@ -555,6 +556,24 @@ cleanup_obsolete_managed_files() {
 
   for target in "${old_targets[@]}"; do
     is_current_managed_target "$target" && continue
+
+    # Skills without a current template are project-specific (installed via
+    # /find-skills, boilerplate, or manually) — never delete them.  They ended
+    # up in .ai-setup.json because older write_metadata() tracked all skills.
+    if [[ "$target" == .claude/skills/*/SKILL.md ]]; then
+      local _sname
+      _sname=$(echo "$target" | sed 's|.claude/skills/\([^/]*\)/SKILL.md|\1|')
+      if [ ! -f "$SCRIPT_DIR/templates/skills/$_sname/SKILL.template.md" ]; then
+        # Clean the stale entry from .ai-setup.json so it won't be checked again
+        if command -v jq >/dev/null 2>&1; then
+          local _tmp
+          _tmp=$(jq --arg f "$target" 'del(.files[$f])' .ai-setup.json 2>/dev/null) \
+            && echo "$_tmp" > .ai-setup.json
+        fi
+        continue
+      fi
+    fi
+
     should_update_template "_:$target" || continue
     [ -f "$target" ] || continue
 
