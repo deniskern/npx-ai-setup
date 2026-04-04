@@ -1,5 +1,5 @@
 ---
-name: orchestrate
+name: ais:orchestrate
 description: "Delegate a task to Gemini or Codex CLI. Triggers: 'use gemini for X', 'delegate to gemini', 'ask gemini', 'use codex for X'. Only on explicit delegation — never auto-routes."
 ---
 

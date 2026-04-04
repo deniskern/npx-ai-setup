@@ -1,5 +1,5 @@
 ---
-name: session-optimize
+name: ais:session-optimize
 description: "Analyzes past sessions via claude-mem and raw JSONL metrics to surface quality, efficiency, and token-saving improvements. Triggers: /session-optimize, 'analyze sessions', 'optimize setup from sessions'."
 model: sonnet
 allowed-tools: Read, Bash, Glob, Grep, mcp__plugin_claude-mem_mcp-search__search, mcp__plugin_claude-mem_mcp-search__get_observations, mcp__plugin_claude-mem_mcp-search__timeline

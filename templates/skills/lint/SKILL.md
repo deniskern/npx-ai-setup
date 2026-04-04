@@ -1,5 +1,5 @@
 ---
-name: lint
+name: ais:lint
 description: Runs the project linter, reports findings grouped by severity, and optionally auto-fixes issues.
 model: sonnet
 argument-hint: "[optional: --fix to auto-fix]"

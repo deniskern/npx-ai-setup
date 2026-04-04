@@ -1,5 +1,5 @@
 ---
-name: agent-browser
+name: ais:agent-browser
 model: haiku
 description: "Browser automation CLI. Use for navigating pages, filling forms, screenshots, scraping, testing web apps. Triggers: 'open website', 'fill form', 'take screenshot', 'scrape page', 'test web app'."
 allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)

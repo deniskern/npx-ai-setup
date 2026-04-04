@@ -1,5 +1,5 @@
 ---
-name: test
+name: ais:test
 description: "Runs the project test suite and fixes failures in source code. Uses `test-prep.sh` to auto-detect and execute tests — green builds use 0 LLM tokens, Claude only activates on failure."
 model: sonnet
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep

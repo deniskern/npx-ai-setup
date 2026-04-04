@@ -1,5 +1,5 @@
 ---
-name: test-setup
+name: ais:test-setup
 description: Run ai-setup from local dev repo (~/Sites/npx-ai-setup) and validate with /doctor. Use to test setup changes before publishing.
 ---
 

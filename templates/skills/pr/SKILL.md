@@ -1,5 +1,5 @@
 ---
-name: pr
+name: ais:pr
 description: Drafts a pull request with staff review and PR body. Use when a feature branch is ready to be submitted for review.
 model: haiku
 allowed-tools: Read, Bash, Glob, Grep, Agent

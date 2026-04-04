@@ -1,5 +1,5 @@
 ---
-name: context-load
+name: ais:context-load
 model: haiku
 description: "Load context files on demand — STACK.md, ARCHITECTURE.md, CONVENTIONS.md, decisions.md. Triggers: /context-load, 'load architecture', 'show stack details', 'load conventions'."
 ---

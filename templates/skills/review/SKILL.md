@@ -1,5 +1,5 @@
 ---
-name: review
+name: ais:review
 description: Reviews uncommitted changes with selectable intensity. Use before committing or merging.
 model: sonnet
 mode: plan

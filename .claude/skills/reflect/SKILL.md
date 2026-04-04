@@ -1,5 +1,5 @@
 ---
-name: reflect
+name: ais:reflect
 description: "Analyze the current session for corrections, architectural discoveries, and stack decisions — convert them into permanent learnings. Triggers: /reflect, 'save learnings', 'capture session insights'."
 model: sonnet
 mode: plan

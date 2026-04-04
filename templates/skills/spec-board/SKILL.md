@@ -1,5 +1,5 @@
 ---
-name: spec-board
+name: ais:spec-board
 description: "Overview of all specs as Kanban board. Triggers: /spec-board, 'show specs', 'spec overview', 'what specs do we have', 'show me whats in progress'."
 ---
 

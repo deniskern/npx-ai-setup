@@ -1,5 +1,5 @@
 ---
-name: resume
+name: ais:resume
 description: "Restores session state from `.claude/session-state.json` plus `.continue-here.md` and routes to the next action. Run at the start of a new session."
 model: haiku
 allowed-tools: Read, Bash, Glob, Grep, AskUserQuestion
