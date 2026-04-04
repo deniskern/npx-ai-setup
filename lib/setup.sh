@@ -230,7 +230,7 @@ _check_claude_code_install_method() {
     "Zu npm-Installation wechseln?" \
     "Ja" "brew uninstall claude-code && npm i -g @anthropic-ai/claude-code" \
     "Nein" "Weiter mit Homebrew-Installation" \
-    "no"; then
+    "yes"; then
     tui_step "Wechsel zu npm..."
     local _brew_out
     if _brew_out=$(brew uninstall --cask claude-code 2>&1); then
