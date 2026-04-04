@@ -181,10 +181,13 @@ write_metadata() {
     done < <(find .claude/scripts -type f -print0 | sort -z)
   fi
 
-  # Include skills installed via install_skills
+  # Include only template-managed skills (skip custom skills without a template source)
   if [ -d ".claude/skills" ]; then
     while IFS= read -r -d '' _skill; do
       local _target="${_skill#./}"
+      local _sname
+      _sname=$(echo "$_target" | sed 's|.claude/skills/\([^/]*\)/SKILL.md|\1|')
+      [ -f "$SCRIPT_DIR/templates/skills/$_sname/SKILL.template.md" ] || continue
       local cs
       cs=$(compute_checksum "$_target")
       json=$(echo "$json" | _json_set_file "$_target" "$cs")
@@ -211,8 +214,12 @@ is_current_managed_target() {
   # Scripts are managed via install_claude_scripts
   [[ "$target" == .claude/scripts/* ]] && return 0
 
-  # Skills are managed via install_skills
-  [[ "$target" == .claude/skills/* ]] && return 0
+  # Skills: only protect if a matching template exists (custom skills are not tracked)
+  if [[ "$target" == .claude/skills/*/SKILL.md ]]; then
+    local _skill_name
+    _skill_name=$(echo "$target" | sed 's|.claude/skills/\([^/]*\)/SKILL.md|\1|')
+    [ -f "$SCRIPT_DIR/templates/skills/$_skill_name/SKILL.template.md" ] && return 0
+  fi
 
   return 1
 }
