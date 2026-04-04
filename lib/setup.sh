@@ -619,7 +619,7 @@ install_skills() {
   local _count=0
   while IFS= read -r -d '' skill_dir; do
     local name="${skill_dir##*/}"
-    local skill_file="$skill_dir/SKILL.md"
+    local skill_file="$skill_dir/SKILL.template.md"
     [ -f "$skill_file" ] || continue
     # Skip internal-only skills not meant for target projects
     [[ "$name" == "test-setup" ]] && continue

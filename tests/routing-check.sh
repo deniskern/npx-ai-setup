@@ -46,20 +46,20 @@ else
   fail ".claude/skills/spec-work/SKILL.md does not route medium to sonnet"
 fi
 
-if grep -q "medium.*sonnet" templates/skills/spec-work/SKILL.md 2>/dev/null; then
-  pass "templates/skills/spec-work/SKILL.md routes medium to sonnet"
+if grep -q "medium.*sonnet" templates/skills/spec-work/SKILL.template.md 2>/dev/null; then
+  pass "templates/skills/spec-work/SKILL.template.md routes medium to sonnet"
 else
-  fail "templates/skills/spec-work/SKILL.md does not route medium to sonnet"
+  fail "templates/skills/spec-work/SKILL.template.md does not route medium to sonnet"
 fi
 
 # ---------------------------------------------------------------------------
 echo ""
 echo "--- spec-work template: no auto-commit per step ---"
 
-if grep -q 'git add -u' templates/skills/spec-work/SKILL.md 2>/dev/null; then
-  fail "templates/skills/spec-work/SKILL.md still has 'git add -u' auto-commit per step"
+if grep -q 'git add -u' templates/skills/spec-work/SKILL.template.md 2>/dev/null; then
+  fail "templates/skills/spec-work/SKILL.template.md still has 'git add -u' auto-commit per step"
 else
-  pass "templates/skills/spec-work/SKILL.md does not auto-commit per step"
+  pass "templates/skills/spec-work/SKILL.template.md does not auto-commit per step"
 fi
 
 if grep -q 'git add -u' .claude/skills/spec-work/SKILL.md 2>/dev/null; then
@@ -89,7 +89,7 @@ echo ""
 echo "--- Cross-file: medium routing line parity ---"
 
 REPO_MEDIUM=$(grep 'medium.*sonnet\|medium.*haiku' .claude/skills/spec-work/SKILL.md 2>/dev/null | head -1 || true)
-TMPL_MEDIUM=$(grep 'medium.*sonnet\|medium.*haiku' templates/skills/spec-work/SKILL.md 2>/dev/null | head -1 || true)
+TMPL_MEDIUM=$(grep 'medium.*sonnet\|medium.*haiku' templates/skills/spec-work/SKILL.template.md 2>/dev/null | head -1 || true)
 
 if [ "$REPO_MEDIUM" = "$TMPL_MEDIUM" ]; then
   pass "spec-work medium routing line is identical in repo and template"

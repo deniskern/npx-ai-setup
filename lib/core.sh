@@ -56,13 +56,13 @@ build_template_map
 # Legacy: explicit skill mappings used by install_spec_skills() — kept for compat.
 # Superseded by install_skills() which installs all templates/skills/ generically.
 SPEC_SKILLS_MAP=(
-  "templates/skills/spec-board/SKILL.md:.claude/skills/spec-board/SKILL.md"
-  "templates/skills/spec/SKILL.md:.claude/skills/spec/SKILL.md"
-  "templates/skills/spec-review/SKILL.md:.claude/skills/spec-review/SKILL.md"
-  "templates/skills/spec-validate/SKILL.md:.claude/skills/spec-validate/SKILL.md"
-  "templates/skills/spec-work/SKILL.md:.claude/skills/spec-work/SKILL.md"
-  "templates/skills/spec-work-all/SKILL.md:.claude/skills/spec-work-all/SKILL.md"
-  "templates/skills/orchestrate/SKILL.md:.claude/skills/orchestrate/SKILL.md"
+  "templates/skills/spec-board/SKILL.template.md:.claude/skills/spec-board/SKILL.md"
+  "templates/skills/spec/SKILL.template.md:.claude/skills/spec/SKILL.md"
+  "templates/skills/spec-review/SKILL.template.md:.claude/skills/spec-review/SKILL.md"
+  "templates/skills/spec-validate/SKILL.template.md:.claude/skills/spec-validate/SKILL.md"
+  "templates/skills/spec-work/SKILL.template.md:.claude/skills/spec-work/SKILL.md"
+  "templates/skills/spec-work-all/SKILL.template.md:.claude/skills/spec-work-all/SKILL.md"
+  "templates/skills/orchestrate/SKILL.template.md:.claude/skills/orchestrate/SKILL.md"
 )
 
 # System-to-boilerplate-repo mapping (org: onedot-digital-crew)

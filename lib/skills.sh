@@ -12,7 +12,7 @@ command -v gtimeout &>/dev/null && TIMEOUT_CMD="gtimeout 30"
 install_local_skill_template() {
   local sid="$1"
   local skill_name="${sid##*@}"
-  local local_template="$SCRIPT_DIR/templates/skills/$skill_name/SKILL.md"
+  local local_template="$SCRIPT_DIR/templates/skills/$skill_name/SKILL.template.md"
   local local_target_dir=".claude/skills/$skill_name"
 
   [ -f "$local_template" ] || return 1

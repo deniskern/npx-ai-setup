@@ -139,10 +139,10 @@ fi
 # Step 7: Verify spec-work validation gate
 echo ""
 echo "--- Spec-work validation gate ---"
-if grep -q 'Validation gate\|validation gate\|skip-validate' templates/skills/spec-work/SKILL.md 2>/dev/null; then
-  pass "templates/skills/spec-work/SKILL.md has validation gate"
+if grep -q 'Validation gate\|validation gate\|skip-validate' templates/skills/spec-work/SKILL.template.md 2>/dev/null; then
+  pass "templates/skills/spec-work/SKILL.template.md has validation gate"
 else
-  fail "templates/skills/spec-work/SKILL.md missing validation gate"
+  fail "templates/skills/spec-work/SKILL.template.md missing validation gate"
 fi
 
 echo ""
@@ -487,12 +487,12 @@ if grep -q 'session-state.json' templates/claude/hooks/pre-compact-state.sh 2>/d
 else
   fail "compact hooks do not consistently use session-state.json"
 fi
-if grep -q 'session-state.json' templates/skills/pause/SKILL.md 2>/dev/null && grep -q 'session-state.json' templates/skills/resume/SKILL.md 2>/dev/null; then
+if grep -q 'session-state.json' templates/skills/pause/SKILL.template.md 2>/dev/null && grep -q 'session-state.json' templates/skills/resume/SKILL.template.md 2>/dev/null; then
   pass "pause and resume skills reference unified session-state.json"
 else
   fail "pause/resume skills missing unified session-state.json guidance"
 fi
-if grep -q 'session-state.json' templates/skills/spec-work/SKILL.md 2>/dev/null && grep -q 'session-state.json' templates/skills/spec-run/SKILL.md 2>/dev/null; then
+if grep -q 'session-state.json' templates/skills/spec-work/SKILL.template.md 2>/dev/null && grep -q 'session-state.json' templates/skills/spec-run/SKILL.template.md 2>/dev/null; then
   pass "spec workflow skills refresh unified session-state.json"
 else
   fail "spec workflow skills missing unified session-state.json references"
@@ -539,10 +539,10 @@ else
   fail "spec-work/SKILL.md missing sonnet routing for medium-complexity tasks"
 fi
 
-if grep -q 'medium.*sonnet\|sonnet' templates/skills/spec-work/SKILL.md 2>/dev/null; then
-  pass "templates/skills/spec-work/SKILL.md uses sonnet for medium-complexity implementation"
+if grep -q 'medium.*sonnet\|sonnet' templates/skills/spec-work/SKILL.template.md 2>/dev/null; then
+  pass "templates/skills/spec-work/SKILL.template.md uses sonnet for medium-complexity implementation"
 else
-  fail "templates/skills/spec-work/SKILL.md missing sonnet routing for medium-complexity tasks"
+  fail "templates/skills/spec-work/SKILL.template.md missing sonnet routing for medium-complexity tasks"
 fi
 
 if grep -q 'haiku.*explore\|explore.*haiku\|dedicated explore' .claude/rules/agents.md 2>/dev/null; then
