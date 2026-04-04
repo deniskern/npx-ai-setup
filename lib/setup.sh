@@ -202,6 +202,50 @@ check_requirements() {
     AI_CLI="copilot"
   fi
   tui_success "Requirements OK (AI CLI: ${AI_CLI:-none detected})"
+
+  # Claude Code minimum version check (hooks require >= 2.1.89)
+  if [ "$AI_CLI" = "claude" ]; then
+    _check_claude_code_version
+  fi
+}
+
+# Check Claude Code version and offer update if outdated
+_check_claude_code_version() {
+  local MIN_CC_VERSION="2.1.89"
+  local cc_version
+  cc_version=$(claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+  [ -z "$cc_version" ] && return 0
+
+  # Semver comparison: returns 0 if $1 >= $2
+  _semver_ge() {
+    local IFS=.
+    local i a=($1) b=($2)
+    for ((i=0; i<3; i++)); do
+      [ "${a[i]:-0}" -gt "${b[i]:-0}" ] && return 0
+      [ "${a[i]:-0}" -lt "${b[i]:-0}" ] && return 1
+    done
+    return 0
+  }
+
+  if _semver_ge "$cc_version" "$MIN_CC_VERSION"; then
+    return 0
+  fi
+
+  tui_warn "Claude Code v${cc_version} ist veraltet (Hooks benötigen >= v${MIN_CC_VERSION})"
+  if ask_yes_no_menu \
+    "Claude Code jetzt aktualisieren?" \
+    "Ja" "npm i -g @anthropic-ai/claude-code@latest" \
+    "Nein" "Weiter ohne Update (einige Hooks funktionieren nicht)" \
+    "no"; then
+    tui_step "Updating Claude Code..."
+    if npm install -g @anthropic-ai/claude-code@latest 2>&1 | tail -3; then
+      local new_version
+      new_version=$(claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+      tui_success "Claude Code aktualisiert auf v${new_version:-latest}"
+    else
+      tui_warn "Update fehlgeschlagen. Manuell: npm i -g @anthropic-ai/claude-code@latest"
+    fi
+  fi
 }
 
 # Detect and remove legacy AI structures
