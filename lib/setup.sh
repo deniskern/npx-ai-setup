@@ -665,6 +665,10 @@ update_gitignore() {
       echo "scripts/storyblok-dump.json" >> .gitignore
       echo "CLAUDE.local.md" >> .gitignore
       echo ".claude/session-state.json" >> .gitignore
+      echo ".claude/compact-state.json" >> .gitignore
+      echo ".claude/worktrees/" >> .gitignore
+      echo ".claude/*.log" >> .gitignore
+      echo "__pycache__/" >> .gitignore
       echo ".codex/skills" >> .gitignore
       echo ".gemini/agents" >> .gitignore
       echo ".opencode/skills" >> .gitignore
@@ -678,6 +682,10 @@ update_gitignore() {
       grep -q "storyblok-dump\.json" .gitignore 2>/dev/null || echo "scripts/storyblok-dump.json" >> .gitignore
       grep -q "CLAUDE\.local\.md" .gitignore 2>/dev/null || echo "CLAUDE.local.md" >> .gitignore
       grep -q "session-state" .gitignore 2>/dev/null || echo ".claude/session-state.json" >> .gitignore
+      grep -q "compact-state" .gitignore 2>/dev/null || echo ".claude/compact-state.json" >> .gitignore
+      grep -q "worktrees" .gitignore 2>/dev/null || echo ".claude/worktrees/" >> .gitignore
+      grep -q "\.claude/\*\.log" .gitignore 2>/dev/null || echo ".claude/*.log" >> .gitignore
+      grep -q "__pycache__" .gitignore 2>/dev/null || echo "__pycache__/" >> .gitignore
       grep -q "\.codex/skills" .gitignore 2>/dev/null || echo ".codex/skills" >> .gitignore
       grep -q "\.gemini/agents" .gitignore 2>/dev/null || echo ".gemini/agents" >> .gitignore
       grep -q "\.opencode/skills" .gitignore 2>/dev/null || echo ".opencode/skills" >> .gitignore
@@ -692,6 +700,10 @@ update_gitignore() {
     echo "scripts/storyblok-dump.json" >> .gitignore
     echo "CLAUDE.local.md" >> .gitignore
     echo ".claude/session-state.json" >> .gitignore
+    echo ".claude/compact-state.json" >> .gitignore
+    echo ".claude/worktrees/" >> .gitignore
+    echo ".claude/*.log" >> .gitignore
+    echo "__pycache__/" >> .gitignore
     echo ".codex/skills" >> .gitignore
     echo ".gemini/agents" >> .gitignore
     echo ".opencode/skills" >> .gitignore
