@@ -1226,7 +1226,7 @@ def _extract_skills_and_agents_from_subagent(filepath):
                     tool_name = block.get("name", "")
                     inp = block.get("input", {})
                     if tool_name == "Skill":
-                        skill = inp.get("skill", "unknown")
+                        skill = _normalize_skill_name(inp.get("skill", "unknown"))
                         skills[skill] = skills.get(skill, 0) + 1
                     elif tool_name == "Task":
                         agent_type = inp.get("subagent_type", "unknown")
@@ -1391,7 +1391,7 @@ def _parse_session_jsonl(filepath):
 
                             inp = block.get("input", {})
                             if tool_name == "Skill":
-                                skill = inp.get("skill", "unknown")
+                                skill = _normalize_skill_name(inp.get("skill", "unknown"))
                                 skills_used[skill] = skills_used.get(skill, 0) + 1
                             elif tool_name == "Task":
                                 agent_type = inp.get("subagent_type", "unknown")
@@ -1467,6 +1467,23 @@ def _normalize_model_name(model_id):
     if "haiku" in m:
         return "haiku"
     return model_id
+
+
+def _normalize_skill_name(skill_name):
+    """Normalize skill IDs so project skills are consistently namespaced as 'ais:*'."""
+    if skill_name is None:
+        return "unknown"
+    skill = str(skill_name).strip()
+    if not skill:
+        return "unknown"
+    if skill.startswith("/"):
+        skill = skill[1:]
+    if skill.startswith("$"):
+        skill = skill[1:]
+    # Keep externally namespaced skills (e.g. github:..., google-calendar:...) as-is.
+    if ":" in skill:
+        return skill
+    return f"ais:{skill}"
 
 
 def _load_overhead_snapshots():
@@ -1772,7 +1789,10 @@ def _query_trends_db(conn, days):
            FROM skill_daily WHERE date >= ? GROUP BY skill ORDER BY sess DESC""",
         (cutoff,),
     ).fetchall()
-    skill_sessions = {r["skill"]: r["sess"] for r in skill_rows}
+    skill_sessions = {}
+    for r in skill_rows:
+        normalized_skill = _normalize_skill_name(r["skill"])
+        skill_sessions[normalized_skill] = skill_sessions.get(normalized_skill, 0) + r["sess"]
 
     # Model mix
     model_rows = conn.execute(
@@ -1845,8 +1865,11 @@ def _query_trends_db(conn, days):
             skills = json.loads(sr["skills_json"]) if sr["skills_json"] else {}
         except (json.JSONDecodeError, TypeError):
             skills = {}
+        normalized_skills = {}
         for skill, cnt in skills.items():
-            d["skills_used"][skill] = d["skills_used"].get(skill, 0) + cnt
+            normalized_skill = _normalize_skill_name(skill)
+            d["skills_used"][normalized_skill] = d["skills_used"].get(normalized_skill, 0) + cnt
+            normalized_skills[normalized_skill] = normalized_skills.get(normalized_skill, 0) + cnt
 
         try:
             subagents = json.loads(sr["subagents_json"]) if sr["subagents_json"] else {}
@@ -1859,7 +1882,7 @@ def _query_trends_db(conn, days):
             "output_tokens": sr["output_tokens"] or 0,
             "message_count": sr["message_count"] or 0,
             "api_calls": sr["api_calls"] or 0,
-            "skills": list(skills.keys()),
+            "skills": list(normalized_skills.keys()),
             "subagents": list(subagents.keys()),
             "cache_hit_rate": round(sr["cache_hit_rate"] or 0, 3),
             "slug": sr["slug"],
