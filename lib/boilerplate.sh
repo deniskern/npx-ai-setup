@@ -216,6 +216,9 @@ sync_boilerplate() {
   system=$(detect_installed_system) || true
 
   if [ -z "$system" ]; then
+    # No system recorded — try to detect from project files (handles projects
+    # installed before system detection was added)
+    select_boilerplate_system
     return 0
   fi
 
