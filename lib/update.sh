@@ -272,6 +272,25 @@ scan_template_changes() {
           SCAN_TOTAL_CHANGES=$((SCAN_TOTAL_CHANGES + 1))
         fi
       fi
+      # Check supporting reference files
+      if [ -d "$skill_dir/references" ]; then
+        while IFS= read -r -d '' ref; do
+          local ref_name="${ref##*/}"
+          local ref_target=".claude/skills/$name/references/$ref_name"
+          if [ ! -f "$ref_target" ]; then
+            SCAN_OTHER_NEW=$((SCAN_OTHER_NEW + 1))
+            SCAN_TOTAL_CHANGES=$((SCAN_TOTAL_CHANGES + 1))
+          else
+            local ref_tpl_cs ref_cur_cs
+            ref_tpl_cs=$(compute_checksum "$ref")
+            ref_cur_cs=$(compute_checksum "$ref_target")
+            if [ "$ref_tpl_cs" != "$ref_cur_cs" ]; then
+              SCAN_OTHER_CHANGED=$((SCAN_OTHER_CHANGED + 1))
+              SCAN_TOTAL_CHANGES=$((SCAN_TOTAL_CHANGES + 1))
+            fi
+          fi
+        done < <(find "$skill_dir/references" -type f -name "*.md" -print0 | sort -z)
+      fi
     done < <(find "$SCRIPT_DIR/templates/skills" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
   fi
 }

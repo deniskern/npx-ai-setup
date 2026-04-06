@@ -1,6 +1,6 @@
 # Spec: Skill Progressive Disclosure + Install Refactor
 
-> **Spec ID**: 628 | **Created**: 2026-04-06 | **Status**: draft | **Complexity**: high | **Branch**: --
+> **Spec ID**: 628 | **Created**: 2026-04-06 | **Status**: in-review | **Complexity**: high | **Branch**: main
 > **Related**: Spec 627 (frontmatter normalization) can land independently before or after this refactor
 
 ## Goal
@@ -14,18 +14,18 @@ Install system (`lib/setup.sh:653`) only copies `SKILL.template.md` per skill. S
 - Claude Code loads files referenced from SKILL.md on demand -- Evidence: docs "Reference supporting files from SKILL.md" | Confidence: High | If Wrong: files must be in context at load time
 
 ## Steps
-- [ ] Step 1: Extend `install_skills()` in `lib/setup.sh` to copy `references/*.md` files alongside SKILL.md using `_install_or_update_file` pattern
-- [ ] Step 2: Extend `scan_template_changes()` in `lib/update.sh` to track checksums for `references/*.md` supporting files
-- [ ] Step 3: Split `templates/skills/analyze/SKILL.template.md` -- move agent-prompt detail blocks to `references/`
-- [ ] Step 4: Extend `cleanup_orphans()` in `lib/setup.sh` to detect and remove orphaned `references/*.md` files when template references are deleted
-- [ ] Step 5: Create `scripts/skill-lint.sh` to validate `templates/skills/*/SKILL.template.md` for kebab-case `name`, `description` <=220 chars, and required sections
-- [ ] Step 6: Add inline skill health check to `templates/scripts/doctor.sh` (5-10 lines, checks SKILL.md exists + frontmatter has name/description) and regenerate `.claude/scripts/doctor.sh`
+- [x] Step 1: Extend `install_skills()` in `lib/setup.sh` to copy `references/*.md` files alongside SKILL.md using `_install_or_update_file` pattern
+- [x] Step 2: Extend `scan_template_changes()` in `lib/update.sh` to track checksums for `references/*.md` supporting files
+- [x] Step 3: Split `templates/skills/analyze/SKILL.template.md` -- move agent-prompt detail blocks to `references/`
+- [x] Step 4: Extend `cleanup_orphans()` in `lib/setup.sh` to detect and remove orphaned `references/*.md` files when template references are deleted
+- [x] Step 5: Create `scripts/skill-lint.sh` to validate `templates/skills/*/SKILL.template.md` for kebab-case `name`, `description` <=220 chars, and required sections
+- [x] Step 6: Add inline skill health check to `templates/scripts/doctor.sh` (5-10 lines, checks SKILL.md exists + frontmatter has name/description) and regenerate `.claude/scripts/doctor.sh`
 
 ## Acceptance Criteria
-- [ ] `references/*.md` files are installed to `.claude/skills/*/references/` on fresh setup
-- [ ] `/update` detects and syncs changed supporting files
-- [ ] `bash scripts/skill-lint.sh` passes on all `templates/skills/*/SKILL.template.md` files
-- [ ] `bash .claude/scripts/doctor.sh` includes skill health check and reports OK/FAIL
+- [x] `references/*.md` files are installed to `.claude/skills/*/references/` on fresh setup
+- [x] `/update` detects and syncs changed supporting files
+- [x] `bash scripts/skill-lint.sh` passes on all `templates/skills/*/SKILL.template.md` files
+- [x] `bash .claude/scripts/doctor.sh` includes skill health check and reports OK/FAIL
 - [ ] Split analyze skill still functions correctly (manual test: `/analyze`)
 
 ## Files to Modify

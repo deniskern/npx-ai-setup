@@ -191,6 +191,11 @@ if [ -d ".claude/skills" ]; then
   while IFS= read -r skill_file; do
     [ -z "$skill_file" ] && continue
     skill_name="$(basename "$(dirname "$skill_file")")"
+    # Check for name field
+    if ! grep -q '^name:' "$skill_file" 2>/dev/null; then
+      yaml_errors=$((yaml_errors + 1))
+      yaml_details="${yaml_details}${skill_name}(no name) "
+    fi
     # Check for description field
     if ! grep -q '^description:' "$skill_file" 2>/dev/null; then
       yaml_errors=$((yaml_errors + 1))

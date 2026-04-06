@@ -10,6 +10,8 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+- **Spec 628**: Skill Progressive Disclosure — multi-file skill support with `references/*.md` (install, update, orphan cleanup), analyze skill split into SKILL.md + 2 reference files, `scripts/skill-lint.sh` for template validation (30/30 pass), doctor.sh `name:` field check
+- **Spec 627**: Skill Frontmatter Normalization — removed `ais:` prefix from all 30 skill templates, trimmed descriptions, added `effort:`, `disable-model-invocation:`, and `argument-hint:` fields where applicable
 - **Spec 626**: Hook System Drift Fix — activated tool-redirect.sh (WebFetch→defuddle), added file-index.sh + session-length.sh to hook docs, documented 3 template-only hooks with rationale, corrected README.md hook count (25→23) and names
 - **Spec 619**: Claude Code 2.1.89+ Alignment — tdd-checker absolute path fix, permission-denied retry logic, TaskCreated hook, disableSkillShellExecution warning
 
