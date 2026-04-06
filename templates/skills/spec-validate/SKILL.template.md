@@ -1,7 +1,7 @@
 ---
 name: ais:spec-validate
 description: "Validate a draft spec before execution. Triggers: /spec-validate NNN, 'validate spec NNN', 'is spec NNN ready to implement', 'check spec quality'."
-model: opus
+model: haiku
 ---
 
 Validates spec $ARGUMENTS against 10 quality metrics. Run before `/spec-work` to catch weak specs early.

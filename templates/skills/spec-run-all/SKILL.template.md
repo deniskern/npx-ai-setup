@@ -1,7 +1,7 @@
 ---
 name: ais:spec-run-all
 description: "Run full pipeline for all draft specs in parallel. Triggers: /spec-run-all, 'run all specs', 'implement everything', 'do all the drafts'."
-model: opus
+model: sonnet
 ---
 
 # Spec Run All — Full Pipeline for All Draft Specs

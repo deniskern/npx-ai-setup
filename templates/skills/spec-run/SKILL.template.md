@@ -1,7 +1,7 @@
 ---
 name: ais:spec-run
 description: "Run full spec pipeline — validate, implement, review, commit. Triggers: /spec-run NNN, 'run spec pipeline NNN', 'execute spec NNN end to end'."
-model: opus
+model: sonnet
 ---
 
 Runs the complete spec lifecycle for spec $ARGUMENTS. Self-healing: fixes issues found during review automatically.

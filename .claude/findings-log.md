@@ -13,7 +13,7 @@
 - [x] [T] Haiku verifiziert: 9-14% in Opus-Sessions mit Subagents — Routing funktioniert (2026-04-05)
 - [x] [Q] setup.sh cmux false positive — Fallback auf ~/.local/bin/claude ergänzt, lib/setup.sh:243 (2026-04-04)
 - [x] [T] nuxt-onedot CLAUDE.md fehlte defuddle-Regel und Session-Hygiene — ergänzt (2026-04-04)
-- [ ] [T] npx-ai-setup v2.0.2 → v2.0.8 Update ausstehend
+- [x] [T] npx-ai-setup v2.0.2 → v2.0.8 Update ausstehend — erledigt, package.json bereits auf 2.0.8 (2026-04-05)
 - [x] [T] sp-alpensattel-next CLAUDE.md + templates/CLAUDE.md: Sonnet als Default, Opus nur Architektur/ADR — direkt gefixt (2026-03-28)
 - [x] [T] bash-defensive-patterns/SKILL.md 533 Zeilen → trim auf 64 Zeilen — commit 8f1fc5d (2026-03-28)
 - [ ] [T] spec/SKILL.md should stay lean; avoid reintroducing unconditional broad skill scans or excessive AskUserQuestion loops
