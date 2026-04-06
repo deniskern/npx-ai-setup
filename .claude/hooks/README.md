@@ -2,31 +2,51 @@
 
 Hook scripts use these exit codes: `0` = pass, `1` = fail with feedback, `2` = blocked
 
-## Active Hooks (10 events, 16 hook entries)
+## Active Hooks (14 events, 24 entries, 23 unique scripts)
 
 | Event | Script | Purpose |
 |-------|--------|---------|
 | SessionStart | context-loader.sh | L0 abstracts from .agents/context/ |
+| SessionStart | file-index.sh | Builds file index for fast codebase navigation |
 | SessionStart | mcp-health.sh | Validates .mcp.json syntax and commands |
 | SessionStart | cli-health.sh | Warns about missing tools (rtk, defuddle, jq) |
+| SessionStart (compact) | post-compact-restore.sh | Fallback restore path after compaction |
+| PostCompact | post-compact-restore.sh | Experimental early restore path after compaction |
 | PreToolUse Edit\|Write | protect-and-breaker.sh | Protected file guard + edit loop detection |
+| PreToolUse WebFetch | tool-redirect.sh | Redirects WebFetch to defuddle (~80% token savings) |
 | PostToolUse Edit\|Write | post-edit-lint.sh | Auto-format/lint (silent output) |
-| PostToolUse Edit\|Write\|NE | context-monitor.sh | Context exhaustion warning on write flows |
+| PostToolUse Edit\|Write | tdd-checker.sh | Advisory warning when edited source lacks nearby tests |
+| PostToolUse Edit\|Write\|NotebookEdit | context-monitor.sh | Context exhaustion warning on write flows |
+| PostToolUse (global) | session-length.sh | Tracks session length and warns on long sessions |
 | PostToolUseFailure | post-tool-failure-log.sh | Failure logging to .claude/tool-failures.log |
 | ConfigChange | config-change-audit.sh | Audit log + blocks disableAllHooks/Bash(*) |
 | UserPromptSubmit | context-freshness.sh | CB reset + stale context warning |
 | Notification | notify.sh | macOS/Linux desktop notifications |
+| SubagentStart | subagent-start.sh | Experimental advisory hook for missing model fields / suspicious Haiku routing |
+| SubagentStop | subagent-stop.sh | Experimental usage logger for subagent payloads |
+| PermissionDenied | permission-denied-log.sh | Experimental denial logger with conditional remediation hints |
 | TaskCompleted | task-completed-gate.sh | Blocks WIP/TBD/merge-conflict closures |
 | Stop | transcript-ingest.sh | Auto-extract session learnings via haiku |
 | Stop | spec-stop-guard.sh | Blocks the first stop when specs remain in progress |
 | PreCompact | (inline) | Auto-commit tracked changes before compaction |
 | PreCompact | pre-compact-state.sh | Saves minimal in-progress spec state before compaction |
-| SessionStart (compact) | post-compact-restore.sh | Fallback restore path after compaction |
-| PostCompact | post-compact-restore.sh | Experimental early restore path after compaction |
-| SubagentStart | subagent-start.sh | Experimental advisory hook for missing model fields / suspicious Haiku routing |
-| SubagentStop | subagent-stop.sh | Experimental usage logger for subagent payloads |
-| PermissionDenied | permission-denied-log.sh | Experimental denial logger with conditional remediation hints |
-| PostToolUse Edit\|Write | tdd-checker.sh | Advisory warning when edited source lacks nearby tests |
+
+## Template-Only Hooks (in templates/, not installed)
+
+These scripts exist in `templates/claude/hooks/` but are intentionally not activated:
+
+| Script | Reason not installed |
+|--------|----------------------|
+| context-reinforcement.sh | Iron Laws already enforced via CLAUDE.md + rules/ files. Token overhead on every SessionStart not justified. |
+| task-created-log.sh | `TaskCreated` is not a valid Claude Code hook event type — would never fire. |
+| update-check.sh | CB-reset covered by context-freshness.sh. Update-check available via `/update` skill. |
+| memory-recall.sh | Superseded by claude-mem plugin and context-loader.sh. |
+
+## Merged Hooks
+
+| Template scripts | Installed as | Notes |
+|-----------------|--------------|-------|
+| protect-files.sh + circuit-breaker.sh | protect-and-breaker.sh | Intentional merge — combined file protection and edit-loop detection into one script |
 
 ## Dead-Loop Prevention
 

@@ -164,6 +164,15 @@
             "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/protect-and-breaker.sh"
           }
         ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/tool-redirect.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
