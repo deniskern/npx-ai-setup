@@ -228,7 +228,6 @@ sync_boilerplate() {
   fi
 
   if ! get_boilerplate_repo "$system" >/dev/null 2>&1; then
-    tui_info "No boilerplate available for ${system} — skipping"
     return 0
   fi
 
