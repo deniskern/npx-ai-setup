@@ -22,11 +22,12 @@ After completing work, suggest the logical next skill. Keep hints to one line.
 Claude MAY invoke these skills programmatically (via Skill tool) when the context clearly calls for it:
 - `/spec-work NNN` — after context compaction when the active spec is known
 - `/resume` — at session start when `.continue-here.md` exists
-- `/commit` — when user says "commit" or "committe das"
 - `/spec-board` — when user asks for spec overview
 
+**User-only skills** (`disable-model-invocation: true`) — NEVER invoke via Skill tool, only suggest:
+- `/commit`, `/pause`, `/release`, `/reflect`, `/update`
+
 Claude SHOULD NOT auto-invoke without user intent:
-- `/release` — always confirm first
 - `/pr` — always confirm first
 - `/spec` — only when user explicitly wants a spec
 
