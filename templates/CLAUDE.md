@@ -18,7 +18,7 @@ Default: Sonnet. Opus nur für Architektur/Specs via `claude --model opus`. Haik
 | Model | Use for |
 |-------|---------|
 | `haiku` | Explore agents, file search, codebase questions, grep/glob tasks |
-| `sonnet` | Writing correct logic, code generation, test suites |
+| `sonnet` | Implementation subagents, writing correct logic, code generation, test suites |
 | `opus` | Architecture review, complex analysis, spec creation |
 
 ## CLI Shortcuts (zero tokens)

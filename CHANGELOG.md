@@ -10,10 +10,28 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v2.0.9] — 2026-04-07
+
+<!-- slack-announcement -->
+:rocket: *@onedot/ai-setup v2.0.9*
+
+*Was ist neu:*
+:sparkles: *Skills* — Multi-File Skills mit `references/*.md` Support, Frontmatter normalisiert ohne `ais:` Prefix
+:wrench: *Hooks* — memory-recall.sh aktiviert, alle 27 Hooks jetzt executable, protect-and-breaker.sh entfernt
+:gear: *Routing* — Sonnet als Default für Implementation Subagents, Haiku-never-for-implementation Regel, Spawn-Threshold ≥3 tool calls
+:shield: *Tests* — smoke.sh TMPDIR-safe (Sandbox-kompatibel), 392 passed / 0 failed
+
+*Zahlen:* 34 Skills | 11 Agents | 27 Hooks | 9 Rules
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
 - **Spec 628**: Skill Progressive Disclosure — multi-file skill support with `references/*.md` (install, update, orphan cleanup), analyze skill split into SKILL.md + 2 reference files, `scripts/skill-lint.sh` for template validation (30/30 pass), doctor.sh `name:` field check
 - **Spec 627**: Skill Frontmatter Normalization — removed `ais:` prefix from all 30 skill templates, trimmed descriptions, added `effort:`, `disable-model-invocation:`, and `argument-hint:` fields where applicable
 - **Spec 626**: Hook System Drift Fix — activated tool-redirect.sh (WebFetch→defuddle), added file-index.sh + session-length.sh to hook docs, documented 3 template-only hooks with rationale, corrected README.md hook count (25→23) and names
 - **Spec 619**: Claude Code 2.1.89+ Alignment — tdd-checker absolute path fix, permission-denied retry logic, TaskCreated hook, disableSkillShellExecution warning
+- **Hook Cleanup**: memory-recall.sh registered under UserPromptSubmit, protect-and-breaker.sh removed, all hooks chmod +x
+- **Routing Rules**: Concrete spawn threshold (≥3 tool calls), Sonnet default for implementation subagents, Haiku never for implementation
+- **Test Hardening**: smoke.sh mktemp uses TMPDIR for sandbox compatibility
 
 ## [v2.0.8] — 2026-04-03
 
