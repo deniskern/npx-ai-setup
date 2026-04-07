@@ -26,14 +26,20 @@ _gh_fetch_file() {
 
   mkdir -p "$(dirname "$local_target")"
 
-  # Decode base64 (macOS: base64 -D, GNU: base64 -d)
-  if echo "$content" | base64 -D > "$local_target" 2>/dev/null; then
-    return 0
-  elif echo "$content" | base64 -d > "$local_target" 2>/dev/null; then
+  # Decode base64 (macOS: base64 -D, GNU: base64 -d) into temp file
+  local tmp
+  tmp=$(mktemp)
+  if echo "$content" | base64 -D > "$tmp" 2>/dev/null || echo "$content" | base64 -d > "$tmp" 2>/dev/null; then
+    # Skip if identical to existing file
+    if [ -f "$local_target" ] && diff -q "$tmp" "$local_target" >/dev/null 2>&1; then
+      rm -f "$tmp"
+      return 2  # unchanged
+    fi
+    mv "$tmp" "$local_target"
     return 0
   fi
 
-  rm -f "$local_target"
+  rm -f "$tmp" "$local_target"
   return 1
 }
 
@@ -103,13 +109,16 @@ pull_boilerplate_files() {
       local remote_skill="${skill_dir}/SKILL.md"
       local local_skill=".claude/skills/${skill_name}/SKILL.md"
 
-      if _gh_fetch_file "$repo" "$remote_skill" "$local_skill"; then
+      _gh_fetch_file "$repo" "$remote_skill" "$local_skill"
+      local _rc=$?
+      if [ $_rc -eq 0 ]; then
         tui_success "Skill: ${skill_name}"
         pulled=$((pulled + 1))
-      else
+      elif [ $_rc -eq 1 ]; then
         tui_warn "Skill not found: ${skill_name}/SKILL.md"
         failed=$((failed + 1))
       fi
+      # rc=2: unchanged — skip silently
     done <<< "$skill_dirs"
   fi
 
@@ -122,13 +131,16 @@ pull_boilerplate_files() {
       # Only pull rules prefixed with the system name
       if [[ "$rule_file" == "${system}"* ]]; then
         local local_rule=".claude/rules/${rule_file}"
-        if _gh_fetch_file "$repo" ".claude/rules/${rule_file}" "$local_rule"; then
+        _gh_fetch_file "$repo" ".claude/rules/${rule_file}" "$local_rule"
+        local _rc=$?
+        if [ $_rc -eq 0 ]; then
           tui_success "Rule: ${rule_file}"
           pulled=$((pulled + 1))
-        else
+        elif [ $_rc -eq 1 ]; then
           tui_warn "Rule fetch failed: ${rule_file}"
           failed=$((failed + 1))
         fi
+        # rc=2: unchanged — skip silently
       fi
     done <<< "$rules_listing"
   fi
@@ -143,13 +155,16 @@ pull_boilerplate_files() {
       [[ "$agent_file" == *.md ]] || continue
       [ "$agent_file" = "README.md" ] && continue
       local local_agent=".claude/agents/${agent_file}"
-      if _gh_fetch_file "$repo" ".claude/agents/${agent_file}" "$local_agent"; then
+      _gh_fetch_file "$repo" ".claude/agents/${agent_file}" "$local_agent"
+      local _rc=$?
+      if [ $_rc -eq 0 ]; then
         tui_success "Agent: ${agent_file%.md}"
         pulled=$((pulled + 1))
-      else
+      elif [ $_rc -eq 1 ]; then
         tui_warn "Agent fetch failed: ${agent_file}"
         failed=$((failed + 1))
       fi
+      # rc=2: unchanged — skip silently
     done <<< "$agents_listing"
   fi
 
