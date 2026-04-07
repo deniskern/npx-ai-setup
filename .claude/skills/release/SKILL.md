@@ -66,7 +66,14 @@ git commit -m "release: vX.Y.Z"
 git tag vX.Y.Z
 ```
 
-Report: "Tagged vX.Y.Z. Run `git push && git push --tags` when ready."
+Report: "Tagged vX.Y.Z. Push in this order to avoid CI race conditions:"
+
+```bash
+git push          # CHANGELOG must land on GitHub before the tag triggers the workflow
+git push --tags   # Tag push triggers release workflow — only after code is on remote
+```
+
+**CRITICAL: always push commits before tags.** The release workflow reads CHANGELOG.md from the repo — if the tag arrives before the commit, the workflow fails with "No changelog section found".
 
 ## Rules
 
@@ -78,4 +85,4 @@ Report: "Tagged vX.Y.Z. Run `git push && git push --tags` when ready."
 
 ## Next Step
 
-> 📤 Naechster Schritt: `git push && git push --tags` — Release veroeffentlichen
+> 📤 Naechster Schritt: `git push && git push --tags` — erst Code, dann Tag (Reihenfolge wichtig)
