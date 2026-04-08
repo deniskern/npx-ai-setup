@@ -110,10 +110,14 @@ get_installed_version() {
   fi
 }
 
-# Compute checksum for a file (cksum outputs: checksum size filename)
+# Compute checksum for a file (sha256sum on Linux/macOS, fallback to shasum)
 compute_checksum() {
   if [ -f "$1" ]; then
-    cksum "$1" 2>/dev/null | awk '{print $1, $2}' || echo ""
+    if command -v sha256sum >/dev/null 2>&1; then
+      sha256sum "$1" 2>/dev/null | awk '{print $1}' || echo ""
+    else
+      shasum -a 256 "$1" 2>/dev/null | awk '{print $1}' || echo ""
+    fi
   else
     echo ""
   fi
