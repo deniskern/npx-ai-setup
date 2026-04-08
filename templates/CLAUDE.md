@@ -37,7 +37,7 @@ Skills `doctor`, `spec-board`, `review`, `ci`, `test-setup`, and `session-optimi
 
 ## Web Fetching
 
-Prefer `defuddle parse <url> --md` over WebFetch for reading web pages — strips noise, saves ~80% tokens.
+Library/API docs: use Context7 MCP (`use context7`). Web pages: `defuddle parse <url> --md`.
 Use WebFetch only when defuddle is unavailable or the page requires JavaScript rendering.
 
 ## Session Hygiene

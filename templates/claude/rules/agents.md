@@ -28,6 +28,23 @@ Each agent file contains `## When to Use` and `## Avoid If` sections. Read these
 - Never let subagents inherit your session context — construct exactly what they need in the prompt
 - Escalation rule: if you've already made 8 tool calls on a task with no subagents, consider parallelizing the remaining work
 
+## Graph-Assisted Navigation
+
+If `.agents/context/graph.json` exists, query it before spawning search agents or writing grep-heavy prompts:
+
+```bash
+# Hub files (most imported — start here for broad changes)
+jq -r '.stats.top_hubs[] | "\(.imported_by)x \(.file)"' .agents/context/graph.json
+
+# Who imports a specific file (impact analysis)
+jq -r --arg f "app/composables/useBlokSeo.ts" '.edges[] | select(.target==$f) | .source' .agents/context/graph.json
+
+# What a file depends on (context before editing)
+jq -r --arg f "app/pages/[...slug].vue" '.edges[] | select(.source==$f) | "\(.kind): \(.target)"' .agents/context/graph.json
+```
+
+Inject the result into the agent prompt — 20 tokens instead of 500 for a grep. Skip if graph.json is missing or the project has no JS/TS files.
+
 ## Hallucination Prevention
 
 - Never invent or guess file paths — verify with Glob/Grep before referencing

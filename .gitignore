@@ -6,6 +6,8 @@ node_modules/
 .ai-setup.json
 .ai-setup-backup/
 .agents/context/.state
+.agents/context/graph.json
+.agents/context/graph-manifest.json
 
 .idea
 .claude/worktrees/

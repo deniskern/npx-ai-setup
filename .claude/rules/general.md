@@ -27,8 +27,7 @@ Before implementing anything manually, check installed skills:
 This applies everywhere: direct chat, spec steps, and delegated agents.
 
 ## Web Fetching
-Prefer `defuddle parse <url> --md` over WebFetch for reading web pages — it strips navigation and clutter, saving ~80% tokens.
-Alternative: prepend `https://markdown.new/` to any URL for instant markdown conversion without a CLI.
+Library/API docs: use Context7 MCP (`use context7`). Web pages: `defuddle parse <url> --md`.
 Use WebFetch only when defuddle is unavailable or the page requires JavaScript rendering.
 
 ## Destructive Operations

@@ -229,4 +229,23 @@ show_update_next_steps() {
   printf '\n'
   printf '   %b%-12s%b %b%s%b\n' "$TUI_DIM" "Refresh:" "$TUI_RESET" "$TUI_CYAN" "npx @onedot/ai-setup" "$TUI_RESET"
   echo ""
+
+  # Check if any required CLI tools are missing or outdated — hint to run global-setup
+  if command -v _tool_installed &>/dev/null || declare -f _tool_installed &>/dev/null; then
+    local tools_hint=false
+    for entry in "${CLI_TOOL_REGISTRY[@]}"; do
+      IFS=: read -r name pm package tier description <<< "$entry"
+      [ "$tier" = "required" ] || continue
+      if ! _tool_installed "$name"; then
+        tools_hint=true; break
+      fi
+      if _tool_outdated "$package" "$pm"; then
+        tools_hint=true; break
+      fi
+    done
+    if [ "$tools_hint" = "true" ]; then
+      printf '   %b%-12s%b %b%s%b\n' "$TUI_DIM" "Tools:" "$TUI_RESET" "$TUI_YELLOW" "npx @onedot/ai-setup-global  (required tools missing or outdated)" "$TUI_RESET"
+      echo ""
+    fi
+  fi
 }

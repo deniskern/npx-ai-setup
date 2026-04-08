@@ -114,10 +114,36 @@ Create `.agents/context/AUDIT.md` from the Hotspots, Risks, and Recommendations 
 [Recommendations verbatim from Step 3 output]
 ```
 
-**4.4 — Commit**
+**4.4 — Build dependency graph**
+
+After writing PATTERNS.md and AUDIT.md, build the graph:
 
 ```bash
-git add .agents/context/PATTERNS.md .agents/context/AUDIT.md
+bash .claude/scripts/build-graph.sh 2>&1 | tail -5
+```
+
+If the script is missing or fails, skip silently — graph.json is optional.
+
+If graph.json was built successfully, append a graph stats section to `.agents/context/ARCHITECTURE.md`:
+
+```bash
+python3 -c "
+import json
+g = json.load(open('.agents/context/graph.json'))
+s = g.get('stats', {})
+hubs = s.get('top_hubs', [])
+isolated = [n['id'] for n in g.get('nodes', []) if not any(e['source'] == n['id'] or e['target'] == n['id'] for e in g.get('edges', []))]
+print('## Dependency Graph')
+print(f\"{s.get('files',0)} files, {s.get('edges',0)} import edges, {s.get('circular_count',0)} circular\")
+if hubs: print('Hub files: ' + ', '.join(f\"{h['file']} ({h['imported_by']} imports)\" for h in hubs[:3]))
+if isolated[:5]: print('Isolated files: ' + ', '.join(isolated[:5]))
+" >> .agents/context/ARCHITECTURE.md 2>/dev/null || true
+```
+
+**4.5 — Commit**
+
+```bash
+git add .agents/context/PATTERNS.md .agents/context/AUDIT.md .agents/context/graph.json .agents/context/graph-manifest.json
 git commit -m "chore: update project analysis artifacts"
 ```
 

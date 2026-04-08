@@ -47,9 +47,27 @@ if [ -n "$STORED_TSC" ] && [ -f "tsconfig.json" ]; then
   [ "$CURRENT_TSC" != "$STORED_TSC" ] && CHANGED="${CHANGED:+$CHANGED, }tsconfig.json"
 fi
 
-REASON="${CHANGED}${CHANGED:+${AGE_WARNING:+, }}${AGE_WARNING}"
+# Check graph.json staleness (older than last git commit)
+GRAPH_WARNING=""
+GRAPH_FILE=".agents/context/graph.json"
+if [ -f "$GRAPH_FILE" ]; then
+  GRAPH_MTIME=$(stat -f %m "$GRAPH_FILE" 2>/dev/null || stat -c %Y "$GRAPH_FILE" 2>/dev/null || echo "0")
+  LAST_COMMIT_TIME=$(git log -1 --format=%ct 2>/dev/null || echo "0")
+  if [ "$LAST_COMMIT_TIME" -gt "$GRAPH_MTIME" ] 2>/dev/null; then
+    GRAPH_WARNING="graph.json predates last commit"
+  fi
+fi
+
+REASON="$CHANGED"
+[ -n "$REASON" ] && [ -n "$AGE_WARNING" ] && REASON="$REASON, $AGE_WARNING" || REASON="${REASON:-$AGE_WARNING}"
+[ -n "$REASON" ] && [ -n "$GRAPH_WARNING" ] && REASON="$REASON, $GRAPH_WARNING" || REASON="${REASON:-$GRAPH_WARNING}"
 if [ -n "$REASON" ]; then
-  echo "[CONTEXT STALE] .agents/context/ may be outdated ($REASON). Run the context-refresher agent to update." >&2
+  echo "[CONTEXT STALE] .agents/context/ may be outdated ($REASON). Run /analyze to regenerate." >&2
+fi
+
+# Hint: graph.json missing entirely (JS/TS project without graph)
+if [ ! -f "$GRAPH_FILE" ] && [ -f "package.json" ]; then
+  echo "[HINT] No graph.json found. Run /analyze to build the dependency graph for faster agent navigation." >&2
 fi
 
 exit 0

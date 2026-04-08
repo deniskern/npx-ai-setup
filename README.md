@@ -339,3 +339,5 @@ Repos and tools researched via `/research` — patterns analyzed, best ideas ado
 - [Claude Code Best Practices: Auto Mode](https://code.claude.com/docs/en/best-practices#run-autonomously-with-auto-mode)
 - [pilot-shell](https://github.com/maxritter/pilot-shell)
 - [claude-code-source-code](https://github.com/sanbuphy/claude-code-source-code)
+- [repowise](https://github.com/repowise-dev/repowise)
+- [graphify](https://github.com/safishamsi/graphify)

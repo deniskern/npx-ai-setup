@@ -12,9 +12,12 @@
 CLI_TOOL_REGISTRY=(
   "rtk:npm:@onedot/rtk:required:Rust Token Killer — token-optimized Claude Code proxy"
   "defuddle:npm:defuddle:required:Web content parser (strips noise, 80% token savings)"
+  "agent-browser:npm:agent-browser:required:Persistent browser daemon for Claude automation"
+  "jq:brew:jq:required:JSON processor (used internally by setup scripts)"
+  "gh:brew:gh:required:GitHub CLI (used by /ci, /pr, /review skills)"
+  "delta:brew:git-delta:required:Enhanced git diff output for Claude context"
   "codex:npm:@openai/codex:optional:OpenAI Codex CLI (needs OPENAI_API_KEY)"
   "gemini:npm:@google/gemini-cli:optional:Google Gemini CLI (needs GEMINI_API_KEY)"
-  "agent-browser:npm:agent-browser:required:Persistent browser daemon for Claude automation"
 )
 
 # ==============================================================================
@@ -90,6 +93,41 @@ _install_tool() {
 }
 
 # ==============================================================================
+# SMOKE TESTS — functional checks for required tools
+# Returns 0 if test passes, 1 if fails. Prints nothing (caller handles output).
+# ==============================================================================
+_smoke_test() {
+  local name="$1"
+  case "$name" in
+    rtk)
+      # DB dir must exist on macOS before first use
+      if [[ "$(uname -s)" == "Darwin" ]]; then
+        mkdir -p "${HOME}/Library/Application Support/rtk" 2>/dev/null || true
+      fi
+      rtk gain &>/dev/null 2>&1
+      ;;
+    defuddle)
+      defuddle --version &>/dev/null 2>&1
+      ;;
+    agent-browser)
+      agent-browser --version &>/dev/null 2>&1
+      ;;
+    jq)
+      echo '{}' | jq . &>/dev/null 2>&1
+      ;;
+    gh)
+      gh --version &>/dev/null 2>&1 && gh auth status &>/dev/null 2>&1
+      ;;
+    delta)
+      delta --version &>/dev/null 2>&1
+      ;;
+    *)
+      return 0  # no smoke test defined — pass silently
+      ;;
+  esac
+}
+
+# ==============================================================================
 # PUBLIC: check_cli_tools (--check mode, no installs)
 # ==============================================================================
 check_cli_tools() {
@@ -101,6 +139,8 @@ check_cli_tools() {
     if _tool_installed "$name"; then
       if _tool_outdated "$package" "$pm"; then
         tui_warn "$name (update available)"
+      elif [ "$tier" = "required" ] && ! _smoke_test "$name"; then
+        tui_warn "$name (installed, smoke test failed)"
       else
         tui_success "$name"
       fi
@@ -189,17 +229,32 @@ install_cli_tools() {
   echo ""
   tui_info "Installed: $installed | Updated: $updated | Skipped: $skipped | Failed: $failed"
 
-  # Ensure RTK hooks are active (idempotent — safe to re-run)
+  # RTK: ensure global hook is active (idempotent — safe to re-run)
+  # Check hook file directly — rtk gain fails on empty DB, not only when unhooked
   if command -v rtk &>/dev/null; then
-    if ! rtk gain &>/dev/null 2>&1; then
+    if [ ! -f "${HOME}/.claude/hooks/rtk-rewrite.sh" ]; then
       tui_spinner_start "Activating RTK hooks"
-      if rtk init --global &>/dev/null; then
+      if rtk init --global --auto-patch &>/dev/null; then
         tui_spinner_stop ok "RTK hooks activated"
       else
         tui_spinner_stop warn "RTK hooks skipped (non-fatal)"
       fi
     fi
   fi
+
+  # Post-install smoke tests for required tools
+  echo ""
+  tui_section "Smoke Tests"
+  for entry in "${CLI_TOOL_REGISTRY[@]}"; do
+    IFS=: read -r name pm package tier description <<< "$entry"
+    [ "$tier" = "required" ] || continue
+    command -v "$name" &>/dev/null || continue
+    if _smoke_test "$name"; then
+      tui_success "$name"
+    else
+      tui_warn "$name (smoke test failed — may need shell reload)"
+    fi
+  done
 
   if [ "$failed" -gt 0 ]; then
     echo ""

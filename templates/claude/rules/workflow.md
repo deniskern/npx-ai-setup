@@ -12,10 +12,12 @@ After completing work, suggest the logical next skill. Keep hints to one line.
 | `/commit` done | `/pr` auf Feature-Branches, oder `/release` auf `main` / `master` |
 | Bug investigation | `/debug` falls noch nicht geladen |
 | Multi-file changes (3+ files, incl. config/rules) | `/spec` — erst planen, dann bauen |
+| Spec erstellt oder abgeschlossen | `/clear` — Session leeren, Kontext-Bleed vermeiden |
 | Session start + `.continue-here.md` exists | `/resume` — State wiederherstellen |
 | Session >30 tool calls | `/reflect` — Learnings sichern, dann `/pause` |
 | Build failure | `/build-fix` — iterativ fixen |
 | Pre-release | `/release` — Version bump, CHANGELOG, Tag |
+| Viele neue Dateien committed (>5) | `/analyze` — graph.json + Context-Dateien neu generieren |
 
 ## When to Auto-Invoke Skills
 

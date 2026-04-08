@@ -12,7 +12,23 @@ Analyzes sessions for setup improvements focused on **Qualitat, Effizienz und To
 - **Portfolio (default):** last 30 days across all projects via JSONL + claude-mem
 - **Deep-dive:** specific export file (`session-*.txt`) — run `bash .claude/scripts/session-deep-dive.sh <path>` first, then refine
 - **Insights:** parse `~/.claude/usage-data/report.html` (from `/insights` command) for aggregated cross-session metrics, friction patterns, and CLAUDE.md suggestions. Use as enrichment layer on top of Portfolio or Deep-dive.
+- **Token analysis:** cross-project token breakdown via `token_analysis.py` — run when user asks for token usage per project, costliest sessions, or cache hit ratios.
 - **Devtools assist:** extra source only for tool timing/loops — never sole source
+
+## Token Analysis
+
+Wenn der User Token-Verbrauch pro Projekt, teuerste Sessions oder Cache-Hit-Ratio sehen will:
+
+```bash
+! python3 .claude/skills/session-optimize/token_analysis.py
+```
+
+Output landet in `~/.claude/token-analysis/token_report.md`. Umgebungsvariablen:
+- `SINCE_DAYS=30` — nur letzte 30 Tage
+- `SINCE_DATE=2026-04-01` — ab Datum
+- `TOKEN_ANALYSIS_OUTPUT=/pfad` — Output-Verzeichnis überschreiben
+
+Cache-Hit-Ratio sollte >85% sein. Darunter: zu viele Idle-Gaps (>5min Pause mid-session).
 
 ## Process
 

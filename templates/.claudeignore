@@ -66,6 +66,8 @@ __pycache__/
 .agents/repomix-snapshot.xml
 .agents/.skill-cache.json
 .agents/context/.state
+.agents/context/graph.json
+.agents/context/graph-manifest.json
 .agents/context/AUDIT.md
 .agents/context/DESIGN-DECISIONS.md
 .agents/context/LEARNINGS.md

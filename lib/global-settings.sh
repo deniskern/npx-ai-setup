@@ -237,6 +237,31 @@ check_global_settings() {
 }
 
 # ==============================================================================
+# DELTA GIT CONFIG
+# Configures delta as git pager/diff tool — idempotent, only when delta is installed
+# ==============================================================================
+_install_delta_config() {
+  if ! command -v delta &>/dev/null; then
+    return 0
+  fi
+
+  local already_set
+  already_set=$(git config --global core.pager 2>/dev/null)
+  if [ "$already_set" = "delta" ]; then
+    tui_info "delta git config already set, kept"
+    return 0
+  fi
+
+  git config --global core.pager delta
+  git config --global interactive.diffFilter "delta --color-only"
+  git config --global delta.navigate true
+  git config --global delta.side-by-side false
+  git config --global merge.conflictstyle diff3
+  git config --global diff.colorMoved default
+  tui_success "delta configured as git pager"
+}
+
+# ==============================================================================
 # PUBLIC: install_global_settings
 # ==============================================================================
 install_global_settings() {
@@ -244,4 +269,5 @@ install_global_settings() {
   _install_global_commands
   _install_global_rules
   _install_statusline_config
+  _install_delta_config
 }
