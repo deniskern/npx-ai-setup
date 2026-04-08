@@ -1,6 +1,6 @@
 {
   "name": "@onedot/ai-setup",
-  "version": "2.0.9",
+  "version": "2.1.0",
   "description": "AI project setup: Claude Code, Hooks, and AI-curated skills",
   "bin": {
     "ai-setup": "./bin/ai-setup.sh",

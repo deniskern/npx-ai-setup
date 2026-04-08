@@ -10,6 +10,30 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v2.1.0] — 2026-04-08
+
+<!-- slack-announcement -->
+:rocket: *@onedot/ai-setup v2.1.0*
+
+*Was ist neu:*
+:sparkles: *Features* — Graph-basiertes Kontext-System: `graph-context` PreToolUse Hook surfact Dependency-Nachbarn bei File-Zugriff, `build-graph.sh` generiert Dependency-Graph mit Nuxt + Auto-Import Support
+:wrench: *Skills* — Neue Skills: `architectural-decisions` (ADR Auto-Trigger) und `pre-modification` (Risk Assessment), `/analyze` generiert jetzt `graph.json` Artefakt mit Graph-Statistiken
+:gear: *CLI Tools* — Tool-Registry mit Smoke Tests (jq, gh, delta), RTK DB Auto-Init, delta als Standard-Git-Pager (60-90% Token-Ersparnis)
+:books: *Docs* — Context7 als primäres Dokumentations-Tool dokumentiert (Library/API Docs), Tool-Hierarchie: Context7 → defuddle → WebFetch
+
+*Zahlen:* 36 Skills | 11 Agents | 27 Hooks | 9 Rules
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
+- **Graph Context**: `graph-context.sh` PreToolUse Hook zeigt Dependency-Nachbarn (imports/importedBy) bei File-Zugriff, `build-graph.sh` Python-Script mit Nuxt `~` Alias und Auto-Import Support
+- **Architectural Decisions Skill**: `architectural-decisions/` Template mit Auto-Trigger für ARCHITECTURE.md-Änderungen
+- **Pre-Modification Skill**: `pre-modification/` Template für Risk Assessment vor File-Modifikation
+- **CLI Tool Registry**: `lib/cli-tools.sh` mit generalisiertem Smoke-Test-System für 10+ Tools, RTK DB Auto-Init, `lib/global-settings.sh` mit delta als Git-Pager
+- **Context7 Docs**: `general.md` und `CLAUDE.md` mit klarer Tool-Hierarchie für Dokumentations-Lookups
+- **Analyze Skill**: Graph-Statistiken (top hubs, edge count) in `ARCHITECTURE.md` generiert, `graph.json` als Artefakt
+- **Test Fix**: `claude-runtime.sh` Fixture renamed `SKILL.template.md` → `SKILL.md` für korrekte Claude-Skill-Invocation im Test-Sandbox
+- **Specs**: Research-Specs 624 (CocoIndex), 625 (Repowise), 626 (Graphify) — Implementation-Specs 627 (ADR Skill), 628 (Pre-Modification Skill), 629 (Dependency Graph)
+
 ## [v2.0.9] — 2026-04-07
 
 <!-- slack-announcement -->

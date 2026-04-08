@@ -121,6 +121,10 @@ EOF
   cp -R "$ROOT_DIR/templates/claude/hooks" "$PROJECT_DIR/.claude/hooks"
   cp -R "$ROOT_DIR/templates/claude/rules" "$PROJECT_DIR/.claude/rules"
   cp -R "$ROOT_DIR/templates/skills" "$PROJECT_DIR/.claude/skills"
+  # Rename SKILL.template.md → SKILL.md so Claude can invoke skills in the fixture
+  find "$PROJECT_DIR/.claude/skills" -name "SKILL.template.md" | while read -r f; do
+    mv "$f" "$(dirname "$f")/SKILL.md"
+  done
   cp -R "$ROOT_DIR/templates/scripts" "$PROJECT_DIR/.claude/scripts"
   cp -R "$ROOT_DIR/templates/agents" "$PROJECT_DIR/.claude/agents"
   cp "$ROOT_DIR/templates/CLAUDE.md" "$PROJECT_DIR/CLAUDE.md"
