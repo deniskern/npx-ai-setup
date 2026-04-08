@@ -266,6 +266,18 @@ else
   fail "lib/boilerplate.sh update sync still pulls boilerplate skills"
 fi
 
+if grep -q '_is_current_repo_boilerplate' lib/boilerplate.sh 2>/dev/null; then
+  pass "lib/boilerplate.sh detects when the current repo is itself a boilerplate"
+else
+  fail "lib/boilerplate.sh missing self-boilerplate detection"
+fi
+
+if grep -Eq 'Skipping boilerplate (pull|sync) \(already inside .* boilerplate repo\)' lib/boilerplate.sh 2>/dev/null; then
+  pass "lib/boilerplate.sh skips boilerplate pulls inside boilerplate repos"
+else
+  fail "lib/boilerplate.sh missing skip guard for boilerplate repos"
+fi
+
 if grep -q 'install_skills' lib/update.sh 2>/dev/null; then
   pass "lib/update.sh installs skills during smart update"
 else

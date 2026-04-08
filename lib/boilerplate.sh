@@ -12,6 +12,39 @@ _gh_available() {
   return 0
 }
 
+# Return 0 when the current repository already is the canonical boilerplate repo
+# for the given system. This avoids pointless self-pulls inside boilerplates.
+_is_current_repo_boilerplate() {
+  local system="$1"
+  local repo_name
+  repo_name=$(get_boilerplate_repo "$system" 2>/dev/null) || return 1
+
+  local repo_root=""
+  local current_dir=""
+  local origin_url=""
+
+  if command -v git >/dev/null 2>&1; then
+    repo_root=$(git rev-parse --show-toplevel 2>/dev/null || true)
+    origin_url=$(git remote get-url origin 2>/dev/null || true)
+  fi
+
+  if [ -n "$repo_root" ]; then
+    current_dir=$(basename "$repo_root")
+  else
+    current_dir=$(basename "$PWD")
+  fi
+
+  [ "$current_dir" = "$repo_name" ] && return 0
+
+  case "$origin_url" in
+    *"${BOILERPLATE_ORG}/${repo_name}" | *"${BOILERPLATE_ORG}/${repo_name}.git")
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
 # Fetch a single file from a GitHub repo via gh API.
 # Decodes base64 content and writes to target path.
 # Usage: _gh_fetch_file <org>/<repo> <remote_path> <local_target>
@@ -251,6 +284,12 @@ sync_boilerplate() {
     return 0
   fi
 
+  if _is_current_repo_boilerplate "$system"; then
+    tui_info "Skipping boilerplate sync (already inside ${system} boilerplate repo)"
+    SELECTED_SYSTEM="$system"
+    return 0
+  fi
+
   tui_step "Syncing boilerplate for $system"
   pull_boilerplate_files "$system" --skip-skills
 
@@ -307,6 +346,11 @@ select_boilerplate_system() {
   fi
 
   tui_info "Detected framework: $SELECTED_SYSTEM"
+
+  if _is_current_repo_boilerplate "$SELECTED_SYSTEM"; then
+    tui_info "Skipping boilerplate pull (already inside ${SELECTED_SYSTEM} boilerplate repo)"
+    return 0
+  fi
 
   if _gh_available; then
     pull_boilerplate_files "$SELECTED_SYSTEM"
