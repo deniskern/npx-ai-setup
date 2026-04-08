@@ -9,6 +9,10 @@
 
 set -euo pipefail
 
+# Cache expiry tracking: record stop timestamp for idle detection
+CACHE_STAMP_FILE="${TMPDIR:-/tmp}/claude-last-stop-$(echo "${CLAUDE_PROJECT_DIR:-.}" | cksum | cut -d' ' -f1)"
+date +%s > "$CACHE_STAMP_FILE" 2>/dev/null || true
+
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 MEMORY_DIR="$PROJECT_DIR/.agents/memory"
 TRANSCRIPT_FILE="${CLAUDE_TRANSCRIPT:-}"

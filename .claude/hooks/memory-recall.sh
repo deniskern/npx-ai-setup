@@ -11,6 +11,18 @@ SETTINGS_FILE="$PROJECT_DIR/.claude/settings.json"
 CLAUDE_MEM_PLUGIN_DIR="${HOME}/.claude/plugins/cache/thedotmack/claude-mem"
 MAX_CONTEXT_CHARS=2000  # ~500 tokens
 
+# Cache expiry warning: if idle >5min, prompt cache is gone (10x cost on next turn)
+CACHE_STAMP_FILE="${TMPDIR:-/tmp}/claude-last-stop-$(echo "${CLAUDE_PROJECT_DIR:-.}" | cksum | cut -d' ' -f1)"
+if [ -f "$CACHE_STAMP_FILE" ]; then
+  LAST_STOP=$(cat "$CACHE_STAMP_FILE" 2>/dev/null || echo 0)
+  NOW=$(date +%s)
+  IDLE_SECS=$(( NOW - LAST_STOP ))
+  if [ "$IDLE_SECS" -gt 300 ]; then
+    IDLE_MIN=$(( IDLE_SECS / 60 ))
+    echo "[CACHE EXPIRED] ${IDLE_MIN}min idle — prompt cache abgelaufen. Dieser Turn kostet 10x mehr. Erwäge /compact vor dem Fortfahren." >&2
+  fi
+fi
+
 # Guard: skip short prompts
 if [ ${#PROMPT} -lt 15 ]; then
   exit 0
