@@ -85,10 +85,12 @@ _merge_mcp_json() {
 }
 
 # Pull all boilerplate files for a given system from the canonical repo.
-# Fetches: .claude/skills/*/SKILL.md, .claude/rules/<system>*.md, .mcp.json (merged)
-# Usage: pull_boilerplate_files <system>
+# Fresh installs pull skills, rules, agents, and .mcp.json by default.
+# Update syncs can pass --skip-skills to avoid overwriting project-local skills.
+# Usage: pull_boilerplate_files <system> [--skip-skills]
 pull_boilerplate_files() {
   local system="$1"
+  local skip_skills="${2:-}"
   local repo_name
   repo_name=$(get_boilerplate_repo "$system") || { echo "Unknown system: $system"; return 1; }
   local repo="${BOILERPLATE_ORG}/${repo_name}"
@@ -98,28 +100,30 @@ pull_boilerplate_files() {
   local pulled=0
   local failed=0
 
-  # --- Skills: .claude/skills/*/SKILL.md ---
-  local skill_dirs
-  skill_dirs=$(_gh_list_dir "$repo" ".claude/skills" 2>/dev/null | grep -v '^$' || true)
+  if [ "$skip_skills" != "--skip-skills" ]; then
+    # --- Skills: .claude/skills/*/SKILL.md ---
+    local skill_dirs
+    skill_dirs=$(_gh_list_dir "$repo" ".claude/skills" 2>/dev/null | grep -v '^$' || true)
 
-  if [ -n "$skill_dirs" ]; then
-    while IFS= read -r skill_dir; do
-      local skill_name
-      skill_name=$(basename "$skill_dir")
-      local remote_skill="${skill_dir}/SKILL.md"
-      local local_skill=".claude/skills/${skill_name}/SKILL.md"
+    if [ -n "$skill_dirs" ]; then
+      while IFS= read -r skill_dir; do
+        local skill_name
+        skill_name=$(basename "$skill_dir")
+        local remote_skill="${skill_dir}/SKILL.md"
+        local local_skill=".claude/skills/${skill_name}/SKILL.md"
 
-      _gh_fetch_file "$repo" "$remote_skill" "$local_skill"
-      local _rc=$?
-      if [ $_rc -eq 0 ]; then
-        tui_success "Skill: ${skill_name}"
-        pulled=$((pulled + 1))
-      elif [ $_rc -eq 1 ]; then
-        tui_warn "Skill not found: ${skill_name}/SKILL.md"
-        failed=$((failed + 1))
-      fi
-      # rc=2: unchanged — skip silently
-    done <<< "$skill_dirs"
+        _gh_fetch_file "$repo" "$remote_skill" "$local_skill"
+        local _rc=$?
+        if [ $_rc -eq 0 ]; then
+          tui_success "Skill: ${skill_name}"
+          pulled=$((pulled + 1))
+        elif [ $_rc -eq 1 ]; then
+          tui_warn "Skill not found: ${skill_name}/SKILL.md"
+          failed=$((failed + 1))
+        fi
+        # rc=2: unchanged — skip silently
+      done <<< "$skill_dirs"
+    fi
   fi
 
   # --- Rules: .claude/rules/<system>*.md ---
@@ -225,7 +229,8 @@ detect_installed_system() {
 }
 
 # Sync boilerplate files for the detected system.
-# Called during updates to re-pull latest skills/agents/rules from boilerplate repos.
+# Called during updates to re-pull latest rules/agents from boilerplate repos
+# without overwriting project-local skills.
 sync_boilerplate() {
   local system
   system=$(detect_installed_system) || true
@@ -247,7 +252,7 @@ sync_boilerplate() {
   fi
 
   tui_step "Syncing boilerplate for $system"
-  pull_boilerplate_files "$system"
+  pull_boilerplate_files "$system" --skip-skills
 
   # Persist system in SELECTED_SYSTEM for metadata write
   SELECTED_SYSTEM="$system"

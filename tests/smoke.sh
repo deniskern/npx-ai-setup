@@ -260,6 +260,12 @@ else
   fail "lib/update.sh missing ensure_skills_alias call"
 fi
 
+if grep -Eq 'pull_boilerplate_files "\$system" --skip-skills' lib/boilerplate.sh 2>/dev/null; then
+  pass "lib/boilerplate.sh skips boilerplate skills during update sync"
+else
+  fail "lib/boilerplate.sh update sync still pulls boilerplate skills"
+fi
+
 if grep -q 'install_skills' lib/update.sh 2>/dev/null; then
   pass "lib/update.sh installs skills during smart update"
 else
