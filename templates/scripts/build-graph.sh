@@ -285,14 +285,30 @@ edge_map = {}
 for e in all_edges:
     edge_map.setdefault(e['source'], []).append(e['target'])
 
-def has_cycle(src, target, visited=None):
-    if visited is None: visited = set()
-    if target in visited: return False
-    if target == src: return True
-    visited.add(target)
-    return any(has_cycle(src, t, visited.copy()) for t in edge_map.get(target, []))
+# Build a separate map containing only explicit imports for cycle traversal.
+# Auto-imports are framework-injected (e.g. Nuxt) and must not contribute to
+# cycle detection — otherwise A->B explicit + B->A auto-import looks circular.
+explicit_edge_map = {}
+for e in all_edges:
+    if e.get('kind') == 'explicit':
+        explicit_edge_map.setdefault(e['source'], []).append(e['target'])
 
-circular = list({f"{e['source']} <-> {e['target']}" for e in all_edges if has_cycle(e['target'], e['source'])})
+def has_path(src, target, visited=None):
+    """Check if there is a directed path from src to target via explicit imports only."""
+    if visited is None: visited = set()
+    for neighbor in explicit_edge_map.get(src, []):
+        if neighbor == target: return True
+        if neighbor not in visited:
+            visited.add(neighbor)
+            if has_path(neighbor, target, visited): return True
+    return False
+
+explicit_edges = [e for e in all_edges if e.get('kind') == 'explicit']
+circular = list({
+    f"{e['source']} <-> {e['target']}"
+    for e in explicit_edges
+    if has_path(e['target'], e['source'])
+})
 
 # Hub stats
 hub_counts = {}

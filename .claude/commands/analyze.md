@@ -212,7 +212,18 @@ Create `.agents/context/AUDIT.md` from the Hotspots, Risks, and Recommendations 
 [Recommendations verbatim from Step 3 output]
 ```
 
-**4.4 — Commit**
+**4.4 — Build dependency graph**
+
+Run `build-graph.sh` if the project has JS/TS/Vue files:
+
+```bash
+bash .claude/scripts/build-graph.sh
+```
+
+If the script exits with an error, note it and continue — graph.json is optional.
+graph.json is machine-local (in `.claudeignore`) and not committed.
+
+**4.5 — Commit**
 
 ```bash
 git add .agents/context/PATTERNS.md .agents/context/AUDIT.md

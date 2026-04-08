@@ -140,10 +140,29 @@ if isolated[:5]: print('Isolated files: ' + ', '.join(isolated[:5]))
 " >> .agents/context/ARCHITECTURE.md 2>/dev/null || true
 ```
 
-**4.5 — Commit**
+**4.5 — Platform context (optional)**
+
+If `scripts/storyblok.sh` exists, pull the latest component schemas:
+
+```bash
+if [ -f "scripts/storyblok.sh" ]; then
+  if bash scripts/storyblok.sh pull 2>/dev/null; then
+    cp .storyblok/components.json .agents/context/storyblok-schema.json 2>/dev/null && \
+      echo "Storyblok schema written to .agents/context/storyblok-schema.json" || \
+      echo "Storyblok pull succeeded but components.json not found — skip"
+  else
+    echo "Storyblok pull failed (offline or not authenticated) — skip"
+  fi
+fi
+```
+
+If the script is missing or the pull fails, skip silently — storyblok-schema.json is optional.
+
+**4.6 — Commit**
 
 ```bash
 git add .agents/context/PATTERNS.md .agents/context/AUDIT.md .agents/context/graph.json .agents/context/graph-manifest.json
+[ -f .agents/context/storyblok-schema.json ] && git add .agents/context/storyblok-schema.json
 git commit -m "chore: update project analysis artifacts"
 ```
 
