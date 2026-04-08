@@ -111,6 +111,42 @@ print(sum(len(v) if isinstance(v, list) else 1 for v in hooks.values()))
 fi
 
 # ---------------------------------------------------------------------------
+# 6. WORKFLOW-GUIDE.md coverage check
+# ---------------------------------------------------------------------------
+section "WORKFLOW-GUIDE COVERAGE"
+GUIDE_FILE="WORKFLOW-GUIDE.md"
+SKILLS_DIR=".claude/skills"
+MISSING_FROM_GUIDE=()
+
+if [[ -f "$GUIDE_FILE" && -d "$SKILLS_DIR" ]]; then
+  while IFS= read -r skill_dir; do
+    skill_name="$(basename "$skill_dir")"
+    # Skip non-user-facing utility skills
+    if [[ "$skill_name" == "skill-creator-workspace" ]]; then
+      continue
+    fi
+    in_guide=0
+    grep -qF "/$skill_name" "$GUIDE_FILE" 2>/dev/null && in_guide=1
+    grep -qF "\"$skill_name\"" "$GUIDE_FILE" 2>/dev/null && in_guide=1
+    if [[ "$in_guide" -eq 0 ]]; then
+      MISSING_FROM_GUIDE+=("$skill_name")
+    fi
+  done < <(find "$SKILLS_DIR" -mindepth 1 -maxdepth 1 -type d | sort)
+
+  if [[ "${#MISSING_FROM_GUIDE[@]}" -eq 0 ]]; then
+    printf "GUIDE_COVERAGE: OK — all skills mentioned in WORKFLOW-GUIDE.md\n"
+  else
+    printf "GUIDE_COVERAGE: WARN — %d skill(s) missing from WORKFLOW-GUIDE.md:\n" "${#MISSING_FROM_GUIDE[@]}"
+    for s in "${MISSING_FROM_GUIDE[@]}"; do
+      printf "  - %s\n" "$s"
+    done
+    printf "\nAction: Update WORKFLOW-GUIDE.md (and templates/WORKFLOW-GUIDE.md) before releasing.\n"
+  fi
+else
+  printf "GUIDE_COVERAGE: SKIP — %s or %s not found\n" "$GUIDE_FILE" "$SKILLS_DIR"
+fi
+
+# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 section "SUMMARY FOR CLAUDE"

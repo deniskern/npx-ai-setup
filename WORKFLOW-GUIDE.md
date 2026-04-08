@@ -84,7 +84,6 @@ Neue Idee oder Feature?
 | Command | Was es tut |
 |---------|------------|
 | `/test` | Tests laufen lassen + Failures fixen (bis zu 3 Versuche) |
-| `/test-setup` | Test-Framework fuer das Projekt konfigurieren (einmalig) |
 | `/review` | Uncommitted Changes reviewen (Quick Scan / Standard / Adversarial) |
 | `/lint` | Linter ausfuehren, sichere Violations auto-fixen |
 | `/scan` | Security-Vulnerability-Scan (snyk/npm audit/pip-audit) |
@@ -95,8 +94,7 @@ Neue Idee oder Feature?
 | Command | Was es tut |
 |---------|------------|
 | `/commit` | Stagen + Conventional Commit Message generieren |
-| `/pr` | Build-Validierung + Staff-Review + PR-Draft |
-| `/ci` | CI-Status pruefen, naechsten Schritt vorschlagen |
+| `gh pr create` | PR direkt via GitHub CLI erstellen (kein separater Skill) |
 | `/release` | Version bump, CHANGELOG aktualisieren, Git Tag |
 | `/build-fix` | Build-Error iterativ fixen — parsen, fixen, rebuilden (max 10x) |
 
@@ -108,6 +106,7 @@ Neue Idee oder Feature?
 | `/challenge "idea"` | Schnelles Critical Gate — GO/SIMPLIFY/REJECT vor Spec-Investment |
 | `/research "tool"` | Deep-Research eines externen Tools/Repos/Patterns |
 | `/explore "topic"` | Read-Only Thinking Partner — keine Dateiaenderungen |
+| `/orchestrate "task"` | Task an Gemini oder Codex CLI delegieren |
 
 ---
 
@@ -134,6 +133,7 @@ Kein Spec noetig — `/debug` Output dient als Untersuchungsprotokoll.
 | `/resume` | State wiederherstellen und zur naechsten Aktion routen. Nutzen beim Start einer neuen Session. |
 | `/reflect` | Session-Learnings als permanente Regeln speichern. Nach langen Sessions (>30 Tool Calls). |
 | `/apply-learnings` | Gesammelte Learnings aus LEARNINGS.md in die richtigen Context-Dateien einarbeiten. |
+| `/session-optimize` | Vergangene Sessions analysieren — Qualitaet, Effizienz, Token-Savings verbessern. |
 | `/doctor` | AI-Setup Health Check — Hooks, Settings, Context, MCP pruefen. |
 | `/update` | ai-setup Updates pruefen und installieren. |
 
@@ -144,6 +144,10 @@ Kein Spec noetig — `/debug` Output dient als Untersuchungsprotokoll.
 | Command | Was es tut |
 |---------|------------|
 | `/context-load` | Context-Dateien on-demand laden (STACK, ARCHITECTURE, CONVENTIONS). |
+| `/context-refresh` | Context-Dateien neu generieren (STACK.md, ARCHITECTURE.md, CONVENTIONS.md). |
+| `/gh-cli` | GitHub CLI Reference — Repos, Issues, PRs, Actions, Releases. |
+| `/agent-browser` | Browser-Automation — Seiten navigieren, Formulare ausfuellen, Screenshots. |
+| `/bash-defensive-patterns` | Defensive Bash-Techniken fuer Production-Grade Scripts. |
 
 ---
 
@@ -189,7 +193,8 @@ In `.agents/context/` — automatisch beim Setup generiert, committed, teamweit 
 | `PATTERNS.md` | Wiederverwendbare Code-Patterns, Module Boundaries | `/analyze` (manuell) |
 | `AUDIT.md` | Hotspots, Risks, Recommendations | `/analyze` (manuell) |
 
-Regenerieren: `npx @onedot/ai-setup` ausfuehren → **Regenerate** → **Context** waehlen.
+STACK/ARCHITECTURE/CONVENTIONS regenerieren: `/context-refresh` oder `npx @onedot/ai-setup` → **Regenerate** → **Context**.
+PATTERNS/AUDIT regenerieren: `/analyze` ausfuehren.
 
 ---
 
@@ -201,7 +206,7 @@ Regenerieren: `npx @onedot/ai-setup` ausfuehren → **Regenerate** → **Context
 | `! git status` | Bash-Command direkt ausfuehren (kein Token-Overhead) |
 | `@src/index.ts` | Datei kompakt in den Kontext importieren |
 | `ultrathink:` | Prefix fuer Extended Reasoning |
-| `/compact` | Kontext komprimieren bei 80% Auslastung |
+| `/compact` | Kontext komprimieren (eingebauter Claude Code Command, kein Skill) |
 | `/` | Autocomplete fuer alle verfuegbaren Commands |
 
 ---

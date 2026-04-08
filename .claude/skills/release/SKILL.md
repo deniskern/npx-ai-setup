@@ -23,6 +23,7 @@ The output contains: dirty state, verify:release result, last tag, commits since
 **Abort conditions** (check from prep output):
 - `UNCOMMITTED_CHANGES` → abort, commit or stash first
 - `Verify: FAIL` → fix before proceeding. If runtime validation is skipped because Claude is not authenticated, stop the release.
+- `GUIDE_COVERAGE: WARN` → list missing skills to user and ask: update guide now, or skip?
 - Detect version source: `package.json`, `Cargo.toml`, `pyproject.toml`, `version.txt`, or ask user
 
 Do NOT re-run `git status`, `verify:release`, or read CHANGELOG — all data is in the prep output.
@@ -58,6 +59,9 @@ Derive the project name from `package.json` name, repo name, or ask. Only includ
 Show the generated message and ask: "Passt so" / "Anpassen" / "Ohne Slack"
 
 ### Phase 4: Commit and Tag
+
+Before committing, confirm with user:
+- [ ] WORKFLOW-GUIDE.md aktuell? (`GUIDE_COVERAGE: OK` in prep output, oder manuell bestaetigt)
 
 ```bash
 git add <version-file> CHANGELOG.md README.md
