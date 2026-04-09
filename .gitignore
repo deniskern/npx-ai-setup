@@ -21,4 +21,5 @@ scripts/storyblok-dump.json
 .gemini/agents
 .opencode/skills
 .claude/session-state.json
+.claude/subagent-usage.log
 __pycache__/

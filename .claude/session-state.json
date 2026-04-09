@@ -1,9 +1,0 @@
-{
-  "updated_at": "2026-04-06T15:59:32Z",
-  "source": "pre-compact",
-  "phase": "compaction",
-  "active_spec": "",
-  "active_specs": [],
-  "next_action": "Start with the current priority task or inspect open specs",
-  "has_active_spec": false
-}
