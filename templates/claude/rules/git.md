@@ -3,10 +3,6 @@
 ## Commit Message Format
 Use Conventional Commits: `type(scope): description`
 Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `perf`, `ci`
-Examples:
-- `feat(auth): add OAuth2 login flow`
-- `fix(cart): prevent negative quantity on decrement`
-- `chore: update dependencies`
 
 Keep the subject line under 72 characters.
 Use the body to explain *why*, not *what* — the diff shows what changed.

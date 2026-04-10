@@ -192,15 +192,12 @@ prepare_fixture_project
 assert_file_exists "$PROJECT_DIR/.claude/settings.json" "project settings installed"
 assert_file_exists "$PROJECT_DIR/.claude/hooks/context-freshness.sh" "project hooks installed"
 assert_file_exists "$PROJECT_DIR/.claude/skills/context-load/SKILL.md" "project skills installed"
-instrument_hook "context-reinforcement.sh"
 instrument_hook "context-freshness.sh"
 instrument_hook "protect-files.sh"
 instrument_hook "circuit-breaker.sh"
 instrument_hook "post-edit-lint.sh"
-instrument_hook "tdd-checker.sh"
 instrument_hook "task-completed-gate.sh"
 instrument_hook "spec-stop-guard.sh"
-instrument_hook "permission-denied-log.sh"
 PROJECT_SKILLS_DIR="$(canonical_path "$PROJECT_DIR/.claude/skills")"
 
 echo ""
@@ -239,12 +236,10 @@ assert_file_exists "$EVENT_LOG" "hook event log created"
 assert_contains "$PROBE_STDOUT" "RESULT: OK" "probe reached terminal marker"
 assert_contains "$DEBUG_LOG" "Loading skills from:" "claude loaded skill sources"
 assert_contains_any "$DEBUG_LOG" "claude saw project skills directory" "$PROJECT_SKILLS_DIR" "$PROJECT_DIR/.claude/skills"
-assert_contains "$EVENT_LOG" "context-reinforcement.sh" "SessionStart hook fired"
 assert_contains "$EVENT_LOG" "context-freshness.sh" "UserPromptSubmit hook fired"
 assert_contains "$EVENT_LOG" "protect-files.sh" "PreToolUse hook fired"
 assert_contains "$EVENT_LOG" "circuit-breaker.sh" "PreToolUse secondary hook fired"
 assert_contains "$EVENT_LOG" "post-edit-lint.sh" "PostToolUse hook fired"
-assert_contains "$EVENT_LOG" "tdd-checker.sh" "PostToolUse advisory hook fired"
 assert_contains "$EVENT_LOG" "spec-stop-guard.sh" "Stop hook fired"
 
 echo ""
@@ -289,11 +284,6 @@ else
   skip "TaskCompleted hook fired"
 fi
 
-if grep -qF "permission-denied-log.sh" "$EVENT_LOG" 2>/dev/null; then
-  pass "PermissionDenied hook fired"
-else
-  skip "PermissionDenied hook fired"
-fi
 
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed, ${SKIP} skipped"

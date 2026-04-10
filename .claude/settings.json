@@ -6,7 +6,7 @@
   "_governanceDoc": "docs/claude-governance.md",
   "_governanceProfile": "project-baseline",
   "_governanceOwnership": "Project settings own repo-local permissions, hooks, and context limits. Global settings stay workstation-local and optional.",
-  "_cacheNote": "Keep tool/permission order stable \u2014 reordering the allow list mid-session breaks Claude's prompt cache prefix and increases cost.",
+  "_cacheNote": "Keep tool/permission order stable — reordering the allow list mid-session breaks Claude's prompt cache prefix and increases cost.",
   "respectGitignore": true,
   "attribution": {
     "coAuthoredBy": true,
@@ -32,18 +32,12 @@
   "permissions": {
     "_profileIntent": "Baseline project-local allow/deny policy. Operator mode changes are explicit choices, not hidden defaults.",
     "allow": [
-      "Read(src/**)",
       "Read(.planning/**)",
       "Bash(date:*)",
-      "Bash(echo:*)",
-      "Bash(cat:*)",
       "Bash(ls:*)",
       "Bash(mkdir:*)",
       "Bash(wc:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
       "Bash(sort:*)",
-      "Bash(grep:*)",
       "Bash(tr:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
@@ -111,27 +105,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/context-reinforcement.sh",
-            "timeout": 5000
-          },
-          {
-            "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/context-loader.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/file-index.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/mcp-health.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/cli-health.sh",
             "timeout": 5
           }
         ]
@@ -145,52 +119,6 @@
             "type": "command",
             "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/post-edit-lint.sh",
             "timeout": 30
-          },
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/tdd-checker.sh",
-            "timeout": 5
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/context-monitor.sh",
-            "timeout": 5
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/session-length.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PostToolUseFailure": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/post-tool-failure-log.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "ConfigChange": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/config-change-audit.sh",
-            "timeout": 5
           }
         ]
       }
@@ -269,50 +197,6 @@
         ]
       }
     ],
-    "SubagentStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/subagent-start.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/subagent-stop.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PermissionDenied": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/permission-denied-log.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "TaskCreated": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/task-created-log.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "TaskCompleted": [
       {
         "hooks": [
@@ -340,17 +224,6 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/spec-stop-guard.sh",
             "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'cd \"${CLAUDE_PROJECT_DIR:-.}\" && command -v git >/dev/null 2>&1 && git rev-parse --git-dir >/dev/null 2>&1 && [ -n \"$(git status --porcelain 2>/dev/null)\" ] && git add -u && git commit -m \"chore: save session state before context compaction\" || true'",
-            "timeout": 10
           }
         ]
       }

@@ -12,23 +12,10 @@
 - Operations that can run multiple times must be idempotent
 - External calls must have timeouts and retry limits
 
-## Security
-- Never interpolate user input into SQL, shell commands, or HTML
-- Validate and sanitize all external inputs (query params, headers, uploads)
-- No secrets, tokens, or passwords in source code, logs, or error messages
-- Enforce authorization checks on every request — never trust client-provided IDs
-
 ## Performance
 - No N+1 queries — batch or join instead of loops with DB calls
 - No synchronous I/O in hot paths — use async equivalents
-- No layout thrashing: do not mix DOM reads and writes in loops
 - Cache only deterministic, bounded data with an eviction strategy
-
-## Maintainability
-- Single Responsibility: each function/module does one thing
-- DRY: extract repeated logic; do not copy-paste with minor variations
-- Names reveal intent: `getUserByEmail` not `getUser`
-- Handle errors at the layer that can act on them; don't log and re-throw
 
 ## Code Quality
 - No dead code, no magic numbers without named constants
@@ -37,19 +24,11 @@
 
 ## Debugging
 
-**Revert-First**: When something breaks during implementation, simplify — don't add more code.
-1. Revert the breaking change. Clean state.
-2. Can the broken thing be deleted entirely?
-3. One-liner minimal targeted fix only.
+**Revert-First**: When something breaks, simplify — don't add more code.
 3+ failed fixes = architectural problem — question the approach, not the fix.
 
-**Investigation budget**: Max 2 diagnostic attempts per hypothesis. If no new information after 2 tries, switch strategy or ask the user. Never repeat the same approach with minor variations.
+**Investigation budget**: Max 2 diagnostic attempts per hypothesis. If no new information after 2 tries, switch strategy or ask the user.
 
 **Shell scripts**: Run `bash -n <file>` before staging. Silent syntax errors cause hook failures.
 
-**Systematic phases**: Root Cause → Pattern Analysis → Hypothesis (specific, falsifiable) → Implement.
-Treat your own code as foreign. Your mental model is a guess — the code's behavior is truth.
-
-**When challenged**: If the user disputes your conclusion, re-investigate the actual code before defending your answer. The initial analysis may be wrong.
-
-**Constraint Classification**: Hard (non-negotiable), Soft (negotiable if stated), Ghost (past constraints that no longer apply). Ghost constraints lock out options nobody knows are available — ask "why can't we do X?"
+**When challenged**: If the user disputes your conclusion, re-investigate the actual code before defending your answer.

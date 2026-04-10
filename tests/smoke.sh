@@ -147,10 +147,10 @@ fi
 
 echo ""
 echo "--- Routing guidance ---"
-if grep -qi 'haiku.*direct tool\|haiku.*explore' CLAUDE.md 2>/dev/null; then
-  pass "CLAUDE.md restricts Haiku to direct tool use and explore agents"
+if grep -qi 'haiku.*explore\|explore.*haiku' .claude/rules/agents.md 2>/dev/null; then
+  pass "agents.md restricts Haiku to explore agents"
 else
-  fail "CLAUDE.md missing Haiku routing scope"
+  fail "agents.md missing Haiku routing scope"
 fi
 
 if grep -q 'Threshold: spawn agents only for tasks requiring ≥3 distinct tool calls' .claude/rules/agents.md 2>/dev/null; then
@@ -165,10 +165,10 @@ else
   fail ".claude/rules/agents.md missing early parallelization threshold"
 fi
 
-if grep -q 'crosses `>30` tool calls with no subagents' CLAUDE.md 2>/dev/null; then
-  pass "CLAUDE.md tells long sessions to reconsider delegation"
+if grep -q '8 tool calls' .claude/rules/agents.md 2>/dev/null; then
+  pass "agents.md includes delegation escalation rule"
 else
-  fail "CLAUDE.md missing long-session delegation check"
+  fail "agents.md missing delegation escalation rule"
 fi
 
 if grep -q 'model: haiku' .claude/skills/spec-work/SKILL.md 2>/dev/null; then
@@ -438,66 +438,18 @@ else
   fail "global settings missing explicit broad-grant opt-in"
 fi
 
-echo "--- Experimental hook registrations ---"
+echo "--- Hook registration checks ---"
 if ! grep -q '"PostCompact"' templates/claude/settings.json 2>/dev/null; then
-  pass "PostCompact removed (superseded by claude-mem)"
+  pass "PostCompact removed (dangerous auto-commit)"
 else
   fail "PostCompact still registered but should be removed"
 fi
-if awk '
-  /"command"[[:space:]]*:[[:space:]]*".*context-monitor\.sh"/ { print block "\n" $0; found=1; exit }
-  { block = block $0 "\n" }
-  /^[[:space:]]*}[[:space:]]*,?[[:space:]]*$/ { block="" }
-' templates/claude/settings.json | grep -q '"matcher"[[:space:]]*:[[:space:]]*"Edit|Write|NotebookEdit"'; then
-  pass "template context-monitor matcher stays off generic Bash"
+if ! grep -q '"SubagentStart"' templates/claude/settings.json 2>/dev/null && ! grep -q '"SubagentStop"' templates/claude/settings.json 2>/dev/null; then
+  pass "subagent logging hooks removed (unused)"
 else
-  fail "template context-monitor matcher regressed to generic Bash"
+  fail "subagent logging hooks still registered"
 fi
-if grep -q '"SubagentStart"' templates/claude/settings.json 2>/dev/null && grep -q '"SubagentStop"' templates/claude/settings.json 2>/dev/null; then
-  pass "template settings.json registers subagent hooks"
-else
-  fail "template settings.json missing subagent hook registration"
-fi
-if grep -q '"PermissionDenied"' templates/claude/settings.json 2>/dev/null; then
-  pass "template settings.json registers PermissionDenied"
-else
-  fail "template settings.json missing PermissionDenied registration"
-fi
-for hook_file in templates/claude/hooks/subagent-start.sh templates/claude/hooks/subagent-stop.sh templates/claude/hooks/permission-denied-log.sh; do
-  if [ -f "$hook_file" ]; then
-    pass "$(basename "$hook_file") exists"
-  else
-    fail "$(basename "$hook_file") missing"
-  fi
-done
 
-echo "--- CLI health hook ---"
-CLI_HEALTH_STDERR="$SANDBOX_TMP/cli-health.stderr"
-FAKEBIN="$SANDBOX_TMP/fakebin"
-mkdir -p "$FAKEBIN"
-cat > "$FAKEBIN/rtk" <<'EOF'
-#!/usr/bin/env bash
-if [ "${1:-}" = "--version" ]; then
-  echo "rtk 0.34.2"
-  exit 0
-fi
-if [ "${1:-}" = "gain" ]; then
-  echo "Error: Failed to initialize tracking database" >&2
-  echo >&2
-  echo "Caused by:" >&2
-  echo "    0: unable to open database file" >&2
-  echo "    1: Error code 14: Unable to open the database file" >&2
-  exit 1
-fi
-exit 0
-EOF
-chmod +x "$FAKEBIN/rtk"
-PATH="$FAKEBIN:/usr/bin:/bin" bash templates/claude/hooks/cli-health.sh > /dev/null 2>"$CLI_HEALTH_STDERR"
-if grep -q 'tracking DB is unavailable' "$CLI_HEALTH_STDERR" 2>/dev/null; then
-  pass "cli-health.sh distinguishes RTK DB failures from inactive hooks"
-else
-  fail "cli-health.sh did not classify RTK DB failure correctly"
-fi
 
 
 echo "--- Spec status consistency ---"
@@ -523,10 +475,10 @@ done
 # Routing guidance assertions
 echo ""
 echo "--- Model routing rules ---"
-if grep -qi 'haiku' CLAUDE.md 2>/dev/null; then
-  pass "CLAUDE.md documents Haiku routing guidance"
+if grep -qi 'haiku' .claude/rules/agents.md 2>/dev/null; then
+  pass "agents.md documents Haiku routing guidance"
 else
-  fail "CLAUDE.md missing Haiku routing guidance"
+  fail "agents.md missing Haiku routing guidance"
 fi
 
 if grep -qi 'haiku' .claude/rules/agents.md 2>/dev/null; then
@@ -565,32 +517,15 @@ else
   fail "tests/routing-check.sh has syntax errors"
 fi
 
-echo "--- Claude Code 2.1.89+ alignment ---"
-# tdd-checker: exclusion patterns must handle absolute paths (*/node_modules/*, etc.)
-if grep -q '\*/node_modules/\*' templates/claude/hooks/tdd-checker.sh 2>/dev/null; then
-  pass "tdd-checker uses absolute-path-safe exclusion patterns"
-else
-  fail "tdd-checker still uses relative-only exclusion patterns (breaks with absolute file_path)"
-fi
-
-# permission-denied-log: retry logic for auto_classifier
-if grep -q 'retry.*true\|{retry' templates/claude/hooks/permission-denied-log.sh 2>/dev/null; then
-  pass "permission-denied-log emits retry:true for auto_classifier safe commands"
-else
-  fail "permission-denied-log missing retry logic for 2.1.89 PermissionDenied hook"
-fi
-
-# task-created-log.sh exists and is registered
-if [ -f templates/claude/hooks/task-created-log.sh ]; then
-  pass "task-created-log.sh exists"
-else
-  fail "task-created-log.sh missing"
-fi
-if grep -q '"TaskCreated"' templates/claude/settings.json 2>/dev/null; then
-  pass "template settings.json registers TaskCreated hook"
-else
-  fail "template settings.json missing TaskCreated registration"
-fi
+echo "--- Hook cleanup validation ---"
+# Verify removed hooks are not registered
+for removed_hook in "context-reinforcement" "context-monitor" "session-length" "file-index" "mcp-health" "cli-health" "tdd-checker" "permission-denied-log" "task-created-log" "config-change-audit"; do
+  if grep -q "$removed_hook" templates/claude/settings.json 2>/dev/null; then
+    fail "$removed_hook still registered in template settings"
+  else
+    pass "$removed_hook removed from template settings"
+  fi
+done
 
 # disableSkillShellExecution warning in CLAUDE.md
 if grep -q 'disableSkillShellExecution' templates/CLAUDE.md 2>/dev/null; then
