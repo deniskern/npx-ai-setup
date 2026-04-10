@@ -66,7 +66,9 @@ if [ -n "$REASON" ]; then
 fi
 
 # Hint: graph.json missing entirely (JS/TS project without graph)
-if [ ! -f "$GRAPH_FILE" ] && [ -f "package.json" ]; then
+# Guard: only hint for JS/TS apps (src/, app/, or pages/ directory present)
+# Bash CLI repos that happen to have a package.json for npm distribution don't benefit from graph.json
+if [ ! -f "$GRAPH_FILE" ] && [ -f "package.json" ] && { [ -d "src" ] || [ -d "app" ] || [ -d "pages" ]; }; then
   echo "[HINT] No graph.json found. Run /analyze to build the dependency graph for faster agent navigation." >&2
 fi
 
