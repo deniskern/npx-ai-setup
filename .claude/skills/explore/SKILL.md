@@ -14,6 +14,8 @@ Curious, open-ended exploration of a problem or codebase. Reads everything, writ
 - Bash (read-only commands: `ls`, `cat`, `find`, `wc`, `git log`, `git diff`, `git show`)
 - WebFetch, WebSearch
 
+> **Library/API docs**: prefer the Context7 MCP tool (`use context7`) for official documentation — it's more precise and token-efficient than WebSearch. Fall back to WebFetch if Context7 is unavailable.
+
 ## Forbidden Tools
 
 NEVER use: Write, Edit, NotebookEdit. This skill is strictly read-only.

@@ -310,6 +310,18 @@ else
   add_row "$WARN" "Specs"               "No specs/ directory"
 fi
 
+# 16. Corpus size
+if command -v git >/dev/null 2>&1 && git rev-parse --git-dir >/dev/null 2>&1; then
+  corpus_count="$(git ls-files 2>/dev/null | wc -l | tr -d ' ')"
+  if [ "$corpus_count" -gt 500 ]; then
+    add_row "$WARN" "Corpus size" "${corpus_count} tracked files — /analyze and /context-refresh will be expensive"
+  elif [ "$corpus_count" -lt 5 ]; then
+    add_row "$WARN" "Corpus size" "${corpus_count} tracked files — too small for context generation to add value"
+  else
+    add_row "$PASS" "Corpus size" "${corpus_count} tracked files"
+  fi
+fi
+
 # Output table
 echo "# Doctor Report"
 echo ""
