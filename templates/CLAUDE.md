@@ -26,5 +26,8 @@ Hard blocks via `permissions.deny` in `.claude/settings.json`.
 Non-interactive: `claude -p "<prompt>" --output-format json`. CI: add `--bare` (disables Hooks/Skills/MCP).
 Cost controls: `--max-budget-usd 0.50` / `--max-turns 20`.
 
+## Model Routing
+Haiku: explore agents and direct tool use only. Sonnet: code generation and implementation (default).
+
 ## RTK
 Always prefix commands with `rtk`. Full reference: `.claude/docs/rtk-reference.md`.
