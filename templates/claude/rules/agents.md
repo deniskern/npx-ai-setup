@@ -12,6 +12,20 @@ Always set `model:` when spawning subagents. Sonnet is the default for implement
 
 Never spawn an Explore or search agent without `model: haiku`. Haiku is never for implementation — code-writing agents must use Sonnet.
 
+## Advisor Strategy (Beta)
+
+Wenn Sonnet allein nicht ausreicht, aber Opus-Preis nicht gerechtfertigt ist:
+
+| Szenario | Ansatz |
+|----------|--------|
+| Sonnet reicht | Sonnet solo |
+| Komplexe Architektur / Spec | Opus solo |
+| Langer agentic Task mit strategischen Entscheidungen | Sonnet + Opus-Advisor |
+
+Executor (Sonnet/Haiku) konsultiert Opus server-seitig mid-task. Beta-Header: `advisor-tool-2026-03-01`.
+Nur relevant für eigene API-Apps — nicht für Claude Code CLI. Claude Code nutzt `opusplan` als Äquivalent.
+Docs: https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool
+
 ## Agent Dispatch
 
 Full trigger/model table: see `.claude/docs/agent-dispatch.md`.

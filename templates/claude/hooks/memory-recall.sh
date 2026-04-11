@@ -71,11 +71,8 @@ claude_mem_available() {
   return 1
 }
 
-# Try claude-mem first (semantic search — best results)
+# claude-mem active — Claude sees MCP tools directly, no hint needed
 if claude_mem_available; then
-  # claude-mem is configured — Claude will use MCP tools directly
-  # We just hint that memory search is available
-  printf '{"additionalContext": "Memory search available: claude-mem MCP is active. Consider searching for relevant past observations if this prompt relates to prior work."}\n'
   exit 0
 fi
 
