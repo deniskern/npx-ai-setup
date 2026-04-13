@@ -8,28 +8,20 @@
 echo "  [2.1.0] Applying migration..."
 
 # ------------------------------------------------------------------
-# Rename perf-reviewer → performance-reviewer
+# Remove legacy agents (replaced by Claude Code built-in agents)
 # ------------------------------------------------------------------
 _remove_file ".claude/agents/perf-reviewer.md"
-_add_file "templates/agents/performance-reviewer.md" ".claude/agents/performance-reviewer.md"
+_remove_file ".claude/agents/performance-reviewer.md"
+_remove_file ".claude/agents/verify-app.md"
+_remove_file ".claude/agents/frontend-developer.md"
+_remove_file ".claude/agents/backend-developer.md"
+_remove_file ".claude/agents/liquid-linter.md"
 
 # ------------------------------------------------------------------
-# Update agents with new model routing / name references
+# Update remaining agents with new model routing / name references
 # ------------------------------------------------------------------
-_update_file "templates/agents/verify-app.md"           ".claude/agents/verify-app.md"
 _update_file "templates/agents/code-reviewer.md"        ".claude/agents/code-reviewer.md"
 _update_file "templates/agents/security-reviewer.md"    ".claude/agents/security-reviewer.md"
-_update_file "templates/agents/frontend-developer.md"   ".claude/agents/frontend-developer.md"
-
-# ------------------------------------------------------------------
-# New conditional agent: backend-developer
-# ------------------------------------------------------------------
-_add_file "templates/agents/backend-developer.md" ".claude/agents/backend-developer.md"
-
-# ------------------------------------------------------------------
-# Remove liquid-linter from project agents (now in boilerplate repos)
-# ------------------------------------------------------------------
-_remove_file ".claude/agents/liquid-linter.md"
 
 # ------------------------------------------------------------------
 # Update dispatch documentation

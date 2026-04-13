@@ -17,7 +17,7 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 *Was ist neu:*
 :sparkles: *Features* — PreCompact Hook (Session-State-Preservation vor AutoCompact), Search-before-Read Navigationshierarchie (Glob/Grep → targeted Read → full-file Read), Skill Trigger Phrases in Frontmatter-Descriptions, Output Offloading Rule für große Agenten-Outputs
-:wrench: *Fixes* — `spec-review-prep.sh` SPEC_BRANCH + STATUS Extraktion, `spec-validate-prep.sh` Step-Count-Schwelle, CLAUDE.md Model Routing Section
+:wrench: *Fixes* — `spec-review-prep.sh` SPEC_BRANCH + STATUS Extraktion, `spec-validate-prep.sh` Step-Count-Schwelle, CLAUDE.md Model Routing Section, Migration 2.1.0 bricht bei fehlendem Agent-Template nicht mehr ab
 
 *Update:* `npx github:onedot-digital-crew/npx-ai-setup`
 <!-- /slack-announcement -->
