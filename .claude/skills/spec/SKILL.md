@@ -15,6 +15,11 @@ Before writing anything: triage the idea, then think the implementation complete
 ### 1a — Load Skills
 If `.claude/skills/` exists, glob all skill directories and read each `SKILL.md` (first 5 lines only). Apply their guidance throughout.
 
+### 1a.5 — Documentation Discovery (if external libs/APIs involved)
+
+For each external dependency: `mcp__context7__resolve-library-id` → `mcp__context7__query-docs` (specific feature only).
+Output: verified method signatures + what does NOT exist. Feeds into 1d and spec steps.
+
 ### 1b — Detect Input Type & Clarify
 
 - If `$ARGUMENTS` is an existing `.md` file: read it, ask only for missing implementation details, then continue.
