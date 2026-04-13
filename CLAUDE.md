@@ -14,11 +14,6 @@ For full details: `/context-load STACK.md` (or ARCHITECTURE.md, CONVENTIONS.md, 
 
 Use the skill (`/test`, `/lint`) only when you need Claude to analyze failures or auto-fix.
 
-## Skill Shell Execution
-
-Do NOT set `disableSkillShellExecution: true` in settings.json for this project.
-Skills `doctor`, `spec-board`, `review`, `ci`, `test-setup`, and `session-optimize` use `!` inline shell execution.
-
 ## Build Artifact Rules
 
 Never read or search inside: `dist/`, `.output/`, `.nuxt/`, `.next/`, `build/`, `coverage/`.

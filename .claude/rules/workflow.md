@@ -1,3 +1,13 @@
+---
+paths:
+  - "**/*.ts"
+  - "**/*.js"
+  - "**/*.vue"
+  - "**/*.sh"
+  - "specs/**"
+  - ".claude/skills/**"
+---
+
 # Workflow Routing
 
 ## Skill Hints
