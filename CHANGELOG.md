@@ -10,9 +10,25 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
-- **Fixed**: `spec-review-prep.sh` — `SPEC_BRANCH` Extraktion korrigiert (Zeilen mit `> ` statt `**Branch**`), `STATUS` Extraktion via sed repariert (war immer "unknown")
-- **Fixed**: `spec-validate-prep.sh` — Step-Count-Warning-Schwelle von `>10` auf `>8` angepasst, entspricht dem dokumentierten Maximum in `spec/SKILL.md`
-- **Improved**: `workflow.md` — `/spec`-Trigger auf "Planning a multi-file change..." umformuliert (Spec-first Kausalität), neuer Hint für `/spec-validate` nach Spec-Erstellung
+## [v2.1.2] — 2026-04-13
+
+<!-- slack-announcement -->
+:rocket: *@onedot/ai-setup v2.1.2*
+
+*Was ist neu:*
+:sparkles: *Features* — PreCompact Hook (Session-State-Preservation vor AutoCompact), Search-before-Read Navigationshierarchie (Glob/Grep → targeted Read → full-file Read), Skill Trigger Phrases in Frontmatter-Descriptions, Output Offloading Rule für große Agenten-Outputs
+:wrench: *Fixes* — `spec-review-prep.sh` SPEC_BRANCH + STATUS Extraktion, `spec-validate-prep.sh` Step-Count-Schwelle, CLAUDE.md Model Routing Section
+
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
+- **Fixed**: CLAUDE.md — Model Routing Section re-added (routing-check.sh erwartet sie)
+- **Fixed**: `spec-review-prep.sh` — `SPEC_BRANCH` Extraktion korrigiert, `STATUS` Extraktion via sed repariert
+- **Fixed**: `spec-validate-prep.sh` — Step-Count-Warning-Schwelle auf `>8` angepasst
+- **Added**: PreCompact Hook — gibt strukturiertes `{"additionalContext": ...}` JSON aus, bewahrt Session Intent / Files / Decisions / Next Steps vor AutoCompact
+- **Added**: Search-before-Read Regel in `agents.md` + `quality.md` — Glob/Grep zuerst, dann targeted Read, dann Full-file Read
+- **Added**: Skill Trigger Phrases — kombiniert mit technischen Details in SKILL.template.md Descriptions
+- **Added**: Output Offloading Rule in `agents.md` — Agenten-Outputs >2KB nach `$TMPDIR` schreiben
 
 ## [v2.1.1] — 2026-04-10
 
