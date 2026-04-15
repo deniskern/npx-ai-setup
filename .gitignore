@@ -22,3 +22,4 @@ scripts/storyblok-dump.json
 .opencode/skills
 .claude/subagent-usage.log
 __pycache__/
+specs/changelog-audit-*.md
