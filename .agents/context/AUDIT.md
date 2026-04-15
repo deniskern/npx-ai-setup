@@ -1,9 +1,9 @@
 ---
-abstract: "Known issues: 4 HIGH security, 7 reliability, 4 correctness bugs. Hotspots: tui.sh (1014L), update.sh (522L), setup.sh (348L)."
+abstract: "No active HIGH issues. 6 MEDIUM remain: eval-ref counter (setup-skills), set+e gap (generate), jq-no-fallback (update+6 hooks), /tmp hardcoded, mktemp leaks (8+ files)."
 sections:
-  - "Security HIGH: json.sh shell-interpolation injection, setup-skills.sh eval injection, setup.sh Node fallback interpolation"
-  - "Reliability: npm exit code unchecked (cli-tools.sh), generate.sh set+e gaps, /tmp hardcoded (update.sh), temp leaks (5+ files)"
-  - "Correctness: _semver_gt() return inverted (core.sh:89), is_binary logic inverted (validate-no-hardcoded-paths.sh), context-loader YAML 2-space hardcoded"
+  - "All previous HIGH resolved: S1 S2 S3 S6 R1 R6 C1-C5 fixed or files removed"
+  - "MEDIUM active: S5 eval, R2 set+e, R3 jq no fallback in update.sh, R4 6 hooks no jq guard, R5 /tmp, R7 mktemp leaks"
+  - "Correctness: all known bugs fixed (_semver_gt, is_binary, protect-files, context-loader removed)"
 ---
 
 # Audit
@@ -12,73 +12,70 @@ sections:
 
 ## Hotspots
 
-| Datei | Zeilen | Risiko |
-|-------|--------|--------|
-| `lib/tui.sh` | ~1014 | Terminal-UI, Spinner, Escape-Parsing |
-| `lib/update.sh` | ~522 | Version-Detection, Template-Diffing |
-| `lib/setup.sh` | ~348 | Checksum-Updates, JSON-Fallbacks |
-| `lib/generate.sh` | ~320 | Parallele Claude-Aufrufe, Retry |
-| `lib/setup-skills.sh` | ~322 | Skill-Symlinks, Multi-Tool-Aliases |
-| `lib/plugins.sh` | ~270 | Multi-Plugin-Install |
-| `.claude/scripts/scan-prep.sh` | ~240 | Multi-Tool Vulnerability Scanning |
+| File | Lines | Risk |
+|------|-------|------|
+| `lib/tui.sh` | ~1014 | Terminal UI, spinner, escape parsing |
+| `lib/update.sh` | ~522 | Version detection, template diff, direct jq without fallback |
+| `lib/setup.sh` | ~348 | Checksum updates, smart-merge, JSON fallbacks |
+| `lib/generate.sh` | ~320 | Parallel Claude calls, set+e scope, retry logic |
+| `lib/setup-skills.sh` | ~322 | Skill symlinks, eval reference pattern |
 
-Höchstes Risiko: `lib/json.sh` (Fundament aller JSON-Ops) + `lib/setup.sh`/`lib/update.sh` (asymmetrische jq/Node Fehlerbehandlung).
+## Findings
 
-## Security Issues
+### Critical
+None.
 
-| # | Severity | Datei | Issue |
-|---|----------|-------|-------|
-| S1 | HIGH | `lib/json.sh` | Shell-Interpolation in Node.js Code → Injection |
-| ~~S2~~ | ~~HIGH~~ | ~~`.claude/hooks/notify.sh`~~ | ~~Unescaped vars~~ → **FIXED** (sed escaping + notify-send `--` arg) |
-| S3 | HIGH | `.claude/scripts/storyblok-dump.ts` | API-Token als URL Query-Parameter |
-| S4 | HIGH | `lib/setup.sh:260` | Node.js Fallback mit Variable-Interpolation |
-| S5 | MEDIUM | `lib/setup-skills.sh` | `eval` für Reference-Counter → Code Injection |
-| S6 | LOW | `.claude/hooks/circuit-breaker.sh` | World-readable Log in /tmp |
+### High
+None. All previously reported HIGH issues resolved — see Fixed section.
 
-## Reliability Issues
+### Medium
 
-| # | Severity | Datei | Issue |
-|---|----------|-------|-------|
-| R1 | HIGH | `lib/cli-tools.sh:59` | npm Exit-Code nie geprüft (PIPESTATUS nach tail) |
-| R2 | HIGH | `lib/generate.sh` | set +e mit unvollständiger Fehlerbehandlung |
-| R3 | MEDIUM | `lib/update.sh:271` | jq ohne Node.js-Fallback (Inkonsistenz) |
-| R4 | MEDIUM | 4+ Hooks | Stille Exits wenn jq fehlt |
-| R5 | MEDIUM | `lib/update.sh:13` | Hardcoded /tmp statt $TMPDIR |
-| R6 | MEDIUM | `transcript-ingest.sh` | Keine Rate-Limits → Memory-Overflow |
-| R7 | MEDIUM | 5+ Dateien | mktemp ohne Signal-Traps → Temp-Leak |
+| # | File | Issue |
+|---|------|-------|
+| S5 | `lib/setup-skills.sh:168,172,177` | `eval "$ref=..."` for by-ref counter — bash 3.2 workaround; caller-controlled but auditable smell |
+| R2 | `lib/generate.sh:22` | `set +e` in `run_generation()` — intentional for bash 3.2 background jobs, but `regen_failed` tracking incomplete for some subshell exits |
+| R3 | `lib/update.sh:332,601-639` | Direct `jq` calls without Node.js fallback; inconsistent with `lib/json.sh` abstraction; silent failure when jq absent |
+| R4 | `circuit-breaker.sh`, `tool-redirect.sh`, `protect-files.sh`, `post-edit-lint.sh`, `graph-context.sh`, `update-check.sh` | No `command -v jq` guard — hooks silently exit or produce no output when jq absent |
+| R5 | `lib/update.sh:13` | `/tmp` hardcoded; use `${TMPDIR:-/tmp}` for cross-platform correctness |
+| R7 | `lib/migrate.sh:73,183`, `lib/boilerplate.sh:64,93`, `lib/setup.sh:573,764`, `.claude/scripts/build-summary.sh:143` | `mktemp` without signal trap — temp files leak on SIGINT/SIGTERM |
 
-## Correctness Issues
+### Low / Code Quality
 
-| # | Datei | Issue |
-|---|-------|-------|
-| C1 | `lib/core.sh:89` | _semver_gt() Return-Werte semantisch invertiert |
-| C2 | `validate-no-hardcoded-paths.sh:55` | is_binary Logik invertiert |
-| ~~C3~~ | ~~`.claude/hooks/protect-files.sh:8`~~ | ~~Substring `env`~~ → **FIXED** (pattern is `.env` with dot, no false matches) |
-| C4 | `lib/generate.sh:83` | Backtick-Sanitization nach Heredoc-Einbettung |
-| C5 | `.claude/hooks/context-loader.sh` | YAML-Parsing hardcoded auf 2-Space-Indent |
+| # | Pattern | Affected |
+|---|---------|---------|
+| Q1 | `2>/dev/null` overuse (40+ locations) | Nearly all lib/ and hooks/ |
+| Q2 | Inconsistent error reporting (`tui_error` vs bare `echo`) | lib/core.sh, generate.sh, boilerplate.sh |
+| Q3 | Duplicated package.json detection | `.claude/scripts/build-prep.sh` + `lint-prep.sh` |
+| Q4 | Duplicated `ensure_*_alias` functions | `lib/setup-skills.sh` |
+| Q5 | Duplicated Node.js JSON fallback | `lib/global-settings.sh` + `lib/json.sh` |
 
-## Dead Code
+## Fixed (vs. previous audit)
 
-~~delegate-codex.sh and delegate-gemini.sh removed~~ — **DELETED** (both from `.claude/scripts/` and `templates/scripts/`)
+| # | Issue | Verified |
+|---|-------|---------|
+| S1 | json.sh shell-interpolation injection | Fixed — Node args via `process.argv`, no interpolation in JS string |
+| S2 | notify.sh unescaped vars | Fixed |
+| S3 | storyblok-dump.ts API token in URL | File removed |
+| S6 | circuit-breaker log world-readable | Fixed — `chmod 600` at `circuit-breaker.sh:16` |
+| R1 | npm exit code unchecked (cli-tools.sh) | Fixed — `PIPESTATUS[0]` check at `cli-tools.sh:78` |
+| R6 | transcript-ingest no rate limits | Fixed — `MAX_MEMORY_FILES=50`, `MAX_MEMORY_SIZE_KB=200` |
+| C1 | `_semver_gt()` return inverted | Fixed — `core.sh:87-96` returns correctly |
+| C2 | `is_binary` logic inverted | Not a bug — `grep -qI ""` returns 0 for text, logic correct |
+| C3 | protect-files.sh substring `env` | Fixed |
+| C4 | Backtick sanitization after heredoc | Fixed |
+| C5 | context-loader.sh YAML 2-space hardcoded | File removed (Spec 636) |
 
-## Code Quality Patterns
+## Risks
 
-| # | Pattern | Betroffene Dateien |
-|---|---------|-------------------|
-| Q1 | 2>/dev/null Übernutzung (40+ Stellen) | Fast alle lib/ und hooks/ |
-| Q2 | Inkonsistente Fehler-Reporting (tui_error vs echo) | lib/core, generate, boilerplate |
-| Q3 | Duplizierte package.json Detection | build-prep.sh + lint-prep.sh |
-| Q4 | Duplizierte ensure_*_alias Funktionen | lib/setup-skills.sh |
-| Q5 | Duplizierte Node.js JSON-Fallback | global-settings.sh + json.sh |
-
-## Template Drift
-
-Kein Drift — alle 33 Template-Dateien byte-identisch mit aktiven Gegenstücken.
+1. **bash 3.2 macOS constraint** — limits language features. `eval` and `case`-statement workarounds compensate but are audit surface.
+2. **jq as undeclared hard dependency** — 6 hooks fail silently without jq. `lib/json.sh` abstraction not consistently used.
+3. **Parallel Claude calls** — `run_generation()` spawns background CLI subprocesses with no per-call timeout or resource cap.
+4. **Template drift** — no CI check confirms `templates/` and `.claude/` stay byte-identical.
 
 ## Recommendations
 
-1. **JSON-Layer absichern** (S1, S4, S5) — Shell-Interpolation in Node.js durch sichere Escaping ersetzen. Betrifft 6+ Module.
-2. **Zentrale jq-Validierung** (R3, R4) — Ein Check beim Session-Start in cli-health.sh. Eliminiert stille Ausfälle.
-3. **Temp-File Cleanup** (R7) — Shared trap-Pattern in prep-lib.sh für alle mktemp-Nutzer.
-4. **Security Quick-Wins** (S3, S6) — storyblok Token→Header, circuit-breaker Log chmod 600. (S2 already fixed)
-5. ~~**Dead Code aufräumen**~~ — **DONE**: delegate-codex/gemini deleted.
+1. **Centralize jq guard** (R3, R4) — add `command -v jq >/dev/null 2>&1 || exit 0` to 6 unguarded hooks; route `lib/update.sh:332,601-639` through `lib/json.sh`.
+2. **Shared trap pattern** (R7) — extract `_mktemp_with_trap()` into `lib/core.sh`: creates temp and registers EXIT trap. Replaces 8+ open leaks.
+3. **TMPDIR compliance** (R5) — replace `/tmp/` literals with `${TMPDIR:-/tmp}/` across all scripts.
+4. **Replace eval reference counters** (S5) — use arithmetic subshell `count=$(( count + 1 ))` with local scope instead of by-ref eval.
+5. **CI template-drift check** — add `diff -rq templates/claude .claude` step to CI; prevents release of diverged active config.

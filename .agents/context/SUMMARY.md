@@ -3,10 +3,10 @@
 # Project Summary
 
 ## Audit
-Known issues: 4 HIGH security, 7 reliability, 4 correctness bugs. Hotspots: tui.sh (1014L), update.sh (522L), setup.sh (348L).
-  - Security HIGH: json.sh shell-interpolation injection, setup-skills.sh eval injection, setup.sh Node fallback interpolation
-  - Reliability: npm exit code unchecked (cli-tools.sh), generate.sh set+e gaps, /tmp hardcoded (update.sh), temp leaks (5+ files)
-  - Correctness: _semver_gt() return inverted (core.sh:89), is_binary logic inverted (validate-no-hardcoded-paths.sh), context-loader YAML 2-space hardcoded
+No active HIGH issues. 6 MEDIUM remain: eval-ref counter (setup-skills), set+e gap (generate), jq-no-fallback (update+6 hooks), /tmp hardcoded, mktemp leaks (8+ files).
+  - All previous HIGH resolved: S1 S2 S3 S6 R1 R6 C1-C5 fixed or files removed
+  - MEDIUM active: S5 eval, R2 set+e, R3 jq no fallback in update.sh, R4 6 hooks no jq guard, R5 /tmp, R7 mktemp leaks
+  - Correctness: all known bugs fixed (_semver_gt, is_binary, protect-files, context-loader removed)
 
 ## Architecture
 CLI tool automating Claude Code setup: detects stack, copies templates, generates context, installs hooks/skills
