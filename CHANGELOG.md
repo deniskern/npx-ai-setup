@@ -10,12 +10,27 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
-### feat: SUMMARY.md @-Import statt context-loader.sh (Spec 636)
-- `build-summary.sh` Generator: AUDIT/ARCH Frontmatter + CONCEPT.md (wenn vorhanden) + graph.json Top-Hubs → `.agents/context/SUMMARY.md` (max 50 Zeilen)
-- `CLAUDE.md` + `templates/CLAUDE.md`: `@.agents/context/SUMMARY.md` unter Project Context — statisch gecacht
-- `context-refresh` Skill ruft `build-summary.sh` vor `.state`-Write
-- `context-loader.sh` Hook entfernt aus `.claude/hooks/` und beiden `settings.json`
-- `context-freshness.sh`: Commit-Counter statt Hash-Diff — warnt erst bei ≥5 Commits
+## [v2.1.3] — 2026-04-15
+
+<!-- slack-announcement -->
+:rocket: *@onedot/ai-setup v2.1.3*
+
+*Was ist neu:*
+:sparkles: *Features* — SUMMARY.md @-Import ersetzt context-loader.sh Hook (statisch gecacht, kein API-Call), `/health` Command ersetzt `/doctor`
+:wrench: *Fixes* — spec-stop-guard matched nicht mehr README.md (numerischer Prefix-Guard), tool-redirect.sh blockt keine piped git Commands mehr, test-Suite erkennt Lock-Konflikte als SKIP
+:gear: *Verbesserungen* — context-freshness warnt erst bei ≥5 Commits statt bei jedem Commit, Context7-Priorität in Web-Fetching-Regeln verstärkt
+
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
+- **Added**: `build-summary.sh` Generator — AUDIT/ARCH Frontmatter + CONCEPT.md + graph.json Top-Hubs → `.agents/context/SUMMARY.md` (max 50 Zeilen)
+- **Added**: `@.agents/context/SUMMARY.md` @-Import in `CLAUDE.md` + `templates/CLAUDE.md` — statisch gecacht, kein SessionStart-Hook-API-Call
+- **Added**: `context-refresh` Skill ruft `build-summary.sh` auf, `context-loader.sh` Hook entfernt
+- **Added**: `/health` Command (umbenennung von `/doctor`), orphan cleanup für veraltete doctor-Dateien
+- **Fixed**: `spec-stop-guard.sh` — numerischer Prefix-Guard verhindert false positives auf README.md und andere Nicht-Spec-Dateien
+- **Fixed**: `tool-redirect.sh` — POSIX-Regex ersetzt Perl-Syntax, `.git/`-Pfade werden nicht mehr blockiert
+- **Fixed**: `context-freshness.sh` — Commit-Counter statt Hash-Diff, Shallow-clone Guard, Threshold ≥5 Commits
+- **Fixed**: `tests/claude-runtime.sh` — Skill-Probe wird als SKIP statt FAIL gewertet bei Lock-Konflikt (parallele claude-Session)
 
 ## [v2.1.2] — 2026-04-13
 
