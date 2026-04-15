@@ -69,11 +69,7 @@ SPEC_SKILLS_MAP=(
 # Uses a function instead of declare -A for bash 3.2 compatibility (macOS)
 get_boilerplate_repo() {
   case "$1" in
-    shopify)        echo "sp-shopify-boilerplate" ;;
-    shopware)       echo "sw-shop-boilerplate" ;;
     nuxt-storyblok) echo "sb-nuxt-boilerplate" ;;
-    next)           echo "sb-next-boilerplate" ;;
-    storyblok)      echo "sb-storyblok-boilerplate" ;;
     *)         return 1 ;;
   esac
 }
