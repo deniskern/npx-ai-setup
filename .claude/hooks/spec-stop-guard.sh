@@ -14,6 +14,11 @@ WINDOW=60
 IN_PROGRESS=()
 for spec_file in "$PROJECT_ROOT"/specs/*.md; do
   [ -f "$spec_file" ] || continue
+  # Skip non-spec files (README, BOARD, etc.) — spec files have a numeric prefix
+  case "$(basename "$spec_file")" in
+    [0-9]*) ;;
+    *) continue ;;
+  esac
   if grep -qiE 'Status[^:]*:[[:space:]]*in-progress' "$spec_file" 2>/dev/null; then
     IN_PROGRESS+=("$(basename "$spec_file")")
   fi
