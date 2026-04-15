@@ -249,20 +249,36 @@ run_skill_probe
 skill_rc=$?
 set -e
 
-if [ "$skill_rc" -eq 0 ]; then
-  pass "skill probe completed"
-else
-  fail "skill probe completed"
-fi
+is_lock_conflict() {
+  local file="$1"
+  grep -q 'Lock acquisition failed\|EPERM.*claude\.json\|error_during_execution' "$file" 2>/dev/null
+}
 
-if is_not_logged_in "$SKILL_STDOUT"; then
-  if [ "$STRICT_RUNTIME" = "1" ]; then
-    fail "claude session authenticated for skill probe"
+if is_lock_conflict "$SKILL_STDOUT"; then
+  skip "skill probe completed (lock conflict — another claude session running)"
+  skip "context-load skill returned stack content"
+elif [ "$skill_rc" -eq 0 ]; then
+  pass "skill probe completed"
+  if is_not_logged_in "$SKILL_STDOUT"; then
+    if [ "$STRICT_RUNTIME" = "1" ]; then
+      fail "claude session authenticated for skill probe"
+    else
+      skip "claude session authenticated for skill probe"
+    fi
   else
-    skip "claude session authenticated for skill probe"
+    assert_contains_any "$SKILL_STDOUT" "context-load skill returned stack content" "# Stack" "Runtime & Distribution" "Bash CLI"
   fi
 else
-  assert_contains_any "$SKILL_STDOUT" "context-load skill returned stack content" "# Stack" "Runtime & Distribution" "Bash CLI"
+  fail "skill probe completed"
+  if is_not_logged_in "$SKILL_STDOUT"; then
+    if [ "$STRICT_RUNTIME" = "1" ]; then
+      fail "claude session authenticated for skill probe"
+    else
+      skip "claude session authenticated for skill probe"
+    fi
+  else
+    assert_contains_any "$SKILL_STDOUT" "context-load skill returned stack content" "# Stack" "Runtime & Distribution" "Bash CLI"
+  fi
 fi
 
 echo ""
