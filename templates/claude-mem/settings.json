@@ -1,0 +1,18 @@
+{
+  "CLAUDE_MEM_MODEL": "haiku",
+  "CLAUDE_MEM_PROVIDER": "claude",
+  "CLAUDE_MEM_WORKER_PORT": "37777",
+  "CLAUDE_MEM_CONTEXT_OBSERVATIONS": "30",
+  "CLAUDE_MEM_CONTEXT_SESSION_COUNT": "10",
+  "CLAUDE_MEM_CONTEXT_OBSERVATION_TYPES": "bugfix,decision,discovery",
+  "CLAUDE_MEM_CONTEXT_OBSERVATION_CONCEPTS": "how-it-works,gotcha",
+  "CLAUDE_MEM_CONTEXT_FULL_COUNT": "5",
+  "CLAUDE_MEM_CONTEXT_FULL_FIELD": "narrative",
+  "CLAUDE_MEM_CONTEXT_SHOW_READ_TOKENS": "true",
+  "CLAUDE_MEM_CONTEXT_SHOW_WORK_TOKENS": "true",
+  "CLAUDE_MEM_CONTEXT_SHOW_SAVINGS_AMOUNT": "true",
+  "CLAUDE_MEM_CONTEXT_SHOW_LAST_SUMMARY": "false",
+  "CLAUDE_MEM_CONTEXT_SHOW_LAST_MESSAGE": "false",
+  "CLAUDE_MEM_LOG_LEVEL": "WARN",
+  "CLAUDE_MEM_SKIP_TOOLS": "ListMcpResourcesTool,SlashCommand,Skill,TodoWrite,AskUserQuestion,Read,Glob,Grep,BashOutput,KillShell,Monitor,WebFetch,WebSearch,mcp__context7__resolve-library-id,mcp__context7__query-docs,mcp__plugin_claude-mem_mcp-search__search,mcp__plugin_claude-mem_mcp-search__smart_search,mcp__plugin_claude-mem_mcp-search__get_observations,mcp__plugin_claude-mem_mcp-search__timeline,mcp__plugin_claude-mem_mcp-search__smart_outline,mcp__plugin_claude-mem_mcp-search__smart_unfold"
+}

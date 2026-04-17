@@ -35,6 +35,30 @@ install_claude_mem() {
       echo "  📋 Claude-Mem registered — teammates will be prompted to install when they trust this project"
     fi
   fi
+
+  install_claude_mem_settings
+}
+
+# Claude-Mem tuned settings — reduces rate-limit burn and token overhead
+install_claude_mem_settings() {
+  local mem_home="${HOME}/.claude-mem"
+  local target="${mem_home}/settings.json"
+  local source_tpl="${TPL:-${SCRIPT_DIR:-.}/templates}/claude-mem/settings.json"
+
+  mkdir -p "$mem_home"
+
+  if [ -f "$target" ]; then
+    echo "  🧠 Claude-Mem settings already exist (${target}) — skipping"
+    return 0
+  fi
+
+  if [ ! -f "$source_tpl" ]; then
+    echo "  ⚠️  Claude-Mem settings template missing: ${source_tpl}"
+    return 1
+  fi
+
+  cp "$source_tpl" "$target"
+  echo "  🧠 Claude-Mem settings installed → ${target} (haiku, 30 obs, skip noise tools)"
 }
 
 # Official Claude Code Plugins (code-review, feature-dev, etc.)
