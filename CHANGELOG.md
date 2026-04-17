@@ -10,17 +10,42 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v2.2.0] — 2026-04-17
+
+<!-- slack-announcement -->
+:rocket: *@onedot/ai-setup v2.2.0*
+
+*Was ist neu:*
+:compass: *Claude Code native Alignment* — Setup folgt ab jetzt konsequent den neuen Claude Code Standards (2.1.89 bis 2.1.112). Viele eigene Hooks und Workarounds raus, Native Features rein.
+:sparkles: *Features* — PreCompact-Hook preserviert Session-State vor AutoCompact (2.1.105+), Bash-Matcher mit `if`-condition reduziert Hook-Overhead ~70%, Lockfile Write-Protection schliesst Bypass via Write-Tool, Model-Upgrade auf `claude-opus-4-7`
+:broom: *Cleanup* — 13 Skills + 4 Hooks + 2 Rule-Files entfernt, templates/claude/settings.json 1:1 mit lokalem Setup synchronisiert
+:wrench: *Fixes* — spec-stop-guard aus PreCompact-Chain raus (blockte AutoCompact bei in-progress Specs, Codex-Review P1), disableSkillShellExecution-Warning in Template dokumentiert
+
+*Update:* `npx github:onedot-digital-crew/npx-ai-setup`
+<!-- /slack-announcement -->
+
 ### Removed
 - Skills: `/spec-run`, `/spec-run-all`, `/setup-optimize`, `/debug`, `/build-fix`, `/lint`, `/scan`, `/techdebt`, `/health`, `/update`, `/context-refresh`, `/context-load`, `/apply-learnings` — verschlankt auf 22 user-invokable slash commands
-- Hooks: `memory-recall.sh`, `transcript-ingest.sh`, `precompact-guidance.sh`, `notify.sh` — redundant seit claude-mem `SessionStart`-Hook Events konsumiert
+- Hooks: `memory-recall.sh`, `transcript-ingest.sh`, `notify.sh` — redundant seit claude-mem `SessionStart`-Hook Events konsumiert
 - Rules: `terse-output.md` als Projekt-Rule entfernt (bleibt Global-Rule); hooks/README.md Referenzen auf entfernte `context-monitor.sh`, `file-index.sh`, `subagent-*`, `tdd-checker.sh`, `permission-denied-log.sh` bereinigt
 
+### Added
+- `precompact-guidance.sh` Hook via PreCompact Event — preserviert Session-Intent/Files/Decisions/NextSteps vor AutoCompact (Claude Code 2.1.105+)
+- Lockfile Write-Protection: `Write(**/package-lock.json|yarn.lock|pnpm-lock.yaml|bun.lockb|composer.lock)` in `permissions.deny` — schließt Bypass via Write-Tool
+- `Bash` matcher mit `if`-condition für `tool-redirect.sh` — reduziert Hook-Overhead ~70% durch conditional invocation (nur bei grep/find/cat/head/tail/git)
+- `templates/CLAUDE.md`: `disableSkillShellExecution` Warning Section
+
 ### Changed
+- Model-Upgrade auf `claude-opus-4-7` (production-ready seit 2.1.96)
 - `.claude/rules/agents.md`: 82 → 31 Zeilen — TDD-Tutorials und Modell-Boilerplate entfernt, Kern-Dispatch-Regeln behalten
 - `.claude/rules/testing.md`: 66 → 30 Zeilen — Standard-Test-Knowledge raus, nur noch projektspezifische Policies
-- `settings.json` Hook-Config gestrippt: UserPromptSubmit 3 → 2 Hooks, Stop 2 → 1, Notification + PreCompact komplett entfernt
+- `settings.json` Hook-Config gestrippt: UserPromptSubmit 3 → 2 Hooks, Stop 2 → 1, Notification komplett entfernt
+- `templates/claude/settings.json` 1:1-Sync mit lokaler `settings.json` — Hook-Registrierungen, permissions.deny, if-conditions identisch
 - `README.md` + `WORKFLOW-GUIDE.md` + `hooks/README.md`: stale refs auf entfernte Commands/Hooks entfernt, Inventar synchronisiert
-- `lib/update.sh` Cross-Project-Cleanup-Array um 9 Einträge erweitert für saubere Migration auf Client-Projekten
+- `lib/update.sh` Cross-Project-Cleanup-Array um 9 Einträge erweitert; `precompact-guidance.sh` aus Orphan-Liste entfernt (jetzt registriert)
+
+### Fixed
+- PreCompact-Chain-Blocker: `spec-stop-guard.sh` aus `PreCompact`-Hook entfernt — verhinderte Auto-Compaction bei in-progress Specs via exit 2 (Codex-Review P1)
 
 ## [v2.1.3] — 2026-04-15
 

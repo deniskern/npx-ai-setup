@@ -36,6 +36,9 @@ Always prefix shell commands with `rtk`. Hook rewrites automatically where possi
 ## Build Artifacts
 Never read/search: `dist/`, `.output/`, `.nuxt/`, `.next/`, `build/`, `coverage/`. Blocked via `permissions.deny`.
 
+## Skill Shell Execution
+Skills in this setup use `!` shell-exec prefix in prep scripts (ci, test, doctor, etc.). If org policy sets `disableSkillShellExecution: true`, those skills fail silently. Fallback: run the `.sh` directly via Bash tool.
+
 ## Destructive Operations
 Before confirming delete/revert/disable as "correct": trace the actual code path with file:line. Never `dangerouslyDisableSandbox: true` without explicit user confirmation.
 

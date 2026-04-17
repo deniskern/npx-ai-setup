@@ -1,7 +1,7 @@
 ---
 name: security-reviewer
-description: Performs a security audit focused on OWASP Top 10, secrets detection, and dependency vulnerabilities. Reports HIGH/MEDIUM confidence findings with fix recommendations. Stack-aware for Shopify Liquid, Vue/Nuxt, and Shell scripts.
-tools: Read, Glob, Grep, Bash, Write, Edit
+description: Security audit for authentication, authorization, secrets, SQL injection, XSS, CSRF, SSRF, and OWASP Top 10. Triggers on "security review", "OWASP", "pen-test", "vulnerability scan", "secret leak". Stack-aware for Shopify Liquid, Vue/Nuxt, Shell. Reports only — never fixes.
+tools: Read, Glob, Grep, Bash
 model: sonnet
 max_turns: 20
 memory: project
