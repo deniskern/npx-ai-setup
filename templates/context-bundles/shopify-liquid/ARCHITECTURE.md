@@ -24,3 +24,20 @@ abstract: "Shopify theme directory layout. Liquid objects flow from section sche
 - Theme settings: read via `settings.color_accent` (from settings_data.json)
 - Metafields: `product.metafields.custom.field_name`
 - Sections everywhere: JSON template references section handles
+
+## Liquid Dependency Graph
+
+`.agents/context/liquid-graph.json` maps render/include/section/schema-block edges across all Liquid files.
+Build: `bash lib/build-liquid-graph.sh $PWD` — writes `.agents/context/liquid-graph.json` (<2s).
+Refresh: `bash .claude/scripts/liquid-graph-refresh.sh` — no-op if graph is up to date.
+
+```bash
+# Top rendered snippets
+jq -r '.stats.top_rendered_snippets[] | "\(.count)x \(.file)"' .agents/context/liquid-graph.json | head -10
+
+# Who renders snippets/product-card.liquid?
+jq -r --arg s "snippets/product-card.liquid" '.edges[] | select(.target==$s) | .source' .agents/context/liquid-graph.json
+
+# Orphan snippets (unreferenced)
+jq -r '.stats.orphans[]' .agents/context/liquid-graph.json
+```

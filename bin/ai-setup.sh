@@ -133,6 +133,12 @@ customize_settings_for_stack
 tui_step "Writing installation metadata"
 write_metadata
 update_gitignore
+
+# Detect stack profile for claudeignore installer
+STACK_PROFILE="default"
+if [ -f "$SCRIPT_DIR/lib/detect-stack.sh" ]; then
+  STACK_PROFILE=$(bash "$SCRIPT_DIR/lib/detect-stack.sh" "$PWD" 2>/dev/null | grep '^stack_profile=' | cut -d= -f2 || echo "default")
+fi
 install_claudeignore
 
 # Plugins & extensions
@@ -212,13 +218,7 @@ fi
 show_installation_summary
 show_next_steps
 
-# Generate project context files (.agents/context/STACK.md, ARCHITECTURE.md, CONVENTIONS.md)
-# Step 5: detect stack profile and install bundle if available, else fall back to LLM
-STACK_PROFILE="default"
-if [ -f "$SCRIPT_DIR/lib/detect-stack.sh" ]; then
-  STACK_PROFILE=$(bash "$SCRIPT_DIR/lib/detect-stack.sh" "$PWD" 2>/dev/null | grep '^stack_profile=' | cut -d= -f2 || echo "default")
-fi
-
+# Install context bundle for detected stack profile (STACK_PROFILE set above)
 BUNDLE_DIR="$SCRIPT_DIR/templates/context-bundles/${STACK_PROFILE}"
 CONTEXT_DIR=".agents/context"
 _BUNDLE_INSTALLED=0
@@ -254,6 +254,16 @@ elif [ "$AI_CLI" = "claude" ]; then
     tui_spinner_stop ok "Project context files refreshed"
   else
     tui_spinner_stop warn "Project context refresh skipped"
+  fi
+fi
+
+# Liquid dependency graph for shopify-liquid profile
+if [ "$STACK_PROFILE" = "shopify-liquid" ] && [ -f "$SCRIPT_DIR/lib/build-liquid-graph.sh" ]; then
+  tui_step "Building Liquid dependency graph"
+  if bash "$SCRIPT_DIR/lib/build-liquid-graph.sh" "$PWD" 2>/dev/null; then
+    tui_success "Liquid graph built (.agents/context/liquid-graph.json)"
+  else
+    tui_warn "Liquid graph skipped (non-fatal)"
   fi
 fi
 

@@ -150,3 +150,15 @@ main() {
 }
 
 main
+
+# liquid_graph_hint — prints a build hint when profile=shopify-liquid
+# Called by external scripts; NOT invoked inside detect-stack itself (detect is read-only).
+# Usage: liquid_graph_hint [project-dir]
+liquid_graph_hint() {
+  local dir="${1:-$PWD}"
+  local profile
+  profile=$(bash "$(dirname "$0")/detect-stack.sh" "$dir" 2>/dev/null | grep '^stack_profile=' | cut -d= -f2 || echo "default")
+  if [ "$profile" = "shopify-liquid" ]; then
+    echo "hint: run 'bash lib/build-liquid-graph.sh $dir' to build .agents/context/liquid-graph.json"
+  fi
+}
