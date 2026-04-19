@@ -238,6 +238,7 @@ Rules:
 - Use markdown headers and bullet points.
 - If information is not available, write 'Not determined from available context.'
 - No umlauts. English only.
+- IMPORTANT: If an existing file starts with <!-- bundle: ... --> do NOT overwrite it. Skip that file and only create the missing ones.
 
 --- package.json ---
 $CTX_PKG

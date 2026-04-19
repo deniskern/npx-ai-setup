@@ -213,7 +213,41 @@ show_installation_summary
 show_next_steps
 
 # Generate project context files (.agents/context/STACK.md, ARCHITECTURE.md, CONVENTIONS.md)
-if [ "$AI_CLI" = "claude" ]; then
+# Step 5: detect stack profile and install bundle if available, else fall back to LLM
+STACK_PROFILE="default"
+if [ -f "$SCRIPT_DIR/lib/detect-stack.sh" ]; then
+  STACK_PROFILE=$(bash "$SCRIPT_DIR/lib/detect-stack.sh" "$PWD" 2>/dev/null | grep '^stack_profile=' | cut -d= -f2 || echo "default")
+fi
+
+BUNDLE_DIR="$SCRIPT_DIR/templates/context-bundles/${STACK_PROFILE}"
+CONTEXT_DIR=".agents/context"
+_BUNDLE_INSTALLED=0
+
+if [ "$STACK_PROFILE" != "default" ] && [ -d "$BUNDLE_DIR" ]; then
+  tui_section "Project Context" "Installing $STACK_PROFILE context bundle (zero LLM cost)"
+  mkdir -p "$CONTEXT_DIR"
+  _bundle_skip=0
+  for _f in STACK.md ARCHITECTURE.md CONVENTIONS.md; do
+    if [ -f "$CONTEXT_DIR/$_f" ] && ! grep -q "<!-- bundle:" "$CONTEXT_DIR/$_f" 2>/dev/null; then
+      # Step 6: file exists and was manually edited (no bundle marker) — don't overwrite
+      tui_warn "$_f already exists (custom). Saving bundle as ${_f}.new"
+      cp "$BUNDLE_DIR/$_f" "$CONTEXT_DIR/${_f}.new"
+      _bundle_skip=$((_bundle_skip + 1))
+    else
+      cp "$BUNDLE_DIR/$_f" "$CONTEXT_DIR/$_f"
+    fi
+  done
+  if [ -f "$SCRIPT_DIR/lib/generate-summary.sh" ]; then
+    bash "$SCRIPT_DIR/lib/generate-summary.sh" "$BUNDLE_DIR" "$CONTEXT_DIR" 2>/dev/null || true
+  fi
+  _BUNDLE_INSTALLED=1
+  if [ "$_bundle_skip" -gt 0 ]; then
+    tui_warn "Bundle installed. $_bundle_skip file(s) saved as .new (review and rename if wanted)"
+  else
+    tui_success "Context bundle installed (${STACK_PROFILE})"
+  fi
+  tui_hint "Edit .agents/context/*.md to add project-specific details. Remove <!-- bundle: --> marker to prevent future overwrites."
+elif [ "$AI_CLI" = "claude" ]; then
   tui_section "Project Context" "Refreshing STACK.md, ARCHITECTURE.md, and CONVENTIONS.md"
   tui_spinner_start "Generating project context files"
   if claude --agent context-refresher "Analyze this project and generate .agents/context/STACK.md, .agents/context/ARCHITECTURE.md, and .agents/context/CONVENTIONS.md." >/dev/null 2>&1; then
@@ -221,5 +255,8 @@ if [ "$AI_CLI" = "claude" ]; then
   else
     tui_spinner_stop warn "Project context refresh skipped"
   fi
+fi
+
+if [ "$AI_CLI" = "claude" ]; then
   tui_hint "Run /analyze to generate PATTERNS.md and AUDIT.md for this project."
 fi

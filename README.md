@@ -275,6 +275,23 @@ Team sharing: marketplace plugins via `extraKnownMarketplaces` in `.claude/setti
 
 ---
 
+## Context Bundles
+
+When a known stack is detected, `npx ai-setup` copies pre-written context files into `.agents/context/` — no LLM call needed.
+
+| Profile | Trigger |
+|---------|---------|
+| `nuxt-storyblok` | nuxt.config + @storyblok/nuxt in package.json |
+| `shopify-liquid` | ≥5 .liquid files in sections/snippets/templates |
+| `laravel` | artisan file or laravel/framework in composer.json |
+| `mcp-server` | @modelcontextprotocol/sdk in package.json |
+| `nextjs` | next.config or next in package.json |
+| `n8n` | .n8n/ dir or n8n in package.json |
+
+Files with `<!-- bundle: ... -->` header are managed. Remove the marker to prevent future overwrites on `--patch`. Custom profiles: add to `templates/context-bundles/` — see `templates/context-bundles/README.md`.
+
+---
+
 ## Token Optimization
 
 ### rtk (Rust Token Killer)
