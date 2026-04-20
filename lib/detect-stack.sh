@@ -1,12 +1,55 @@
 #!/bin/bash
 # detect-stack.sh — detect stack profile from project directory
 # Usage: detect-stack.sh [project-dir]
-# Output: stack_profile=<profile> on stdout
-# Profiles: nuxt-storyblok | shopify-liquid | laravel | mcp-server | nextjs | n8n | default
+# Output: stack_profile=<profile> on stdout, graphify_candidate=true|false on stdout
+# Profiles: nuxt-storyblok | nuxtjs | shopify-liquid | laravel | nextjs | default
 
 set -e
 
 PROJECT_DIR="${1:-$PWD}"
+
+# Count files matching a glob extension within a directory (max depth 3)
+_count_files() {
+  local dir="$1"
+  local ext="$2"
+  local count=0
+  if [ -d "$dir" ]; then
+    count=$(find "$dir" -maxdepth 3 -name "$ext" 2>/dev/null | wc -l | tr -d ' ')
+  fi
+  echo "$count"
+}
+
+# Determine if this project is a good graphify candidate.
+# Returns 0 (true) when the codebase has enough typed/templated files to benefit from a semantic graph.
+# Thresholds: Nuxt ≥50 .vue, Shopify ≥30 .liquid, Laravel ≥100 .php, JS/TS ≥100 .ts/.tsx/.js
+_detect_graphify_candidate() {
+  local dir="$1"
+
+  # .vue files — Nuxt/Vue projects
+  local vue_count
+  vue_count=$(_count_files "$dir" "*.vue")
+  [ "$vue_count" -ge 50 ] && return 0
+
+  # .liquid files — Shopify
+  local liquid_count
+  liquid_count=$(_count_files "$dir" "*.liquid")
+  [ "$liquid_count" -ge 30 ] && return 0
+
+  # .php files — Laravel / PHP projects
+  local php_count
+  php_count=$(_count_files "$dir" "*.php")
+  [ "$php_count" -ge 100 ] && return 0
+
+  # TypeScript / JavaScript — modern JS/TS projects
+  local ts_count tsx_count js_count total_ts
+  ts_count=$(_count_files "$dir" "*.ts")
+  tsx_count=$(_count_files "$dir" "*.tsx")
+  js_count=$(_count_files "$dir" "*.js")
+  total_ts=$((ts_count + tsx_count + js_count))
+  [ "$total_ts" -ge 100 ] && return 0
+
+  return 1
+}
 
 # Count liquid files in a given subdirectory
 _count_liquid_files() {
@@ -129,6 +172,13 @@ main() {
   fi
 
   echo "stack_profile=${profile}"
+
+  # Graphify candidate detection
+  if _detect_graphify_candidate "$dir"; then
+    echo "graphify_candidate=true"
+  else
+    echo "graphify_candidate=false"
+  fi
 }
 
 main

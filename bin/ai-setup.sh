@@ -24,6 +24,9 @@ TPL="$SCRIPT_DIR/templates"
 
 # Parse flags
 PATCH_PATTERN=""
+FORCE_SKIP_GRAPHIFY=false
+INSTALL_GRAPHIFY=no
+FORCE_ALL_SKILLS=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --patch)
@@ -32,20 +35,27 @@ while [[ $# -gt 0 ]]; do
         exit 1
       fi
       PATCH_PATTERN="$2"; shift 2 ;;
+    --force-skip-graphify)
+      FORCE_SKIP_GRAPHIFY=true; shift ;;
+    --force-all-skills)
+      FORCE_ALL_SKILLS=1; shift ;;
+    --relax-context-caps)
+      export CONTEXT_CAPS_RELAX=1; shift ;;
     --reset|--system|--regenerate|--audit|--force-skills)
       echo "❌ Flag '$1' is not supported. Use the interactive setup/update flow instead."
       exit 1
       ;;
     --*)
-      echo "❌ Unsupported flag '$1'. Supported flags: --patch <pattern>"
+      echo "❌ Unsupported flag '$1'. Supported flags: --patch <pattern> | --force-skip-graphify | --force-all-skills | --relax-context-caps"
       exit 1
       ;;
     *)
-      echo "❌ Unexpected argument '$1'. Supported flags: --patch <pattern>"
+      echo "❌ Unexpected argument '$1'. Supported flags: --patch <pattern> | --force-skip-graphify | --force-all-skills | --relax-context-caps"
       exit 1
       ;;
   esac
 done
+export FORCE_ALL_SKILLS
 
 # Load modules
 source "$SCRIPT_DIR/lib/_loader.sh"
@@ -61,6 +71,7 @@ source_lib "update.sh"
 source_lib "setup.sh"
 source_lib "setup-skills.sh"
 source_lib "setup-compat.sh"
+source_lib "skill-filter.sh"
 source_lib "plugins.sh"
 source_lib "boilerplate.sh"
 trap 'tui_cleanup' EXIT INT TERM
@@ -134,19 +145,41 @@ tui_step "Writing installation metadata"
 write_metadata
 update_gitignore
 
-# Detect stack profile for claudeignore installer
+# Detect stack profile + graphify candidate (used for claudeignore + graphify prompt)
 STACK_PROFILE="default"
+GRAPHIFY_CANDIDATE="false"
 if [ -f "$SCRIPT_DIR/lib/detect-stack.sh" ]; then
-  STACK_PROFILE=$(bash "$SCRIPT_DIR/lib/detect-stack.sh" "$PWD" 2>/dev/null | grep '^stack_profile=' | cut -d= -f2 || echo "default")
+  _detect_out=$(bash "$SCRIPT_DIR/lib/detect-stack.sh" "$PWD" 2>/dev/null || true)
+  STACK_PROFILE=$(printf '%s\n' "$_detect_out" | grep '^stack_profile=' | cut -d= -f2 || echo "default")
+  GRAPHIFY_CANDIDATE=$(printf '%s\n' "$_detect_out" | grep '^graphify_candidate=' | cut -d= -f2 || echo "false")
 fi
+export STACK_PROFILE
 install_claudeignore
+
+# Graphify opt-in (only when candidate, not skipped, and terminal is interactive)
+if [ "$GRAPHIFY_CANDIDATE" = "true" ] && [ "$FORCE_SKIP_GRAPHIFY" = "false" ] && [ -t 0 ]; then
+  if [ -f ".claude/skills/graphify/SKILL.md" ] || [ -f ".claude/skills/graphify.md" ]; then
+    tui_info "Graphify skill already installed — skipping prompt"
+    INSTALL_GRAPHIFY=yes
+  else
+    tui_section "Knowledge Graph" "Optional: Graphify semantic knowledge graph (opt-in)"
+    if ask_yes_no_menu \
+      "Activate Graphify knowledge graph for this project?" \
+      "Yes" "Install graphify skill now (requires: pipx install graphifyy)" \
+      "No" "Skip — can be added later via --patch graphify" \
+      "yes"; then
+      INSTALL_GRAPHIFY=yes
+    fi
+  fi
+fi
+export INSTALL_GRAPHIFY
 
 # Plugins & extensions
 tui_section "Plugins & Extensions" "Marketplace plugins, MCP servers, and editor-side helpers"
 
 install_claude_mem
 install_official_plugins
-install_context7
+install_mcp_suggestions
 show_plugin_summary
 
 # Global skills (stack-specific skills come from boilerplate or /find-skills)
@@ -154,6 +187,11 @@ if [ "$SKIP_SKILLS" != "true" ]; then
   if ! run_skill_installation; then
     tui_warn "Shared skill installation completed with warnings"
   fi
+fi
+
+# Graphify skill install (opt-in, only when user confirmed above)
+if [ "${INSTALL_GRAPHIFY:-no}" = "yes" ]; then
+  install_graphify_skill
 fi
 
 # OpenCode compatibility (generates opencode.json from .mcp.json)

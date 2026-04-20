@@ -95,22 +95,30 @@ install_official_plugins() {
   done
 }
 
-# Context7 MCP Server (up-to-date library docs)
-install_context7() {
-  # Create or merge .mcp.json
-  CTX7_CONFIG='{"mcpServers":{"context7":{"command":"npx","args":["-y","@upstash/context7-mcp"]}}}'
+# Add or skip a single MCP entry in .mcp.json (idempotent).
+# Usage: _mcp_add_entry NAME COMMAND ARGS_JSON_ARRAY
+_mcp_add_entry() {
+  local name="$1" cmd="$2" args_json="$3"
+  local entry
+  entry="{\"mcpServers\":{\"${name}\":{\"command\":\"${cmd}\",\"args\":${args_json}}}}"
 
   if [ -f .mcp.json ]; then
-    if grep -q '"context7"' .mcp.json 2>/dev/null; then
-      echo "  📚 Context7 already configured in .mcp.json, skipping."
-    else
-      _json_merge .mcp.json "$CTX7_CONFIG"
-      echo "  📚 Context7 MCP server added to .mcp.json"
+    if grep -q "\"${name}\"" .mcp.json 2>/dev/null; then
+      echo "  📚 ${name} already in .mcp.json, skipping."
+      return 0
     fi
+    _json_merge .mcp.json "$entry"
+    echo "  📚 ${name} MCP server added to .mcp.json"
   else
-    echo "$CTX7_CONFIG" > .mcp.json
-    echo "  📚 Context7 MCP server configured in .mcp.json"
+    echo "$entry" > .mcp.json
+    echo "  📚 ${name} MCP server configured in .mcp.json"
   fi
+}
+
+# Context7 MCP Server (up-to-date library docs)
+# Called directly in non-interactive paths; install_mcp_suggestions wraps this for interactive flows.
+install_context7() {
+  _mcp_add_entry "context7" "npx" '["-y","@upstash/context7-mcp"]'
 
   # Add Context7 rule to CLAUDE.md
   if [ -f CLAUDE.md ] && ! grep -q "context7" CLAUDE.md 2>/dev/null; then
@@ -121,6 +129,91 @@ Always use Context7 MCP when you need library/API documentation, code generation
 setup or configuration steps. Add "use context7" to prompts or it will be auto-invoked.
 CTX7EOF
     echo "  📚 Context7 rule added to CLAUDE.md"
+  fi
+}
+
+# MCP suggestion phase — reads mcp-defaults.json, prompts Y/N per server, merges accepted entries.
+# Uses SELECTED_SYSTEM (set by select_boilerplate_system) as the stack profile.
+# Falls back to install_context7 silently when not in interactive mode (no tty).
+install_mcp_suggestions() {
+  local mcp_suggest="${SCRIPT_DIR}/lib/mcp-suggest.sh"
+  local stack_profile="${SELECTED_SYSTEM:-default}"
+
+  # Non-interactive: fall back to silent install of context7 only
+  if [ ! -t 0 ] || [ ! -f "$mcp_suggest" ]; then
+    install_context7
+    return 0
+  fi
+
+  local mcp_list
+  mcp_list=$(bash "$mcp_suggest" "$stack_profile" 2>/dev/null) || mcp_list="[]"
+
+  # If jq is not available, fall back to silent install
+  if ! command -v jq >/dev/null 2>&1 && ! command -v node >/dev/null 2>&1; then
+    install_context7
+    return 0
+  fi
+
+  # Count entries
+  local mcp_count
+  if command -v jq >/dev/null 2>&1; then
+    mcp_count=$(printf '%s' "$mcp_list" | jq 'length' 2>/dev/null || echo 0)
+  else
+    mcp_count=$(node -e "process.stdout.write(String(JSON.parse(process.argv[1]).length))" "$mcp_list" 2>/dev/null || echo 0)
+  fi
+
+  if [ "$mcp_count" -eq 0 ]; then
+    return 0
+  fi
+
+  tui_section "MCP Servers" "Suggested servers for this project (${stack_profile})"
+
+  local idx=0
+  while [ "$idx" -lt "$mcp_count" ]; do
+    local mcp_name mcp_desc mcp_cmd mcp_args
+    if command -v jq >/dev/null 2>&1; then
+      mcp_name=$(printf '%s' "$mcp_list" | jq -r ".[$idx].name")
+      mcp_desc=$(printf '%s' "$mcp_list" | jq -r ".[$idx].description")
+      mcp_cmd=$(printf '%s' "$mcp_list"  | jq -r ".[$idx].command")
+      mcp_args=$(printf '%s' "$mcp_list" | jq -c ".[$idx].args")
+    else
+      mcp_name=$(node -e "const d=JSON.parse(process.argv[1]);process.stdout.write(d[$idx].name)"        "$mcp_list" 2>/dev/null)
+      mcp_desc=$(node -e "const d=JSON.parse(process.argv[1]);process.stdout.write(d[$idx].description)" "$mcp_list" 2>/dev/null)
+      mcp_cmd=$(node -e  "const d=JSON.parse(process.argv[1]);process.stdout.write(d[$idx].command)"     "$mcp_list" 2>/dev/null)
+      mcp_args=$(node -e  "const d=JSON.parse(process.argv[1]);process.stdout.write(JSON.stringify(d[$idx].args))" "$mcp_list" 2>/dev/null)
+    fi
+
+    # Skip if already present in .mcp.json
+    if [ -f .mcp.json ] && grep -q "\"${mcp_name}\"" .mcp.json 2>/dev/null; then
+      echo "  📚 ${mcp_name} already configured, skipping."
+      idx=$((idx + 1))
+      continue
+    fi
+
+    if ask_yes_no_menu \
+      "Add ${mcp_name} to .mcp.json?" \
+      "Yes" "${mcp_name} — ${mcp_desc}" \
+      "No"  "Skip this MCP server" \
+      "yes"; then
+      _mcp_add_entry "$mcp_name" "$mcp_cmd" "$mcp_args"
+    else
+      echo "  📚 ${mcp_name} skipped."
+    fi
+
+    idx=$((idx + 1))
+  done
+
+  # Ensure the context7 CLAUDE.md rule is added after interactive install
+  if [ -f .mcp.json ] && grep -q '"context7"' .mcp.json 2>/dev/null; then
+    if [ -f CLAUDE.md ] && ! grep -q "context7" CLAUDE.md 2>/dev/null; then
+      cat >> CLAUDE.md << 'CTX7EOF'
+
+## Documentation Lookup
+Always use Context7 MCP when you need library/API documentation, code generation,
+setup or configuration steps. Add "use context7" to prompts or it will be auto-invoked.
+CTX7EOF
+      echo "  📚 Context7 rule added to CLAUDE.md"
+    fi
   fi
 }
 

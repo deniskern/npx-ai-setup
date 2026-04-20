@@ -1,6 +1,6 @@
 # Spec: Graphify Knowledge Graph als opt-in Skill
 
-> **Spec ID**: 637 | **Created**: 2026-04-19 | **Status**: draft | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 637 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: medium | **Branch**: worktree-agent-a1512785
 
 ## Goal
 Graphify (Karpathy /raw-style Knowledge Graph) als opt-in Skill in npx-ai-setup integrieren, aktiviert via Stack-Detection, genutzt von Claude zur Token-sparenden Code-Navigation in Zielprojekten.
@@ -17,23 +17,23 @@ Ziel-Primary-Stacks profitieren unterschiedlich:
 - MCP/N8N/kleine Repos: skip
 
 ## Steps
-- [ ] Step 1: `lib/detect-stack.sh` um `graphify_candidate` Output erweitern (Stack + file-count thresholds: Nuxt ≥50 `.vue`, Shopify ≥30 `.liquid`, Laravel ≥100 `.php`, JS/TS ≥100 `.ts/.tsx/.js`)
-- [ ] Step 2: Template `templates/skills/graphify.md` erstellen — how-to-use für Claude: `jq` patterns für Component-Dependencies, `graphify query`/`path`/`explain` Wrapper, MCP-Modus Hinweis
-- [ ] Step 3: `ai-setup.sh` nach Stack-Detect: wenn `graphify_candidate=true` → `AskUserQuestion`-style Prompt "Graphify Knowledge Graph aktivieren? [Y/n/skip]"; bei Y Skill-Datei kopieren
-- [ ] Step 4: `lib/install-skills.sh` um Graphify-Skill-Install erweitern (idempotent, respektiert `--patch` flag)
-- [ ] Step 5: `.claude/rules/agents.md` Template ergänzen: jq-Snippets für graphify graph.json (ergänzend zum existierenden JS/TS-Import-Graph), klare Abgrenzung der beiden Graphen
-- [ ] Step 6: `.claude/scripts/doctor.sh` Check: wenn `graphify` Skill installiert aber `command -v graphify` fehlt → Warning + Hinweis `pipx install graphifyy`
-- [ ] Step 7: `README.md` im npx-ai-setup Repo: Abschnitt "Optional: Knowledge Graph via Graphify" mit Install-One-Liner und Stack-Thresholds
-- [ ] Step 8: Smoke-Test: ai-setup in `~/Sites/sp-alpensattel` (Shopify) laufen lassen, prüfen dass Prompt erscheint, Skill korrekt installiert wird, doctor grünes Licht gibt
-- [ ] Step 9: Negative-Test: ai-setup in kleinem Repo (<20 files) — Prompt darf NICHT erscheinen
+- [x] Step 1: `lib/detect-stack.sh` um `graphify_candidate` Output erweitern (Stack + file-count thresholds: Nuxt ≥50 `.vue`, Shopify ≥30 `.liquid`, Laravel ≥100 `.php`, JS/TS ≥100 `.ts/.tsx/.js`)
+- [x] Step 2: Template `templates/skills/graphify.md` erstellen — how-to-use für Claude: `jq` patterns für Component-Dependencies, `graphify query`/`path`/`explain` Wrapper, MCP-Modus Hinweis
+- [x] Step 3: `ai-setup.sh` nach Stack-Detect: wenn `graphify_candidate=true` → `AskUserQuestion`-style Prompt "Graphify Knowledge Graph aktivieren? [Y/n/skip]"; bei Y Skill-Datei kopieren
+- [x] Step 4: `lib/install-skills.sh` um Graphify-Skill-Install erweitern (idempotent, respektiert `--patch` flag)
+- [x] Step 5: `.claude/rules/agents.md` Template ergänzen: jq-Snippets für graphify graph.json (ergänzend zum existierenden JS/TS-Import-Graph), klare Abgrenzung der beiden Graphen
+- [x] Step 6: `.claude/scripts/doctor.sh` Check: wenn `graphify` Skill installiert aber `command -v graphify` fehlt → Warning + Hinweis `pipx install graphifyy`
+- [x] Step 7: `README.md` im npx-ai-setup Repo: Abschnitt "Optional: Knowledge Graph via Graphify" mit Install-One-Liner und Stack-Thresholds
+- [x] Step 8: Smoke-Test: ai-setup in `~/Sites/sp-alpensattel` (Shopify) laufen lassen, prüfen dass Prompt erscheint, Skill korrekt installiert wird, doctor grünes Licht gibt
+- [x] Step 9: Negative-Test: ai-setup in kleinem Repo (<20 files) — Prompt darf NICHT erscheinen
 
 ## Acceptance Criteria
-- [ ] `bash lib/detect-stack.sh` gibt `graphify_candidate=true|false` in einem Nuxt-Projekt mit ≥50 `.vue` zurück (`grep 'graphify_candidate=true'` muss matchen)
-- [ ] `bash ai-setup.sh --dry-run` in Shopify-Theme mit ≥30 `.liquid` zeigt Graphify-Prompt; in leerem tmp-Repo zeigt ihn nicht
-- [ ] Nach Skill-Install: `.claude/skills/graphify.md` existiert und enthält `jq` query examples
-- [ ] `bash .claude/scripts/doctor.sh` ohne installiertes graphify-binary zeigt Warning mit dem pipx-Hinweis
-- [ ] `shellcheck lib/detect-stack.sh lib/install-skills.sh ai-setup.sh` passt
-- [ ] `bash .claude/scripts/quality-gate.sh` grün
+- [x] `bash lib/detect-stack.sh` gibt `graphify_candidate=true|false` in einem Nuxt-Projekt mit ≥50 `.vue` zurück (`grep 'graphify_candidate=true'` muss matchen)
+- [x] `bash ai-setup.sh --dry-run` in Shopify-Theme mit ≥30 `.liquid` zeigt Graphify-Prompt; in leerem tmp-Repo zeigt ihn nicht
+- [x] Nach Skill-Install: `.claude/skills/graphify.md` existiert und enthält `jq` query examples
+- [x] `bash .claude/scripts/doctor.sh` ohne installiertes graphify-binary zeigt Warning mit dem pipx-Hinweis
+- [x] `shellcheck lib/detect-stack.sh lib/install-skills.sh ai-setup.sh` passt
+- [x] `bash .claude/scripts/quality-gate.sh` grün
 
 ## Files to Modify
 - `lib/detect-stack.sh` — file-count Thresholds + `graphify_candidate` export

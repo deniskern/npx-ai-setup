@@ -21,14 +21,32 @@ Full trigger/model table: `.claude/docs/agent-dispatch.md`.
 
 ## Graph-Assisted Navigation
 
-If `.agents/context/graph.json` exists, query it before spawning search agents:
+Three graph files may exist — each covers a different layer:
+
+| File | What it maps | When present |
+|------|-------------|--------------|
+| `.agents/context/graph.json` | JS/TS import graph (auto-generated) | JS/TS projects |
+| `.agents/context/liquid-graph.json` | Liquid section/snippet/template deps | Shopify only |
+| `graphify-out/graph.json` | Semantic community graph (opt-in) | After `/graphify build` |
+
+**JS/TS import graph** (`.agents/context/graph.json`):
 
 ```bash
 jq -r '.stats.top_hubs[] | "\(.imported_by)x \(.file)"' .agents/context/graph.json
 jq -r --arg f "path/file.ts" '.edges[] | select(.target==$f) | .source' .agents/context/graph.json
 ```
 
-20 tokens instead of 500 for a grep. Skip if graph.json missing or no JS/TS.
+**Graphify semantic graph** (`graphify-out/graph.json`, only when `/graphify` skill is installed):
+
+```bash
+# Top communities
+jq '.communities[] | {id, size: (.nodes | length), label}' graphify-out/graph.json
+# Community for a specific file
+jq --arg f "components/Header.vue" \
+  '.communities[] | select(.nodes[] == $f) | {id, label}' graphify-out/graph.json
+```
+
+20 tokens instead of 500 for a grep. Skip if the relevant graph file is missing.
 
 ## Graph-Before-Read Enforcement
 

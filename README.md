@@ -132,15 +132,35 @@ Terminal catalogs:
 
 ---
 
+## Skill Stack-Filter
+
+When pulling skills from boilerplate repos, setup automatically skips skills that don't match the detected stack profile. A `storyblok-push` skill tagged `stacks: [nuxt-storyblok]` won't land in a Shopify project. Skills without a `stacks:` field install everywhere (safe default).
+
+```yaml
+# In a SKILL.md frontmatter:
+---
+name: storyblok-push
+stacks: [nuxt-storyblok]
+---
+```
+
+Stack profiles: `nuxt-storyblok` | `nuxtjs` | `shopify-liquid` | `laravel` | `nextjs` | `default`
+
+Use `--force-all-skills` to bypass the filter for meta-projects or multi-stack monorepos.
+`doctor.sh` reports mismatched skills already installed (drift detection).
+
+---
+
 ## Installation flags
 
 ```bash
 npx github:onedot-digital-crew/npx-ai-setup [flags]
 
 --patch <pattern>         # Fast sync: copy only templates matching pattern (e.g. --patch spec-work)
+--force-all-skills        # Install all skills regardless of detected stack profile
+--force-skip-graphify     # Skip the Graphify opt-in prompt
+--relax-context-caps      # Run setup without context file size cap enforcement
 ```
-
-`--patch` is the only supported flag. Other historical flags are intentionally unsupported and exit with an error.
 
 Framework-specific boilerplate is selected interactively during setup. Regeneration is available from the update flow instead of a standalone flag.
 
@@ -279,6 +299,37 @@ When you push a version tag like `v1.2.5`, it creates or updates the GitHub Rele
 
 ---
 
+## Default MCPs
+
+Two MCP servers are auto-suggested during setup (interactive Y/N prompt per server):
+
+| Server | Scope | Description |
+|--------|-------|-------------|
+| `context7` | all stacks | Library/API docs lookup — resolves up-to-date docs for any npm package or framework |
+| `shopify-dev-mcp` | shopify-liquid only | Official Shopify Liquid/GraphQL schema reference for theme and storefront dev |
+
+Both are pure `npx` commands — no auth, no tokens.
+
+**Manual install** (if you opted out or are adding to an existing project):
+
+```bash
+# context7 — all projects
+claude mcp add context7 --scope project -- npx -y @upstash/context7-mcp
+
+# shopify-dev-mcp — Shopify projects only
+claude mcp add shopify-dev-mcp --scope project -- npx -y @shopify/dev-mcp
+```
+
+**Re-run the suggestion phase:**
+
+```bash
+npx @onedot/ai-setup  # runs the full setup flow again; MCP entries are idempotent
+```
+
+**Opt out** of a suggested MCP: answer `N` at the prompt, or remove the entry from `.mcp.json` afterwards.
+
+---
+
 ## Requirements
 
 - Node.js >= 18 + npm
@@ -341,6 +392,18 @@ The hook never blocks — it exits 0 and writes a one-line hint to stderr. Claud
 
 ## Token Optimization
 
+### Turn-Token Budget
+
+Hooks that fire every turn (UserPromptSubmit, PreToolUse) are capped at **300 tokens** of output per hook. Hooks that fire once per session (SessionStart, PreCompact) are capped at **2000 tokens**. All bundled hooks are silent on the happy path — output only when actionable.
+
+Audit the current state at any time:
+
+```bash
+bash lib/hook-token-audit.sh    # report with per-hook token estimates
+```
+
+The policy is documented in `.claude/rules/hooks-token-policy.md`. `doctor.sh` warns if any hook exceeds its cap.
+
 ### rtk (Rust Token Killer)
 
 Installed automatically during setup. Compresses CLI output (git, grep, test, build) by 60-90% before it reaches Claude's context window. Hooks activate transparently via `rtk init --global` (runs during setup).
@@ -353,6 +416,26 @@ rtk gain --history    # Command usage history with savings
 If rtk is not installed, everything works normally — prep-scripts and skills still save 40-60% tokens on their own.
 
 More info: [rtk-ai/rtk](https://github.com/rtk-ai/rtk)
+
+### Context File Budget
+
+`.agents/context/*.md` files have hard line-count caps enforced by `lib/context-size-check.sh`:
+
+| File | Cap |
+|------|-----|
+| `SUMMARY.md` | 40 lines (injected every turn — keep lean) |
+| `STACK.md` | 100 lines |
+| `ARCHITECTURE.md` | 150 lines |
+| `CONVENTIONS.md` | 80 lines |
+| Total directory | 400 lines |
+
+Violations appear as `[CONTEXT SIZE]` warnings in the hook output and as `[WARN]` in `doctor.sh`. No auto-trim — warnings only, you decide. Caps are defined in `lib/data/context-caps.json`.
+
+```bash
+bash lib/context-size-check.sh            # check current project
+CONTEXT_CAPS_RELAX=1 bash lib/context-size-check.sh   # suppress violations
+npx @onedot/ai-setup --relax-context-caps  # run setup without cap enforcement
+```
 
 ---
 

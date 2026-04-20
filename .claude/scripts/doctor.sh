@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# doctor.sh — Health check for Claude Code AI setup (15 checks)
+# doctor.sh — Health check for Claude Code AI setup
 # Usage: bash .claude/scripts/doctor.sh
 # Requires: bash 3.2+, git
-# Repo-local model-version warning until a template-distributed doctor script exists.
 set -euo pipefail
 
 PASS="[OK]"
@@ -414,6 +413,105 @@ if [ "$gbr_hook_registered" = "true" ]; then
   else
     add_row "$PASS" "graph-before-read" "Hook registered and graph.json present"
   fi
+fi
+
+# 10c. Skill stack drift detection
+# Warn when an installed skill declares stacks: that don't match the project profile.
+# Only active when detect-stack.sh is reachable from a known install location.
+if [ -d ".claude/skills" ]; then
+  _doctor_profile=""
+  _detect_script=""
+
+  # Search for detect-stack.sh relative to script locations or npm cache
+  for _candidate in \
+    "$(dirname "$(command -v ai-setup.sh 2>/dev/null || true)" 2>/dev/null)/../lib/detect-stack.sh" \
+    "$HOME/.npm/_npx"/*/node_modules/@onedot/ai-setup/lib/detect-stack.sh; do
+    [ -f "$_candidate" ] && _detect_script="$_candidate" && break
+  done
+
+  if [ -n "$_detect_script" ]; then
+    _doctor_profile=$(bash "$_detect_script" "$PWD" 2>/dev/null \
+      | grep "^stack_profile=" | cut -d= -f2 || true)
+  fi
+
+  if [ -n "$_doctor_profile" ] && [ "$_doctor_profile" != "default" ]; then
+    drift_count=0
+    drift_details=""
+    while IFS= read -r skill_file; do
+      [ -z "$skill_file" ] && continue
+      skill_name="$(basename "$(dirname "$skill_file")")"
+
+      stacks_line=$(awk '
+        /^---$/ { if (front == 0) { front = 1; next } else { exit } }
+        front == 1 && /^stacks:/ { print; exit }
+      ' "$skill_file" 2>/dev/null || true)
+
+      [ -z "$stacks_line" ] && continue
+
+      _match=0
+      if printf '%s\n' "$stacks_line" | grep -qE "(^|[^a-zA-Z0-9_-])${_doctor_profile}([^a-zA-Z0-9_-]|$)"; then
+        _match=1
+      fi
+      if printf '%s\n' "$stacks_line" | grep -qE "(^|[^a-zA-Z0-9_-])all([^a-zA-Z0-9_-]|$)"; then
+        _match=1
+      fi
+
+      if [ "$_match" -eq 0 ]; then
+        drift_count=$((drift_count + 1))
+        stacks_val=$(printf '%s\n' "$stacks_line" | sed 's/^stacks:[[:space:]]*//' )
+        drift_details="${drift_details}${skill_name}${stacks_val} "
+      fi
+    done < <(find .claude/skills -name "SKILL.md" 2>/dev/null)
+
+    if [ "$drift_count" -eq 0 ]; then
+      add_row "$PASS" "Skill stack drift"   "No mismatched skills (profile: ${_doctor_profile})"
+    else
+      add_row "$WARN" "Skill stack drift"   "${drift_count} skill(s) for wrong stack: ${drift_details}"
+    fi
+  fi
+fi
+
+# 19. Graphify skill vs binary
+if [ -f ".claude/skills/graphify.md" ] || [ -f ".claude/skills/graphify/SKILL.md" ]; then
+  if command -v graphify >/dev/null 2>&1; then
+    add_row "$PASS" "Graphify" "Skill installed and binary found"
+  else
+    add_row "$WARN" "Graphify" "Skill installed but graphify not in PATH — run: pipx install graphifyy"
+  fi
+fi
+
+# 20. Context file size caps
+_dsc_script="$(cd "$(dirname "$0")" && pwd)/../../lib/context-size-check.sh"
+if [ -f "$_dsc_script" ] && [ -d ".agents/context" ]; then
+  if [ "${CONTEXT_CAPS_RELAX:-0}" = "1" ]; then
+    add_row "$PASS" "Context size caps" "RELAXED (CONTEXT_CAPS_RELAX=1)"
+  else
+    _dsc_out="$(bash "$_dsc_script" ".agents/context" 2>/dev/null || true)"
+    _dsc_viols="$(printf '%s\n' "$_dsc_out" | grep '^VIOLATION:' || true)"
+    if [ -n "$_dsc_viols" ]; then
+      _dsc_count="$(printf '%s\n' "$_dsc_viols" | grep -c '.' || echo 0)"
+      _dsc_detail="$(printf '%s\n' "$_dsc_viols" | sed 's/^VIOLATION: //' | tr '\n' '; ' | sed 's/; $//')"
+      add_row "$WARN" "Context size caps" "${_dsc_count} violation(s): ${_dsc_detail}"
+    else
+      _dsc_total="$(printf '%s\n' "$_dsc_out" | grep '^TOTAL:' | sed 's/TOTAL: \([0-9]*\) lines.*/\1/' | head -1 || true)"
+      add_row "$PASS" "Context size caps" "All files within caps (${_dsc_total:-?} total lines)"
+    fi
+  fi
+fi
+unset _dsc_script _dsc_out _dsc_viols _dsc_count _dsc_detail _dsc_total
+
+# 21. Hook token audit
+if [ -f "lib/hook-token-audit.sh" ]; then
+  audit_out="$(bash lib/hook-token-audit.sh 2>/dev/null || true)"
+  audit_violations="$(printf '%s\n' "$audit_out" | grep -c 'VIOLATION' 2>/dev/null || echo 0)"
+  if [ "${audit_violations:-0}" -gt 0 ]; then
+    add_row "$WARN" "Hook token budget" "${audit_violations} hook(s) exceed token cap — run: bash lib/hook-token-audit.sh"
+  else
+    total_tokens="$(printf '%s\n' "$audit_out" | grep -oE '^[[:space:]]*[A-Z].*[[:space:]]+[0-9]+[[:space:]]+(tokens|OK)' | awk '{sum+=$(NF-1)} END {print sum+0}' 2>/dev/null || echo '?')"
+    add_row "$PASS" "Hook token budget" "All hooks within budget (~${total_tokens} tokens total)"
+  fi
+else
+  add_row "$WARN" "Hook token budget" "lib/hook-token-audit.sh not found — skipping"
 fi
 
 # Output table
