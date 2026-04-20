@@ -1,6 +1,6 @@
 # Spec: Context-File Size Cap & Auto-Trim Warning
 
-> **Spec ID**: 644 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: small | **Branch**: —
+> **Spec ID**: 644 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: small | **Branch**: —
 
 ## Goal
 Harte Caps für `.agents/context/*.md` Files definieren. Bei Überschreitung: Warning via context-monitor-hook + Empfehlung welche Datei zu trimmen ist. Verhindert dass Context-Files über Zeit unbegrenzt wachsen und jedes `@file`-Injection teuer wird.

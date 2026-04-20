@@ -1,6 +1,6 @@
 # Spec: Graph-Before-Read PreToolUse Hint-Hook
 
-> **Spec ID**: 645 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: small | **Branch**: —
+> **Spec ID**: 645 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: small | **Branch**: —
 
 ## Goal
 PreToolUse-Hook der beim `Read`-Aufruf auf große Files (>500 Zeilen) oder beim wiederholten `Grep`/`Glob` ohne vorherige Graph-Abfrage einen nicht-blockierenden Hint ausgibt. Zweck: Claude verwendet zuerst `graph.json` / `liquid-graph.json` / `graphify-out/graph.json` bevor teure Full-File-Reads gemacht werden.

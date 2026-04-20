@@ -1,6 +1,6 @@
 # Spec: Graphify Knowledge Graph als opt-in Skill
 
-> **Spec ID**: 637 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: medium | **Branch**: worktree-agent-a1512785
+> **Spec ID**: 637 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: medium | **Branch**: worktree-agent-a1512785
 
 ## Goal
 Graphify (Karpathy /raw-style Knowledge Graph) als opt-in Skill in npx-ai-setup integrieren, aktiviert via Stack-Detection, genutzt von Claude zur Token-sparenden Code-Navigation in Zielprojekten.

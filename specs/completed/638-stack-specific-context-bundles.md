@@ -1,6 +1,6 @@
 # Spec: Stack-spezifische Context-Bundles
 
-> **Spec ID**: 638 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: medium | **Branch**: spec/638-stack-specific-context-bundles
+> **Spec ID**: 638 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: medium | **Branch**: spec/638-stack-specific-context-bundles
 
 ## Goal
 Templates um stack-spezifische Context-Bundles erweitern (Nuxt+Storyblok, Shopify Liquid, Laravel, MCP-Server). Zielprojekte bekommen beim `npx ai-setup` sofort passenden `STACK.md`/`ARCHITECTURE.md`/`CONVENTIONS.md` statt generischer Platzhalter — spart LLM-Roundtrip für Context-Generation und liefert bewährte Patterns.

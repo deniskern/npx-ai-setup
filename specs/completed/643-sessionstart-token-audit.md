@@ -1,6 +1,6 @@
 # Spec: SessionStart Token Audit & Hook Trimming
 
-> **Spec ID**: 643 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: medium | **Branch**: worktree-agent-ac9b9672
+> **Spec ID**: 643 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: medium | **Branch**: worktree-agent-ac9b9672
 
 ## Goal
 Token-Verbrauch pro Turn reduzieren durch Audit und Trimming der SessionStart- und UserPromptSubmit-Hooks in den Template-Boilerplates. Ziel: keine Hook-Output die pro Turn >500 Tokens kostet, ohne klaren Mehrwert pro Turn zu liefern.

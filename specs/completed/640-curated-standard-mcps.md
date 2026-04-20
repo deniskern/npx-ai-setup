@@ -1,6 +1,6 @@
 # Spec: Curated Standard MCPs
 
-> **Spec ID**: 640 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: small | **Branch**: —
+> **Spec ID**: 640 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: small | **Branch**: —
 
 ## Goal
 Kuratiertes, kleines Set an Standard-MCP-Servern automatisch in Zielprojekt-`.mcp.json` vorschlagen: `context7` global (Library-Docs), `@shopify/dev-mcp` nur bei Shopify-Stack. User kann per Prompt opt-out. Kein Slug-Raten, keine Auth-Magie.

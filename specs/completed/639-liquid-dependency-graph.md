@@ -1,6 +1,6 @@
 # Spec: Liquid Dependency Graph für Shopify Themes
 
-> **Spec ID**: 639 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: medium | **Branch**: —
+> **Spec ID**: 639 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: medium | **Branch**: —
 
 ## Goal
 Liquid-spezifischer Dependency-Graph (section→snippet→template→asset) parallel zum bestehenden JS/TS-Import-Graph. Ziel: 10+ sp-* Shopify-Theme-Repos kriegen grep-freie Struktur-Discovery beim Feature-Bau.

@@ -1,6 +1,6 @@
 # Spec: Stack-spezifische .claudeignore Templates
 
-> **Spec ID**: 641 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: small | **Branch**: —
+> **Spec ID**: 641 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: small | **Branch**: —
 
 ## Goal
 Pro Stack-Profil eine passende `.claudeignore` mitliefern, die Noise aus Build-Artefakten, Vendor-Verzeichnissen und Stack-spezifischen Generated-Files ausblendet. Senkt Token-Last bei Read/Grep/Glob in Zielprojekten.

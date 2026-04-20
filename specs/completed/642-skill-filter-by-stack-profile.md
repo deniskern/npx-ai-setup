@@ -1,6 +1,6 @@
 # Spec: Skill-Filter by Stack Profile (Boilerplate-Pull)
 
-> **Spec ID**: 642 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: medium | **Branch**: worktree-agent-a8a87caf
+> **Spec ID**: 642 | **Created**: 2026-04-19 | **Status**: completed | **Complexity**: medium | **Branch**: worktree-agent-a8a87caf
 
 ## Goal
 Bei Boilerplate-Pull aus `onedot-digital-crew/*` nur die für das Ziel-Stack-Profil relevanten Skills installieren. Shopify-Themes bekommen keine Nuxt/Storyblok-spezifischen Skills, Laravel keine Liquid-Skills. Reduziert Skill-Listen im SessionStart → weniger Tokens pro Turn + sauberere User-Skill-Auswahl.
