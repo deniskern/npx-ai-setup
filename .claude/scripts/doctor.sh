@@ -322,6 +322,100 @@ if command -v git >/dev/null 2>&1 && git rev-parse --git-dir >/dev/null 2>&1; th
   fi
 fi
 
+# 17. .claudeignore managed block freshness
+# Warns when the installed managed block is older than base OR stack template.
+# Looks up templates/claudeignore via npm install paths (the target project
+# does not ship the templates itself).
+_find_claudeignore_templates() {
+  # 1. Same-repo (dev / source setup): walk up from doctor.sh
+  local script_dir
+  script_dir="$(cd "$(dirname "$0")" && pwd)"
+  local candidate="${script_dir}/../../templates/claudeignore"
+  [ -d "$candidate" ] && { echo "$candidate"; return 0; }
+
+  # 2. Global npm install: resolve the @onedot/ai-setup package root
+  if command -v npm >/dev/null 2>&1; then
+    local npm_root
+    npm_root=$(npm root -g 2>/dev/null || true)
+    [ -n "$npm_root" ] && [ -d "${npm_root}/@onedot/ai-setup/templates/claudeignore" ] \
+      && { echo "${npm_root}/@onedot/ai-setup/templates/claudeignore"; return 0; }
+  fi
+
+  # 3. npx cache fallbacks — search under typical npm cache paths
+  local cache_root
+  for cache_root in \
+    "${NPM_CONFIG_CACHE:-$HOME/.npm}/_npx" \
+    "$HOME/.npm/_npx"; do
+    [ -d "$cache_root" ] || continue
+    local hit
+    hit=$(find "$cache_root" -maxdepth 5 -type d -name claudeignore \
+          -path '*templates/claudeignore' 2>/dev/null | head -1)
+    [ -n "$hit" ] && { echo "$hit"; return 0; }
+  done
+
+  return 1
+}
+
+check_claudeignore_freshness() {
+  [ -f ".claudeignore" ] || return 0
+  local profile
+  profile=$(grep -m1 '^# --- ai-setup managed (profile:' .claudeignore 2>/dev/null | sed "s/.*profile: //;s/) ---.*//") || true
+  [ -z "$profile" ] && return 0
+
+  local tpl_dir
+  tpl_dir=$(_find_claudeignore_templates) || {
+    add_row "$WARN" ".claudeignore" "Cannot locate ai-setup templates — install missing or stale"
+    return 0
+  }
+  local profile_tpl="${tpl_dir}/${profile}.claudeignore"
+  local base_tpl="${tpl_dir}/base.claudeignore"
+  [ -f "$profile_tpl" ] || return 0
+
+  local _stat_cmd
+  if [ "$(uname -s)" = "Darwin" ]; then _stat_cmd="stat -f %m"; else _stat_cmd="stat -c %Y"; fi
+
+  local tpl_mtime base_mtime ci_mtime newest_tpl
+  tpl_mtime=$($_stat_cmd "$profile_tpl" 2>/dev/null || echo 0)
+  base_mtime=0
+  [ -f "$base_tpl" ] && base_mtime=$($_stat_cmd "$base_tpl" 2>/dev/null || echo 0)
+  ci_mtime=$($_stat_cmd ".claudeignore" 2>/dev/null || echo 0)
+
+  # Compare installed file against MAX(profile, base) — base changes must also trigger stale warning
+  newest_tpl=$tpl_mtime
+  [ "$base_mtime" -gt "$newest_tpl" ] && newest_tpl=$base_mtime
+
+  if [ "$newest_tpl" -gt "$ci_mtime" ]; then
+    local reason="profile"
+    [ "$base_mtime" -gt "$tpl_mtime" ] && reason="base"
+    add_row "$WARN" ".claudeignore" "Profile ${profile} ${reason} template is newer — re-run ai-setup to sync"
+  else
+    add_row "$PASS" ".claudeignore" "Profile ${profile} managed block is current"
+  fi
+}
+check_claudeignore_freshness
+
+
+# 18. graph-before-read hook vs graph.json
+gbr_hook_registered=false
+if [ -f "$SETTINGS_FILE" ]; then
+  if command -v python3 >/dev/null 2>&1; then
+    if python3 -c "import json,sys; d=json.load(open(sys.argv[1])); hooks=d.get('hooks',{}); pre=hooks.get('PreToolUse',[]); print('yes' if any('graph-before-read' in str(e) for e in pre) else 'no')" "$SETTINGS_FILE" 2>/dev/null | grep -q yes; then
+      gbr_hook_registered=true
+    fi
+  elif command -v jq >/dev/null 2>&1; then
+    if jq -e '[.hooks.PreToolUse[]? | select(.. | strings | test("graph-before-read"))] | length > 0' "$SETTINGS_FILE" >/dev/null 2>&1; then
+      gbr_hook_registered=true
+    fi
+  fi
+fi
+if [ "$gbr_hook_registered" = "true" ]; then
+  if [ ! -f ".agents/context/graph.json" ]; then
+    add_row "$WARN" "graph-before-read" "Hook active but .agents/context/graph.json missing — hint will not fire"
+  else
+    add_row "$PASS" "graph-before-read" "Hook registered and graph.json present"
+  fi
+fi
+
 # Output table
 echo "# Doctor Report"
 echo ""

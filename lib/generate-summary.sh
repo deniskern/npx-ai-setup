@@ -59,8 +59,16 @@ main() {
 
   local stack_abstract arch_abstract conv_abstract
   stack_abstract=$(_extract_abstract "$stack_file")
-  arch_abstract=$(_extract_abstract "$arch_file" 2>/dev/null || echo "See ARCHITECTURE.md")
-  conv_abstract=$(_extract_abstract "$conv_file" 2>/dev/null || echo "See CONVENTIONS.md")
+  if [ -f "$arch_file" ]; then
+    arch_abstract=$(_extract_abstract "$arch_file")
+  else
+    arch_abstract="See ARCHITECTURE.md"
+  fi
+  if [ -f "$conv_file" ]; then
+    conv_abstract=$(_extract_abstract "$conv_file")
+  else
+    conv_abstract="See CONVENTIONS.md"
+  fi
 
   mkdir -p "$target_dir"
 

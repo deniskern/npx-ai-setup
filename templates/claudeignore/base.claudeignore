@@ -1,0 +1,5 @@
+*.log
+.DS_Store
+coverage/
+.turbo/
+node_modules/

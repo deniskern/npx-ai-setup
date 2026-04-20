@@ -179,6 +179,40 @@ if [ "$statusline_configured" = "false" ] && [ -t 0 ]; then
 fi
 unset _statusline_config
 
+# Install context bundle for detected stack profile (STACK_PROFILE set above)
+# Must run BEFORE any LLM call so bundle files are present and REGEN_CONTEXT can be suppressed.
+BUNDLE_DIR="$SCRIPT_DIR/templates/context-bundles/${STACK_PROFILE}"
+CONTEXT_DIR=".agents/context"
+_BUNDLE_INSTALLED=0
+
+if [ "$STACK_PROFILE" != "default" ] && [ -d "$BUNDLE_DIR" ]; then
+  tui_section "Project Context" "Installing $STACK_PROFILE context bundle (zero LLM cost)"
+  mkdir -p "$CONTEXT_DIR"
+  _bundle_skip=0
+  for _f in STACK.md ARCHITECTURE.md CONVENTIONS.md; do
+    if [ -f "$CONTEXT_DIR/$_f" ] && ! grep -q "<!-- bundle:" "$CONTEXT_DIR/$_f" 2>/dev/null; then
+      # File exists and was manually edited (no bundle marker) — don't overwrite
+      tui_warn "$_f already exists (custom). Saving bundle as ${_f}.new"
+      cp "$BUNDLE_DIR/$_f" "$CONTEXT_DIR/${_f}.new"
+      _bundle_skip=$((_bundle_skip + 1))
+    else
+      cp "$BUNDLE_DIR/$_f" "$CONTEXT_DIR/$_f"
+    fi
+  done
+  if [ -f "$SCRIPT_DIR/lib/generate-summary.sh" ]; then
+    bash "$SCRIPT_DIR/lib/generate-summary.sh" "$BUNDLE_DIR" "$CONTEXT_DIR" 2>/dev/null || true
+  fi
+  _BUNDLE_INSTALLED=1
+  if [ "$_bundle_skip" -gt 0 ]; then
+    tui_warn "Bundle installed. $_bundle_skip file(s) saved as .new (review and rename if wanted)"
+  else
+    tui_success "Context bundle installed (${STACK_PROFILE})"
+  fi
+  tui_hint "Edit .agents/context/*.md to add project-specific details. Remove <!-- bundle: --> marker to prevent future overwrites."
+  # Context files come from the bundle — skip LLM context generation
+  REGEN_CONTEXT=no
+fi
+
 # Optional context generation
 tui_section "Finish Setup" "Optionally generate project-specific docs and context with Claude"
 tui_success "Base setup complete"
@@ -217,45 +251,6 @@ fi
 
 show_installation_summary
 show_next_steps
-
-# Install context bundle for detected stack profile (STACK_PROFILE set above)
-BUNDLE_DIR="$SCRIPT_DIR/templates/context-bundles/${STACK_PROFILE}"
-CONTEXT_DIR=".agents/context"
-_BUNDLE_INSTALLED=0
-
-if [ "$STACK_PROFILE" != "default" ] && [ -d "$BUNDLE_DIR" ]; then
-  tui_section "Project Context" "Installing $STACK_PROFILE context bundle (zero LLM cost)"
-  mkdir -p "$CONTEXT_DIR"
-  _bundle_skip=0
-  for _f in STACK.md ARCHITECTURE.md CONVENTIONS.md; do
-    if [ -f "$CONTEXT_DIR/$_f" ] && ! grep -q "<!-- bundle:" "$CONTEXT_DIR/$_f" 2>/dev/null; then
-      # Step 6: file exists and was manually edited (no bundle marker) — don't overwrite
-      tui_warn "$_f already exists (custom). Saving bundle as ${_f}.new"
-      cp "$BUNDLE_DIR/$_f" "$CONTEXT_DIR/${_f}.new"
-      _bundle_skip=$((_bundle_skip + 1))
-    else
-      cp "$BUNDLE_DIR/$_f" "$CONTEXT_DIR/$_f"
-    fi
-  done
-  if [ -f "$SCRIPT_DIR/lib/generate-summary.sh" ]; then
-    bash "$SCRIPT_DIR/lib/generate-summary.sh" "$BUNDLE_DIR" "$CONTEXT_DIR" 2>/dev/null || true
-  fi
-  _BUNDLE_INSTALLED=1
-  if [ "$_bundle_skip" -gt 0 ]; then
-    tui_warn "Bundle installed. $_bundle_skip file(s) saved as .new (review and rename if wanted)"
-  else
-    tui_success "Context bundle installed (${STACK_PROFILE})"
-  fi
-  tui_hint "Edit .agents/context/*.md to add project-specific details. Remove <!-- bundle: --> marker to prevent future overwrites."
-elif [ "$AI_CLI" = "claude" ]; then
-  tui_section "Project Context" "Refreshing STACK.md, ARCHITECTURE.md, and CONVENTIONS.md"
-  tui_spinner_start "Generating project context files"
-  if claude --agent context-refresher "Analyze this project and generate .agents/context/STACK.md, .agents/context/ARCHITECTURE.md, and .agents/context/CONVENTIONS.md." >/dev/null 2>&1; then
-    tui_spinner_stop ok "Project context files refreshed"
-  else
-    tui_spinner_stop warn "Project context refresh skipped"
-  fi
-fi
 
 # Liquid dependency graph for shopify-liquid profile
 if [ "$STACK_PROFILE" = "shopify-liquid" ] && [ -f "$SCRIPT_DIR/lib/build-liquid-graph.sh" ]; then

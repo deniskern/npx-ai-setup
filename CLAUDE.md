@@ -13,9 +13,7 @@ Interne ONEDOT/Alpensattel-Projekte unter `~/Sites/`. Häufigste Stacks (in Reih
 1. **Nuxt/Vue 3** (nuxt-*, sb-nuxt-*) — Storyblok-driven, Tailwind
 2. **Shopify Themes** (sp-*) — Liquid, Vite, TS-bundle
 3. **Laravel/PHP** (crewbuddy, laravel-overhub)
-4. **MCP-Server** (mcp-*) — Node/TS
-5. **Next/SaaS** (horizon, onedot-seomachine)
-6. **N8N workflows** (n8n-*)
+4. **Next/SaaS** (horizon, onedot-seomachine)
 
 Features müssen für mindestens einen Primary Stack nützlich sein. Generische Dev-Tools (linter, test runner, graph builder) immer via Stack-Detection gated einschalten.
 

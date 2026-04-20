@@ -1,6 +1,6 @@
 # Spec: Stack-spezifische .claudeignore Templates
 
-> **Spec ID**: 641 | **Created**: 2026-04-19 | **Status**: draft | **Complexity**: small | **Branch**: —
+> **Spec ID**: 641 | **Created**: 2026-04-19 | **Status**: in-review | **Complexity**: small | **Branch**: —
 
 ## Goal
 Pro Stack-Profil eine passende `.claudeignore` mitliefern, die Noise aus Build-Artefakten, Vendor-Verzeichnissen und Stack-spezifischen Generated-Files ausblendet. Senkt Token-Last bei Read/Grep/Glob in Zielprojekten.
@@ -18,24 +18,24 @@ Stack-spezifische Noise-Quellen aus Repo-Scan:
 - **Alle**: `*.log`, `.DS_Store`, `coverage/`, `.turbo/`
 
 ## Steps
-- [ ] Step 1: `templates/claudeignore/` Verzeichnis mit Stack-Profil-Files: `nuxt-storyblok.claudeignore`, `shopify-liquid.claudeignore`, `laravel.claudeignore`, `nextjs.claudeignore`, `mcp-server.claudeignore`, `n8n.claudeignore`, `base.claudeignore` (common für alle)
-- [ ] Step 2: `lib/install-claudeignore.sh` — merged `base.claudeignore` + `<profile>.claudeignore` in `.claudeignore` im Zielprojekt; dedupliziert Zeilen
-- [ ] Step 3: `ai-setup.sh` ruft Installer nach Stack-Detection auf, nutzt `stack_profile` aus Spec 638
-- [ ] Step 4: Idempotenz: existierende `.claudeignore` wird NICHT überschrieben — Vorschläge die fehlen werden unter Kommentar-Marker `# --- ai-setup managed ---` / `# --- end ai-setup ---` angehängt/aktualisiert, manuelle User-Zeilen außerhalb bleiben intakt
-- [ ] Step 5: `--patch` Flow re-syncs nur den managed-Block
-- [ ] Step 6: Prüfen ob `permissions.deny` in `.claude/settings.json` weiterhin nötig — wenn `.claudeignore` reicht (Claude Code liest `.claudeignore`) entweder konsolidieren oder beides parallel (Bash-Block vs. LLM-Read-Block) klar dokumentieren
-- [ ] Step 7: `doctor.sh` Check: warn wenn `.claudeignore` älter als passendes Template (mtime-Diff)
-- [ ] Step 8: Smoke-Test: ai-setup in sp-alpensattel + nuxt-onedot + crewbuddy, `.claudeignore` enthält jeweils die Stack-Patterns, aber nicht falsche (Nuxt-Patterns nicht in Laravel-Repo)
+- [x] Step 1: `templates/claudeignore/` Verzeichnis mit Stack-Profil-Files: `nuxt-storyblok.claudeignore`, `shopify-liquid.claudeignore`, `laravel.claudeignore`, `nextjs.claudeignore`, `mcp-server.claudeignore`, `n8n.claudeignore`, `base.claudeignore` (common für alle)
+- [x] Step 2: `lib/install-claudeignore.sh` — merged `base.claudeignore` + `<profile>.claudeignore` in `.claudeignore` im Zielprojekt; dedupliziert Zeilen
+- [x] Step 3: `ai-setup.sh` ruft Installer nach Stack-Detection auf, nutzt `stack_profile` aus Spec 638
+- [x] Step 4: Idempotenz: existierende `.claudeignore` wird NICHT überschrieben — Vorschläge die fehlen werden unter Kommentar-Marker `# --- ai-setup managed ---` / `# --- end ai-setup ---` angehängt/aktualisiert, manuelle User-Zeilen außerhalb bleiben intakt
+- [x] Step 5: `--patch` Flow re-syncs nur den managed-Block
+- [x] Step 6: Prüfen ob `permissions.deny` in `.claude/settings.json` weiterhin nötig — wenn `.claudeignore` reicht (Claude Code liest `.claudeignore`) entweder konsolidieren oder beides parallel (Bash-Block vs. LLM-Read-Block) klar dokumentieren
+- [x] Step 7: `doctor.sh` Check: warn wenn `.claudeignore` älter als passendes Template (mtime-Diff)
+- [x] Step 8: Smoke-Test: ai-setup in sp-alpensattel + nuxt-onedot + crewbuddy, `.claudeignore` enthält jeweils die Stack-Patterns, aber nicht falsche (Nuxt-Patterns nicht in Laravel-Repo)
 
 ## Acceptance Criteria
-- [ ] `.claudeignore` in Shopify-Target enthält `config/settings_data.json`, `assets/*.js.map`
-- [ ] `.claudeignore` in Nuxt-Target enthält `.nuxt/`, `.output/`
-- [ ] `.claudeignore` in Laravel-Target enthält `vendor/`, `storage/logs/`
-- [ ] Manuell hinzugefügte Zeile außerhalb des managed-Blocks bleibt nach `ai-setup --patch` erhalten
-- [ ] Managed-Block kann bei Template-Update komplett ersetzt werden ohne User-Zeilen zu verlieren
-- [ ] `bash .claude/scripts/doctor.sh` erkennt veraltetes `.claudeignore` (mtime-based)
-- [ ] `shellcheck lib/install-claudeignore.sh` passt
-- [ ] `bash .claude/scripts/quality-gate.sh` grün
+- [x] `.claudeignore` in Shopify-Target enthält `config/settings_data.json`, `assets/*.js.map`
+- [x] `.claudeignore` in Nuxt-Target enthält `.nuxt/`, `.output/`
+- [x] `.claudeignore` in Laravel-Target enthält `vendor/`, `storage/logs/`
+- [x] Manuell hinzugefügte Zeile außerhalb des managed-Blocks bleibt nach `ai-setup --patch` erhalten
+- [x] Managed-Block kann bei Template-Update komplett ersetzt werden ohne User-Zeilen zu verlieren
+- [x] `bash .claude/scripts/doctor.sh` erkennt veraltetes `.claudeignore` (mtime-based)
+- [x] `shellcheck lib/install-claudeignore.sh` passt
+- [x] `bash .claude/scripts/quality-gate.sh` grün
 
 ## Files to Modify
 - `templates/claudeignore/base.claudeignore` — NEU

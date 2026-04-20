@@ -81,17 +81,6 @@ _detect_laravel() {
   return 1
 }
 
-# Detection: mcp-server
-# package.json has @modelcontextprotocol/sdk
-_detect_mcp_server() {
-  local dir="$1"
-
-  if [ -f "${dir}/package.json" ] && _pkg_has "${dir}/package.json" "@modelcontextprotocol/sdk"; then
-    return 0
-  fi
-  return 1
-}
-
 # Detection: nextjs
 # next.config.* exists OR next in package.json dependencies
 _detect_nextjs() {
@@ -108,20 +97,15 @@ _detect_nextjs() {
   return 1
 }
 
-# Detection: n8n
-# .n8n/ dir exists OR workflow JSON files present OR package has n8n
-_detect_n8n() {
+# Detection: nuxtjs (plain Nuxt without Storyblok — runs AFTER nuxt-storyblok check)
+_detect_nuxtjs() {
   local dir="$1"
 
-  if [ -d "${dir}/.n8n" ]; then
+  if ls "${dir}/nuxt.config."* 1>/dev/null 2>&1; then
     return 0
   fi
 
-  if find "$dir" -maxdepth 2 -name "*.workflow.json" 2>/dev/null | grep -q .; then
-    return 0
-  fi
-
-  if [ -f "${dir}/package.json" ] && _pkg_has "${dir}/package.json" '"n8n"'; then
+  if [ -f "${dir}/package.json" ] && _pkg_has "${dir}/package.json" '"nuxt"'; then
     return 0
   fi
 
@@ -138,27 +122,13 @@ main() {
     profile="shopify-liquid"
   elif _detect_laravel "$dir"; then
     profile="laravel"
-  elif _detect_mcp_server "$dir"; then
-    profile="mcp-server"
   elif _detect_nextjs "$dir"; then
     profile="nextjs"
-  elif _detect_n8n "$dir"; then
-    profile="n8n"
+  elif _detect_nuxtjs "$dir"; then
+    profile="nuxtjs"
   fi
 
   echo "stack_profile=${profile}"
 }
 
 main
-
-# liquid_graph_hint — prints a build hint when profile=shopify-liquid
-# Called by external scripts; NOT invoked inside detect-stack itself (detect is read-only).
-# Usage: liquid_graph_hint [project-dir]
-liquid_graph_hint() {
-  local dir="${1:-$PWD}"
-  local profile
-  profile=$(bash "$(dirname "$0")/detect-stack.sh" "$dir" 2>/dev/null | grep '^stack_profile=' | cut -d= -f2 || echo "default")
-  if [ "$profile" = "shopify-liquid" ]; then
-    echo "hint: run 'bash lib/build-liquid-graph.sh $dir' to build .agents/context/liquid-graph.json"
-  fi
-}

@@ -4,7 +4,7 @@ Stack-specific starting points for `.agents/context/` files. Installed by `npx a
 
 ## How it works
 
-1. `lib/detect-stack.sh` detects the stack profile (nuxt-storyblok, shopify-liquid, laravel, mcp-server, nextjs, n8n, default)
+1. `lib/detect-stack.sh` detects the stack profile (nuxt-storyblok, nuxtjs, shopify-liquid, laravel, nextjs, default)
 2. Bundle files are copied to `.agents/context/STACK.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`
 3. `lib/generate-summary.sh` creates `SUMMARY.md` from the bundle abstracts
 4. LLM generation is skipped for known stacks
@@ -23,12 +23,13 @@ Each file starts with `<!-- bundle: <profile> v1 -->`. Files without this marker
 | Profile | Trigger |
 |---------|---------|
 | `nuxt-storyblok` | `nuxt.config.*` + `@storyblok/nuxt` in package.json |
+| `nuxtjs` | `nuxt.config.*` or `nuxt` in package.json (no Storyblok) |
 | `shopify-liquid` | ≥5 `.liquid` files in sections/ snippets/ templates/ |
 | `laravel` | `artisan` file or `laravel/framework` in composer.json |
-| `mcp-server` | `@modelcontextprotocol/sdk` in package.json |
 | `nextjs` | `next.config.*` or `next` in package.json |
-| `n8n` | `.n8n/` dir or `n8n` in package.json |
 | `default` | Fallback — generic placeholders |
+
+Detection order matters: `nuxt-storyblok` is checked before `nuxtjs`, `nextjs` before `nuxtjs` — the first match wins.
 
 ## Adding a custom profile
 

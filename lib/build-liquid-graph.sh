@@ -10,8 +10,10 @@
 set -e
 
 PROJECT_DIR="${1:-$PWD}"
-OUTPUT_DIR="${PROJECT_DIR}/.agents/context"
-OUTPUT_FILE="${OUTPUT_DIR}/liquid-graph.json"
+OUTPUT="${2:-${PROJECT_DIR}/.agents/context/liquid-graph.json}"
+
+# Fix 2 [HIGH:92]: ensure output directory exists
+mkdir -p "$(dirname "$OUTPUT")"
 
 SCAN_DIRS="sections snippets templates layout blocks"
 
@@ -53,10 +55,13 @@ done <<< "$LIQUID_LIST"
 
 # ---------------------------------------------------------------------------
 # Single-pass awk extraction (all patterns in one pass, POSIX awk compatible)
+# Fix 3 [HIGH:88]: skip content inside {% comment %}...{% endcomment %} blocks
+# Fix 4 [HIGH:85]: extract ALL render/include/section tags per line (loop)
 # Output: TSV records — source TAB relation TAB target
 # ---------------------------------------------------------------------------
 
-TMPDIR_GRAPH=$(mktemp -d /tmp/liquid-graph-XXXXXX)
+# Fix 5 [MEDIUM:82]: portable tmpdir
+TMPDIR_GRAPH=$(mktemp -d "${TMPDIR:-/tmp}/liquid-graph-XXXXXX")
 # shellcheck disable=SC2064
 trap "rm -rf '$TMPDIR_GRAPH'" EXIT INT TERM
 
@@ -70,8 +75,11 @@ trap "rm -rf '$TMPDIR_GRAPH'" EXIT INT TERM
 /^__FILE__\t/ {
   current = $2
   in_schema = 0
+  in_comment = 0
   next
 }
+
+# Schema block tracking
 /\{% *-? *schema/ { in_schema = 1; next }
 /\{% *-? *endschema/ { in_schema = 0; next }
 in_schema {
@@ -83,36 +91,72 @@ in_schema {
   }
   next
 }
+
+# Fix 3: Comment block tracking (multi-line)
+# Handle same-line open+close: strip commented span first
+/\{%-?[[:space:]]*comment[[:space:]]*-?%\}.*\{%-?[[:space:]]*endcomment[[:space:]]*-?%\}/ {
+  # single-line comment — remove the commented span and continue processing remainder
+  line = $0
+  # blank out everything between comment tags (POSIX: repeated sub approach)
+  while (match(line, /\{%-?[[:space:]]*comment[[:space:]]*-?%\}[^\000]*\{%-?[[:space:]]*endcomment[[:space:]]*-?%\}/)) {
+    line = substr(line, 1, RSTART-1) substr(line, RSTART+RLENGTH)
+  }
+  $0 = line
+  # fall through to extraction below with sanitized line
+}
+
+/\{%-?[[:space:]]*comment[[:space:]]*-?%\}/ { in_comment = 1; next }
+/\{%-?[[:space:]]*endcomment[[:space:]]*-?%\}/ { in_comment = 0; next }
+in_comment { next }
+
 {
   line = $0
-  # render single-quote
-  if (match(line, /\{%-?[[:space:]]*render[[:space:]]*'"'"'[^'"'"']+'"'"'/)) {
-    frag = substr(line, RSTART, RLENGTH)
-    sub(/.*render[[:space:]]*'"'"'/, "", frag); sub(/'"'"'.*/, "", frag)
+
+  # Fix 4: extract ALL render single-quote tags on this line
+  tmp = line
+  while (match(tmp, /\{%-?[[:space:]]*render[[:space:]]*'"'"'[^'"'"']+'"'"'/)) {
+    frag = substr(tmp, RSTART, RLENGTH)
+    sub(/.*render[[:space:]]*'"'"'/, "", frag)
+    sub(/'"'"'.*/, "", frag)
     if (length(frag) > 0) printf "%s\trender\tsnippets/%s.liquid\n", current, frag
+    tmp = substr(tmp, RSTART + RLENGTH)
   }
-  # render double-quote
-  if (match(line, /\{%-?[[:space:]]*render[[:space:]]*"[^"]+"/)) {
-    frag = substr(line, RSTART, RLENGTH)
-    sub(/.*render[[:space:]]*"/, "", frag); sub(/".*/, "", frag)
+
+  # Fix 4: extract ALL render double-quote tags on this line
+  tmp = line
+  while (match(tmp, /\{%-?[[:space:]]*render[[:space:]]*"[^"]+"/)) {
+    frag = substr(tmp, RSTART, RLENGTH)
+    sub(/.*render[[:space:]]*"/, "", frag)
+    sub(/".*/, "", frag)
     if (length(frag) > 0) printf "%s\trender\tsnippets/%s.liquid\n", current, frag
+    tmp = substr(tmp, RSTART + RLENGTH)
   }
-  # dynamic render
+
+  # dynamic render (variable name, not quoted literal)
   if (match(line, /\{%-?[[:space:]]*render[[:space:]]+[^'"'"'"{[:space:]]/)) {
     printf "%s\trender-dynamic\t*\n", current
   }
-  # include single-quote
-  if (match(line, /\{%-?[[:space:]]*include[[:space:]]*'"'"'[^'"'"']+'"'"'/)) {
-    frag = substr(line, RSTART, RLENGTH)
-    sub(/.*include[[:space:]]*'"'"'/, "", frag); sub(/'"'"'.*/, "", frag)
+
+  # Fix 4: extract ALL include single-quote tags on this line
+  tmp = line
+  while (match(tmp, /\{%-?[[:space:]]*include[[:space:]]*'"'"'[^'"'"']+'"'"'/)) {
+    frag = substr(tmp, RSTART, RLENGTH)
+    sub(/.*include[[:space:]]*'"'"'/, "", frag)
+    sub(/'"'"'.*/, "", frag)
     if (length(frag) > 0) printf "%s\tinclude\tsnippets/%s.liquid\n", current, frag
+    tmp = substr(tmp, RSTART + RLENGTH)
   }
-  # section single-quote
-  if (match(line, /\{%-?[[:space:]]*section[[:space:]]*'"'"'[^'"'"']+'"'"'/)) {
-    frag = substr(line, RSTART, RLENGTH)
-    sub(/.*section[[:space:]]*'"'"'/, "", frag); sub(/'"'"'.*/, "", frag)
+
+  # Fix 4: extract ALL section single-quote tags on this line
+  tmp = line
+  while (match(tmp, /\{%-?[[:space:]]*section[[:space:]]*'"'"'[^'"'"']+'"'"'/)) {
+    frag = substr(tmp, RSTART, RLENGTH)
+    sub(/.*section[[:space:]]*'"'"'/, "", frag)
+    sub(/'"'"'.*/, "", frag)
     if (length(frag) > 0) printf "%s\tsection\tsections/%s.liquid\n", current, frag
+    tmp = substr(tmp, RSTART + RLENGTH)
   }
+
   # asset_url single-quote
   if (match(line, /'"'"'[^'"'"']+'"'"'[[:space:]]*\|[[:space:]]*asset_url/)) {
     frag = substr(line, RSTART, RLENGTH)
@@ -123,13 +167,24 @@ in_schema {
 ' > "${TMPDIR_GRAPH}/all_edges.tsv" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
-# Stats: top rendered snippets (TSV: count TAB target)
+# Stats: top rendered snippets (render+include, shape: {file, count})
 # ---------------------------------------------------------------------------
 
 awk -F'\t' '$2=="render"||$2=="include"{print $3}' "${TMPDIR_GRAPH}/all_edges.tsv" 2>/dev/null | \
-  sort | uniq -c | sort -rn | head -20 | \
+  sort | uniq -c | sort -rn | head -10 | \
   awk '{cnt=$1; $1=""; sub(/^ /,""); printf "%s\t%s\n", cnt, $0}' \
   > "${TMPDIR_GRAPH}/top_rendered.tsv" || true
+
+# ---------------------------------------------------------------------------
+# Fix 1 [HIGH:95]: top_hubs — top 10 files by ALL incoming edges
+# Shape: {file, imported_by} — matches JS/TS graph.json convention
+# Counts all relations (render, include, section, schema-block, asset, render-dynamic)
+# ---------------------------------------------------------------------------
+
+awk -F'\t' '$3!="*" && length($3)>0 {print $3}' "${TMPDIR_GRAPH}/all_edges.tsv" 2>/dev/null | \
+  sort | uniq -c | sort -rn | head -10 | \
+  awk '{cnt=$1; $1=""; sub(/^ /,""); printf "%s\t%s\n", cnt, $0}' \
+  > "${TMPDIR_GRAPH}/top_hubs.tsv" || true
 
 # Referenced names for orphan detection
 awk -F'\t' '$2=="render"||$2=="include"{print $3}' "${TMPDIR_GRAPH}/all_edges.tsv" 2>/dev/null | \
@@ -165,6 +220,8 @@ done > "${TMPDIR_GRAPH}/nodes.tsv"
 
 # ---------------------------------------------------------------------------
 # Assemble final JSON via awk (all TSV inputs, zero subprocesses)
+# Fix 1: top_hubs uses {file, imported_by} shape (ARGV[3])
+#        top_rendered_snippets uses {file, count} shape (ARGV[2])
 # ---------------------------------------------------------------------------
 
 awk -F'\t' '
@@ -175,8 +232,8 @@ function jesc(s,   r) {
   return r
 }
 BEGIN {
-  n_sep=""; e_sep=""; t_sep=""; o_sep=""
-  nj=""; ej=""; tj=""; oj=""
+  n_sep=""; e_sep=""; r_sep=""; h_sep=""; o_sep=""
+  nj=""; ej=""; rj=""; hj=""; oj=""
 }
 FILENAME == ARGV[1] {
   nj = nj n_sep "{\"file\":\"" jesc($1) "\",\"type\":\"" jesc($2) "\",\"kind\":\"file\"}"
@@ -189,25 +246,32 @@ FILENAME == ARGV[2] {
   next
 }
 FILENAME == ARGV[3] {
-  # TSV: count TAB target
-  tj = tj t_sep "{\"file\":\"" jesc($2) "\",\"count\":" $1 "}"
-  t_sep = ","
+  # TSV: count TAB file — top_rendered_snippets shape: {file, count}
+  rj = rj r_sep "{\"file\":\"" jesc($2) "\",\"count\":" $1 "}"
+  r_sep = ","
   next
 }
 FILENAME == ARGV[4] {
+  # TSV: count TAB file — top_hubs shape: {file, imported_by}
+  hj = hj h_sep "{\"file\":\"" jesc($2) "\",\"imported_by\":" $1 "}"
+  h_sep = ","
+  next
+}
+FILENAME == ARGV[5] {
   oj = oj o_sep "\"" jesc($1) "\""
   o_sep = ","
   next
 }
 END {
-  printf "{\n  \"nodes\": [%s],\n  \"edges\": [%s],\n  \"stats\": {\n    \"top_hubs\": [%s],\n    \"orphans\": [%s],\n    \"top_rendered_snippets\": [%s]\n  }\n}\n",
-    nj, ej, tj, oj, tj
+  printf "{\n  \"nodes\": [%s],\n  \"edges\": [%s],\n  \"stats\": {\n    \"top_rendered_snippets\": [%s],\n    \"top_hubs\": [%s],\n    \"orphans\": [%s]\n  }\n}\n",
+    nj, ej, rj, hj, oj
 }
 ' \
   "${TMPDIR_GRAPH}/nodes.tsv" \
   "${TMPDIR_GRAPH}/all_edges.tsv" \
   "${TMPDIR_GRAPH}/top_rendered.tsv" \
+  "${TMPDIR_GRAPH}/top_hubs.tsv" \
   "${TMPDIR_GRAPH}/orphans.txt" \
-  > "$OUTPUT_FILE"
+  > "$OUTPUT"
 
-echo "build-liquid-graph: wrote ${OUTPUT_FILE}" >&2
+echo "build-liquid-graph: wrote ${OUTPUT}" >&2

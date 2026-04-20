@@ -6,7 +6,7 @@
   "_governanceDoc": "docs/claude-governance.md",
   "_governanceProfile": "project-baseline",
   "_governanceOwnership": "Project settings own repo-local permissions, hooks, and context limits. Global settings stay workstation-local and optional.",
-  "_cacheNote": "Keep tool/permission order stable — reordering the allow list mid-session breaks Claude's prompt cache prefix and increases cost.",
+  "_cacheNote": "Keep tool/permission order stable \u2014 reordering the allow list mid-session breaks Claude's prompt cache prefix and increases cost.",
   "respectGitignore": true,
   "attribution": {
     "coAuthoredBy": true,
@@ -128,6 +128,16 @@
       }
     ],
     "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/graph-before-read.sh",
+            "timeout": 2
+          }
+        ]
+      },
       {
         "matcher": "Edit|Write",
         "hooks": [
