@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# doctor.sh — Health check for Claude Code AI setup (15 checks)
+# doctor.sh — Health check for Claude Code AI setup
 # Usage: bash .claude/scripts/doctor.sh
 # Requires: bash 3.2+, git
-# Repo-local model-version warning until a template-distributed doctor script exists.
 set -euo pipefail
 
 PASS="[OK]"
@@ -320,6 +319,199 @@ if command -v git >/dev/null 2>&1 && git rev-parse --git-dir >/dev/null 2>&1; th
   else
     add_row "$PASS" "Corpus size" "${corpus_count} tracked files"
   fi
+fi
+
+# 17. .claudeignore managed block freshness
+# Warns when the installed managed block is older than base OR stack template.
+# Looks up templates/claudeignore via npm install paths (the target project
+# does not ship the templates itself).
+_find_claudeignore_templates() {
+  # 1. Same-repo (dev / source setup): walk up from doctor.sh
+  local script_dir
+  script_dir="$(cd "$(dirname "$0")" && pwd)"
+  local candidate="${script_dir}/../../templates/claudeignore"
+  [ -d "$candidate" ] && { echo "$candidate"; return 0; }
+
+  # 2. Global npm install: resolve the @onedot/ai-setup package root
+  if command -v npm >/dev/null 2>&1; then
+    local npm_root
+    npm_root=$(npm root -g 2>/dev/null || true)
+    [ -n "$npm_root" ] && [ -d "${npm_root}/@onedot/ai-setup/templates/claudeignore" ] \
+      && { echo "${npm_root}/@onedot/ai-setup/templates/claudeignore"; return 0; }
+  fi
+
+  # 3. npx cache fallbacks — search under typical npm cache paths
+  local cache_root
+  for cache_root in \
+    "${NPM_CONFIG_CACHE:-$HOME/.npm}/_npx" \
+    "$HOME/.npm/_npx"; do
+    [ -d "$cache_root" ] || continue
+    local hit
+    hit=$(find "$cache_root" -maxdepth 5 -type d -name claudeignore \
+          -path '*templates/claudeignore' 2>/dev/null | head -1)
+    [ -n "$hit" ] && { echo "$hit"; return 0; }
+  done
+
+  return 1
+}
+
+check_claudeignore_freshness() {
+  [ -f ".claudeignore" ] || return 0
+  local profile
+  profile=$(grep -m1 '^# --- ai-setup managed (profile:' .claudeignore 2>/dev/null | sed "s/.*profile: //;s/) ---.*//") || true
+  [ -z "$profile" ] && return 0
+
+  local tpl_dir
+  tpl_dir=$(_find_claudeignore_templates) || {
+    add_row "$WARN" ".claudeignore" "Cannot locate ai-setup templates — install missing or stale"
+    return 0
+  }
+  local profile_tpl="${tpl_dir}/${profile}.claudeignore"
+  local base_tpl="${tpl_dir}/base.claudeignore"
+  [ -f "$profile_tpl" ] || return 0
+
+  local _stat_cmd
+  if [ "$(uname -s)" = "Darwin" ]; then _stat_cmd="stat -f %m"; else _stat_cmd="stat -c %Y"; fi
+
+  local tpl_mtime base_mtime ci_mtime newest_tpl
+  tpl_mtime=$($_stat_cmd "$profile_tpl" 2>/dev/null || echo 0)
+  base_mtime=0
+  [ -f "$base_tpl" ] && base_mtime=$($_stat_cmd "$base_tpl" 2>/dev/null || echo 0)
+  ci_mtime=$($_stat_cmd ".claudeignore" 2>/dev/null || echo 0)
+
+  # Compare installed file against MAX(profile, base) — base changes must also trigger stale warning
+  newest_tpl=$tpl_mtime
+  [ "$base_mtime" -gt "$newest_tpl" ] && newest_tpl=$base_mtime
+
+  if [ "$newest_tpl" -gt "$ci_mtime" ]; then
+    local reason="profile"
+    [ "$base_mtime" -gt "$tpl_mtime" ] && reason="base"
+    add_row "$WARN" ".claudeignore" "Profile ${profile} ${reason} template is newer — re-run ai-setup to sync"
+  else
+    add_row "$PASS" ".claudeignore" "Profile ${profile} managed block is current"
+  fi
+}
+check_claudeignore_freshness
+
+
+# 18. graph-before-read hook vs graph.json
+gbr_hook_registered=false
+if [ -f "$SETTINGS_FILE" ]; then
+  if command -v python3 >/dev/null 2>&1; then
+    if python3 -c "import json,sys; d=json.load(open(sys.argv[1])); hooks=d.get('hooks',{}); pre=hooks.get('PreToolUse',[]); print('yes' if any('graph-before-read' in str(e) for e in pre) else 'no')" "$SETTINGS_FILE" 2>/dev/null | grep -q yes; then
+      gbr_hook_registered=true
+    fi
+  elif command -v jq >/dev/null 2>&1; then
+    if jq -e '[.hooks.PreToolUse[]? | select(.. | strings | test("graph-before-read"))] | length > 0' "$SETTINGS_FILE" >/dev/null 2>&1; then
+      gbr_hook_registered=true
+    fi
+  fi
+fi
+if [ "$gbr_hook_registered" = "true" ]; then
+  if [ ! -f ".agents/context/graph.json" ]; then
+    add_row "$WARN" "graph-before-read" "Hook active but .agents/context/graph.json missing — hint will not fire"
+  else
+    add_row "$PASS" "graph-before-read" "Hook registered and graph.json present"
+  fi
+fi
+
+# 10c. Skill stack drift detection
+# Warn when an installed skill declares stacks: that don't match the project profile.
+# Only active when detect-stack.sh is reachable from a known install location.
+if [ -d ".claude/skills" ]; then
+  _doctor_profile=""
+  _detect_script=""
+
+  # Search for detect-stack.sh relative to script locations or npm cache
+  for _candidate in \
+    "$(dirname "$(command -v ai-setup.sh 2>/dev/null || true)" 2>/dev/null)/../lib/detect-stack.sh" \
+    "$HOME/.npm/_npx"/*/node_modules/@onedot/ai-setup/lib/detect-stack.sh; do
+    [ -f "$_candidate" ] && _detect_script="$_candidate" && break
+  done
+
+  if [ -n "$_detect_script" ]; then
+    _doctor_profile=$(bash "$_detect_script" "$PWD" 2>/dev/null \
+      | grep "^stack_profile=" | cut -d= -f2 || true)
+  fi
+
+  if [ -n "$_doctor_profile" ] && [ "$_doctor_profile" != "default" ]; then
+    drift_count=0
+    drift_details=""
+    while IFS= read -r skill_file; do
+      [ -z "$skill_file" ] && continue
+      skill_name="$(basename "$(dirname "$skill_file")")"
+
+      stacks_line=$(awk '
+        /^---$/ { if (front == 0) { front = 1; next } else { exit } }
+        front == 1 && /^stacks:/ { print; exit }
+      ' "$skill_file" 2>/dev/null || true)
+
+      [ -z "$stacks_line" ] && continue
+
+      _match=0
+      if printf '%s\n' "$stacks_line" | grep -qE "(^|[^a-zA-Z0-9_-])${_doctor_profile}([^a-zA-Z0-9_-]|$)"; then
+        _match=1
+      fi
+      if printf '%s\n' "$stacks_line" | grep -qE "(^|[^a-zA-Z0-9_-])all([^a-zA-Z0-9_-]|$)"; then
+        _match=1
+      fi
+
+      if [ "$_match" -eq 0 ]; then
+        drift_count=$((drift_count + 1))
+        stacks_val=$(printf '%s\n' "$stacks_line" | sed 's/^stacks:[[:space:]]*//' )
+        drift_details="${drift_details}${skill_name}${stacks_val} "
+      fi
+    done < <(find .claude/skills -name "SKILL.md" 2>/dev/null)
+
+    if [ "$drift_count" -eq 0 ]; then
+      add_row "$PASS" "Skill stack drift"   "No mismatched skills (profile: ${_doctor_profile})"
+    else
+      add_row "$WARN" "Skill stack drift"   "${drift_count} skill(s) for wrong stack: ${drift_details}"
+    fi
+  fi
+fi
+
+# 19. Graphify skill vs binary
+if [ -f ".claude/skills/graphify.md" ] || [ -f ".claude/skills/graphify/SKILL.md" ]; then
+  if command -v graphify >/dev/null 2>&1; then
+    add_row "$PASS" "Graphify" "Skill installed and binary found"
+  else
+    add_row "$WARN" "Graphify" "Skill installed but graphify not in PATH — run: pipx install graphifyy"
+  fi
+fi
+
+# 20. Context file size caps
+_dsc_script="$(cd "$(dirname "$0")" && pwd)/../../lib/context-size-check.sh"
+if [ -f "$_dsc_script" ] && [ -d ".agents/context" ]; then
+  if [ "${CONTEXT_CAPS_RELAX:-0}" = "1" ]; then
+    add_row "$PASS" "Context size caps" "RELAXED (CONTEXT_CAPS_RELAX=1)"
+  else
+    _dsc_out="$(bash "$_dsc_script" ".agents/context" 2>/dev/null || true)"
+    _dsc_viols="$(printf '%s\n' "$_dsc_out" | grep '^VIOLATION:' || true)"
+    if [ -n "$_dsc_viols" ]; then
+      _dsc_count="$(printf '%s\n' "$_dsc_viols" | grep -c '.' || echo 0)"
+      _dsc_detail="$(printf '%s\n' "$_dsc_viols" | sed 's/^VIOLATION: //' | tr '\n' '; ' | sed 's/; $//')"
+      add_row "$WARN" "Context size caps" "${_dsc_count} violation(s): ${_dsc_detail}"
+    else
+      _dsc_total="$(printf '%s\n' "$_dsc_out" | grep '^TOTAL:' | sed 's/TOTAL: \([0-9]*\) lines.*/\1/' | head -1 || true)"
+      add_row "$PASS" "Context size caps" "All files within caps (${_dsc_total:-?} total lines)"
+    fi
+  fi
+fi
+unset _dsc_script _dsc_out _dsc_viols _dsc_count _dsc_detail _dsc_total
+
+# 21. Hook token audit
+if [ -f "lib/hook-token-audit.sh" ]; then
+  audit_out="$(bash lib/hook-token-audit.sh 2>/dev/null || true)"
+  audit_violations="$(printf '%s\n' "$audit_out" | grep -c 'VIOLATION' 2>/dev/null || echo 0)"
+  if [ "${audit_violations:-0}" -gt 0 ]; then
+    add_row "$WARN" "Hook token budget" "${audit_violations} hook(s) exceed token cap — run: bash lib/hook-token-audit.sh"
+  else
+    total_tokens="$(printf '%s\n' "$audit_out" | grep -oE '^[[:space:]]*[A-Z].*[[:space:]]+[0-9]+[[:space:]]+(tokens|OK)' | awk '{sum+=$(NF-1)} END {print sum+0}' 2>/dev/null || echo '?')"
+    add_row "$PASS" "Hook token budget" "All hooks within budget (~${total_tokens} tokens total)"
+  fi
+else
+  add_row "$WARN" "Hook token budget" "lib/hook-token-audit.sh not found — skipping"
 fi
 
 # Output table

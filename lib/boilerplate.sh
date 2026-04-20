@@ -1,6 +1,6 @@
 #!/bin/bash
 # Boilerplate pull: fetch system-specific config from canonical boilerplate repos via gh CLI
-# Requires: $SCRIPT_DIR, _json_merge(), _json_valid()
+# Requires: $SCRIPT_DIR, _json_merge(), _json_valid(), skill_matches_profile() (skill-filter.sh)
 
 # Org that hosts all boilerplate repos
 BOILERPLATE_ORG="onedot-digital-crew"
@@ -117,6 +117,7 @@ _merge_mcp_json() {
   rm -f "$tmp_mcp"
 }
 
+# Pass FORCE_ALL_SKILLS=1 (env) to bypass the stack profile filter.
 # Pull all boilerplate files for a given system from the canonical repo.
 # Fresh installs pull skills, rules, agents, and .mcp.json by default.
 # Update syncs can pass --skip-skills to avoid overwriting project-local skills.
@@ -132,6 +133,15 @@ pull_boilerplate_files() {
 
   local pulled=0
   local failed=0
+  local skipped=0
+
+  # Detect stack profile for skill filtering (empty = filter disabled)
+  local _stack_profile=""
+  if [ "${FORCE_ALL_SKILLS:-0}" != "1" ] && [ -n "${SCRIPT_DIR:-}" ] && \
+     [ -f "${SCRIPT_DIR}/lib/detect-stack.sh" ]; then
+    _stack_profile=$(bash "${SCRIPT_DIR}/lib/detect-stack.sh" "$PWD" 2>/dev/null \
+      | grep '^stack_profile=' | cut -d= -f2 || true)
+  fi
 
   if [ "$skip_skills" != "--skip-skills" ]; then
     # --- Skills: .claude/skills/*/SKILL.md ---
@@ -145,16 +155,38 @@ pull_boilerplate_files() {
         local remote_skill="${skill_dir}/SKILL.md"
         local local_skill=".claude/skills/${skill_name}/SKILL.md"
 
-        _gh_fetch_file "$repo" "$remote_skill" "$local_skill"
+        # Download to temp file first so we can inspect frontmatter before install
+        local _tmp_skill
+        _tmp_skill=$(mktemp)
+
+        _gh_fetch_file "$repo" "$remote_skill" "$_tmp_skill"
         local _rc=$?
-        if [ $_rc -eq 0 ]; then
-          tui_success "Skill: ${skill_name}"
-          pulled=$((pulled + 1))
-        elif [ $_rc -eq 1 ]; then
+
+        if [ $_rc -eq 0 ] || [ $_rc -eq 2 ]; then
+          # Apply stack profile filter when profile is known and not "default"
+          if [ -n "$_stack_profile" ] && [ "$_stack_profile" != "default" ]; then
+            if ! skill_matches_profile "$_tmp_skill" "$_stack_profile"; then
+              log_skill_skip "$skill_name" "$_tmp_skill" "$_stack_profile"
+              rm -f "$_tmp_skill"
+              skipped=$((skipped + 1))
+              continue
+            fi
+          fi
+
+          if [ $_rc -eq 0 ]; then
+            mkdir -p ".claude/skills/${skill_name}"
+            mv "$_tmp_skill" "$local_skill"
+            tui_success "Skill: ${skill_name}"
+            pulled=$((pulled + 1))
+          else
+            # rc=2: unchanged — temp file holds the same content, discard
+            rm -f "$_tmp_skill"
+          fi
+        else
+          rm -f "$_tmp_skill"
           tui_warn "Skill not found: ${skill_name}/SKILL.md"
           failed=$((failed + 1))
         fi
-        # rc=2: unchanged — skip silently
       done <<< "$skill_dirs"
     fi
   fi
@@ -209,7 +241,11 @@ pull_boilerplate_files() {
   _merge_mcp_json "$repo"
 
   echo ""
-  tui_info "Done: ${pulled} file(s) pulled, ${failed} failed"
+  if [ "$skipped" -gt 0 ]; then
+    tui_info "Done: ${pulled} file(s) pulled, ${skipped} skipped (profile filter), ${failed} failed"
+  else
+    tui_info "Done: ${pulled} file(s) pulled, ${failed} failed"
+  fi
   echo ""
 }
 

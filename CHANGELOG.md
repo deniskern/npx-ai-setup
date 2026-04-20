@@ -10,6 +10,16 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+### Added
+- Stack-specific context bundles for 6 profiles: nuxt-storyblok, shopify-liquid, laravel, mcp-server, nextjs, n8n (spec/638)
+- `lib/detect-stack.sh` — zero-dep stack profile detection (grep/find only, POSIX-compatible)
+- `lib/generate-summary.sh` — merges bundle abstracts into tiered-loading SUMMARY.md
+- Bundle-aware `--patch` protection: manually edited files (no bundle marker) saved as `.new` instead of overwritten
+
+### Changed
+- `bin/ai-setup.sh` context install phase: known stacks get bundle copy (zero LLM cost), falls back to LLM for unknown stacks
+- `lib/generate.sh` CONTEXT_PROMPT: respects `<!-- bundle: -->` marker, skips already-bundled files on regen
+
 ## [v2.2.0] — 2026-04-17
 
 <!-- slack-announcement -->

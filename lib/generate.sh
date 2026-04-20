@@ -234,10 +234,11 @@ Create exactly 3 files in .agents/context/ using the Write tool:
 Rules:
 - Create all 3 files in one turn using the Write tool.
 - Base ALL content on the provided context. Do not invent details.
-- Keep each file concise: 30-60 lines max.
+- Keep each file concise: STACK.md ≤100 lines, ARCHITECTURE.md ≤150 lines, CONVENTIONS.md ≤80 lines.
 - Use markdown headers and bullet points.
 - If information is not available, write 'Not determined from available context.'
 - No umlauts. English only.
+- IMPORTANT: If an existing file starts with <!-- bundle: ... --> do NOT overwrite it. Skip that file and only create the missing ones.
 
 --- package.json ---
 $CTX_PKG

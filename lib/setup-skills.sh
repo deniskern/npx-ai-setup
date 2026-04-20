@@ -5,13 +5,32 @@
 install_spec_skills() {
   [ "${#SPEC_SKILLS_MAP[@]}" -gt 0 ] || return 0
   tui_step "Installing spec workflow skills"
+
+  # Detect stack profile for filtering (empty = no filter)
+  local _profile=""
+  if [ "${FORCE_ALL_SKILLS:-0}" != "1" ] && [ -n "${SCRIPT_DIR:-}" ] && \
+     [ -f "${SCRIPT_DIR}/lib/detect-stack.sh" ]; then
+    _profile=$(bash "${SCRIPT_DIR}/lib/detect-stack.sh" "$PWD" 2>/dev/null \
+      | grep '^stack_profile=' | cut -d= -f2 || true)
+  fi
+
   for mapping in "${SPEC_SKILLS_MAP[@]}"; do
     local local_tpl="${mapping%%:*}"
     local local_target="${mapping#*:}"
-    local skill_dir src_path
+    local skill_dir src_path skill_name
     skill_dir="$(dirname "$local_target")"
     src_path="$TPL/${local_tpl#templates/}"
+    skill_name="$(basename "$skill_dir")"
     [ -f "$src_path" ] || continue
+
+    # Apply stack profile filter when profile is known and not "default"
+    if [ -n "$_profile" ] && [ "$_profile" != "default" ]; then
+      if ! skill_matches_profile "$src_path" "$_profile"; then
+        log_skill_skip "$skill_name" "$src_path" "$_profile"
+        continue
+      fi
+    fi
+
     mkdir -p "$skill_dir"
     _install_or_update_file "$src_path" "$local_target"
   done
@@ -379,5 +398,32 @@ ensure_opencode_skills_alias() {
   fi
   if ln -s ../.claude/skills "$alias" 2>/dev/null; then
     echo "  🔗 Linked $alias -> ../.claude/skills (OpenCode)"
+  fi
+}
+
+# Install graphify skill when INSTALL_GRAPHIFY=yes and not already present.
+# Idempotent: skips silently if .claude/skills/graphify.md already exists.
+# Called from ai-setup.sh after the user has confirmed the opt-in.
+install_graphify_skill() {
+  [ "${INSTALL_GRAPHIFY:-no}" = "yes" ] || return 0
+
+  local dst=".claude/skills/graphify.md"
+  if [ -f "$dst" ]; then
+    tui_info "Graphify skill already installed — skipping"
+    return 0
+  fi
+
+  local src="$TPL/skills/graphify/SKILL.template.md"
+  if [ ! -f "$src" ]; then
+    tui_warn "Graphify skill template missing: $src"
+    return 1
+  fi
+
+  mkdir -p .claude/skills
+  cp "$src" "$dst"
+  tui_success "Graphify skill installed ($dst)"
+
+  if ! command -v graphify >/dev/null 2>&1; then
+    tui_warn "graphify binary not found — run: pipx install graphifyy"
   fi
 }

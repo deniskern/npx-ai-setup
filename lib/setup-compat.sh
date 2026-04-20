@@ -121,26 +121,17 @@ generate_opencode_config() {
   fi
 }
 
-# Install .claudeignore with universal patterns.
-# Idempotent: merges new patterns into existing file, never removes user entries.
+# Install .claudeignore with stack-specific patterns via managed block.
+# Uses STACK_PROFILE (set before calling) for profile selection.
+# Idempotent: re-syncs managed block, preserves user lines outside markers.
 install_claudeignore() {
-  if [ ! -f .claudeignore ]; then
-    cp "$TPL/.claudeignore" .claudeignore
-    echo "  📄 .claudeignore installed ($(wc -l < .claudeignore | tr -d ' ') patterns)"
-  else
-    # Merge: append template patterns not already present
-    local added=0
-    while IFS= read -r line; do
-      # Skip comments and blank lines for dedup check
-      [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
-      if ! grep -qxF "$line" .claudeignore 2>/dev/null; then
-        echo "$line" >> .claudeignore
-        added=$((added + 1))
-      fi
-    done < "$TPL/.claudeignore"
-    [ "$added" -gt 0 ] && echo "  📄 .claudeignore updated (+$added patterns)"
+  local profile="${STACK_PROFILE:-default}"
+  local installer="$SCRIPT_DIR/lib/install-claudeignore.sh"
+  if [ ! -f "$installer" ]; then
+    echo "  install-claudeignore.sh not found, skipping" >&2
+    return 0
   fi
-
+  bash "$installer" "$PWD" "$profile" "$TPL"
 }
 
 # Install statusline script globally from bundled template.
