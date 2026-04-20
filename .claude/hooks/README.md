@@ -39,6 +39,21 @@ cat /tmp/claude-cb-*.log
 rm /tmp/claude-cb-*.log
 ```
 
+## Hook Types
+
+Hooks unterstützen `type: "command"` (Shell-Skript) und ab v2.1.118 `type: "mcp_tool"` (direkt ein MCP-Tool aufrufen, kein Shell-Wrapper nötig).
+
+```json
+{
+  "type": "mcp_tool",
+  "server": "crewbuddy",
+  "tool": "crewbuddy_create_task",
+  "arguments": { "name": "..." }
+}
+```
+
+Nützlich z.B. für Stop-Hook → Crewbuddy-Task oder Slack-Notification ohne Shell-Skript.
+
 ## Disabling Hooks
 
 Remove the hook block from `.claude/settings.json`, or add `exit 0` at the top of the script.

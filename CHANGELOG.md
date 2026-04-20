@@ -10,15 +10,57 @@ Format: grouped by version. New entries go under `## [Unreleased]` and are moved
 
 ## [Unreleased]
 
+## [v2.2.1] — 2026-04-24
+
+<!-- slack-announcement -->
+:package: *@onedot/ai-setup v2.2.1 — Stack-Aware Setup*
+
+*Was ist neu:*
+:dart: *Stack-Profile* — `lib/detect-stack.sh` erkennt `nuxt-storyblok`, `nuxtjs`, `shopify-liquid`, `laravel`, `nextjs` automatisch. Context-Bundles werden bei bekanntem Stack direkt kopiert — **zero LLM cost**, spart 2-3k Tokens pro Setup.
+:scroll: *Curated MCPs* — `context7` global und `shopify-dev-mcp` bei Shopify-Themes automatisch als Vorschlag in `.mcp.json`. Kein Auth, kein Slug-Raten.
+:mag: *Liquid Dependency Graph* — Shopify-Themes bekommen `.agents/context/liquid-graph.json` mit section→snippet→template Edges. Grep-freie Cross-File Navigation.
+:hammer_and_wrench: *Skill-Filter* — Skills mit `stacks:` Frontmatter werden nur passend zum Profil installiert. Nuxt-Projekt lädt keine Shopify-Skills mehr.
+:no_entry_sign: *.claudeignore per Stack* — managed block mit `.nuxt/`, `config/settings_data.json`, `vendor/` etc. automatisch ausgeblendet. Idempotent + User-Lines preserved.
+:bar_chart: *Token Budget* — Hook-Token-Audit mit 300/2000 Caps, Context-File Size Caps (SUMMARY ≤40, STACK ≤100, ARCHITECTURE ≤150, CONVENTIONS ≤80 Zeilen).
+:brain: *Graphify Opt-in* — grosse Projekte (Nuxt ≥50 .vue, Shopify ≥30 .liquid, Laravel ≥100 .php) kriegen optional Graphify-Skill. `pipx install graphifyy`, dann Knowledge-Graph on-demand.
+:eye: *Graph-Before-Read Hook* — PreToolUse Hint bei >500 Zeilen oder 4x Grep in Folge, verweist auf graph.json-Queries. Exit 0, nie blockierend.
+
+*Neue Flags:* `--force-skip-graphify`, `--force-all-skills`, `--relax-context-caps`
+
+*Entfernt:* n8n + mcp-server Profile (nicht Primary Targets), repomix (bereits in 2.2)
+<!-- /slack-announcement -->
+
 ### Added
-- Stack-specific context bundles for 6 profiles: nuxt-storyblok, shopify-liquid, laravel, mcp-server, nextjs, n8n (spec/638)
-- `lib/detect-stack.sh` — zero-dep stack profile detection (grep/find only, POSIX-compatible)
-- `lib/generate-summary.sh` — merges bundle abstracts into tiered-loading SUMMARY.md
-- Bundle-aware `--patch` protection: manually edited files (no bundle marker) saved as `.new` instead of overwritten
+- Stack-profile detection (`lib/detect-stack.sh`): `nuxt-storyblok`, `nuxtjs`, `shopify-liquid`, `laravel`, `nextjs`, `default` + `graphify_candidate` signal (spec/638, spec/637)
+- Context bundles (`templates/context-bundles/`): 6 profile-specific STACK.md/ARCHITECTURE.md/CONVENTIONS.md starting points
+- `lib/generate-summary.sh` merges bundle abstracts into tiered-loading SUMMARY.md
+- Bundle-aware `--patch` protection: manually edited files (no `<!-- bundle: -->` marker) saved as `.new` instead of overwritten
+- Liquid dependency graph generator (`lib/build-liquid-graph.sh`) + refresher + ARCHITECTURE.md docs (spec/639)
+- Curated standard MCPs (`lib/mcp-suggest.sh`, `lib/data/mcp-defaults.json`): context7 global, shopify-dev-mcp for Shopify (spec/640)
+- Stack-specific `.claudeignore` installer (`lib/install-claudeignore.sh`) + 7 templates + managed-block markers (spec/641)
+- Skill frontmatter filter (`lib/skill-filter.sh`) at boilerplate pull + setup-skills with `stacks:` field support (spec/642)
+- Hook token audit (`lib/hook-token-audit.sh`) + policy template (300/2000 caps) (spec/643)
+- Context-file size caps (`lib/context-size-check.sh`, `lib/data/context-caps.json`) + doctor.sh integration (spec/644)
+- Graph-before-read PreToolUse hint hook (`templates/claude/hooks/graph-before-read.sh`) for files >500 lines or 4x-grep patterns (spec/645)
+- Graphify knowledge-graph opt-in skill (`templates/skills/graphify/`) with file-count thresholds (spec/637)
+- New flags: `--force-skip-graphify`, `--force-all-skills`, `--relax-context-caps`
+- `doctor.sh` checks: skill stack-drift, context size violations, hook token caps, graphify binary, .claudeignore freshness, graph-before-read sanity
+- `README.md` sections: Context Bundles, Skill Stack-Filter, Default MCPs, Turn-Token Budget, Context File Budget, Graph-First Navigation, Claude Ignore Patterns, Optional Knowledge Graph
+- `rules/agents.md`: Effort Levels section for Opus 4.7 (`xhigh`/`max`, Pro/Max defaults)
+- `hooks/README.md`: document new `type: "mcp_tool"` hook type (Claude Code v2.1.118)
 
 ### Changed
-- `bin/ai-setup.sh` context install phase: known stacks get bundle copy (zero LLM cost), falls back to LLM for unknown stacks
-- `lib/generate.sh` CONTEXT_PROMPT: respects `<!-- bundle: -->` marker, skips already-bundled files on regen
+- `bin/ai-setup.sh` context install phase reordered: bundle install runs BEFORE LLM generation, `REGEN_CONTEXT=no` set when bundle installed (spec/638 ordering fix)
+- `lib/generate.sh` CONTEXT_PROMPT respects `<!-- bundle: -->` marker, skips already-bundled files on regen; adds explicit line-count caps
+- `lib/boilerplate.sh` + `lib/setup-skills.sh` honor skill stack-filter; `skipped` counter in summary
+- `lib/plugins.sh` refactored: `_mcp_add_entry` helper, `install_mcp_suggestions` replaces `install_context7` for stack-aware MCP install
+- `hooks/protect-files.sh` slimmed: `.env`, lockfiles, `.git/` are already blocked via `permissions.deny` — hook now only covers Vite `assets/` build-output check (no duplicate enforcement)
+- `rules/mcp.md`: correct stale claim that project `.mcp.json` is empty (it pins `context7` for all contributors)
+
+### Removed
+- `n8n` and `mcp-server` stack profiles (not primary targets per stakeholder decision)
+- `rules/terse-output.md` (opt-in rule, never referenced, dead weight)
+- `.claude/plans/`: 3 stale random-name plan files (Claude Code v2.1.111 changed plan naming to prompt-based)
 
 ## [v2.2.0] — 2026-04-17
 

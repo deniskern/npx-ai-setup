@@ -12,6 +12,12 @@ Always set `model:` when spawning subagents.
 
 Never spawn Explore/search without `haiku`. Code-writing agents must use `sonnet`.
 
+## Effort Levels (Opus 4.7)
+
+`/effort` oder `--effort` setzen: `medium` → `high` → `xhigh` → `max`.
+Default für Pro/Max: `high`. `xhigh` nur Opus 4.7 — andere Modelle fallen auf `high` zurück.
+Für Arch-Review/Spec-Arbeit: `xhigh`. Für normale Code-Tasks: default `high`.
+
 ## Dispatch
 
 - Threshold: spawn agents only for tasks requiring ≥3 distinct tool calls

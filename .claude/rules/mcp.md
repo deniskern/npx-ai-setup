@@ -2,8 +2,8 @@
 
 ## Project vs Global
 
-This project's `.mcp.json` is intentionally empty — project-level overrides are only added when needed.
-Global servers are configured in `~/.claude/mcp.json` and apply to all projects.
+This project's `.mcp.json` pins `context7` project-local (so every contributor gets it without global setup).
+Other MCP servers come from `~/.claude/mcp.json` (workstation-global) — add project entries only when overrides are needed.
 
 ```bash
 claude mcp list               # list all active servers
