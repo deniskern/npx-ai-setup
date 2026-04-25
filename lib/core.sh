@@ -18,7 +18,7 @@ build_template_map() {
   local tpl_dir="$SCRIPT_DIR/templates"
 
   while IFS= read -r -d '' file; do
-    local rel="${file#$tpl_dir/}"
+    local rel="${file#"$tpl_dir"/}"
     local filename="${rel##*/}"
 
     # Skip excluded filenames
@@ -31,6 +31,10 @@ build_template_map() {
     # Skip skills/ and commands/ — both handled by install_skills()
     [[ "$rel" == skills/* ]] && continue
     [[ "$rel" == commands/* ]] && continue
+
+    # Skip context-bundles/ — source material for generate.sh, never installed as-is.
+    # One bundle is selected by stack and rendered into .agents/context/.
+    [[ "$rel" == context-bundles/* ]] && continue
 
     # Skip typescript.md — handled conditionally by TS_RULES_MAP in install_rules()
     [[ "$rel" == "claude/rules/typescript.md" ]] && continue
@@ -55,6 +59,7 @@ build_template_map
 
 # Legacy: explicit skill mappings used by install_spec_skills() — kept for compat.
 # Superseded by install_skills() which installs all templates/skills/ generically.
+# shellcheck disable=SC2034
 SPEC_SKILLS_MAP=(
   "templates/skills/spec-board/SKILL.template.md:.claude/skills/spec-board/SKILL.md"
   "templates/skills/spec/SKILL.template.md:.claude/skills/spec/SKILL.md"
@@ -151,7 +156,6 @@ write_metadata() {
   fi
 
   for mapping in "${TEMPLATE_MAP[@]}"; do
-    local tpl="${mapping%%:*}"
     local target="${mapping#*:}"
     if [ -f "$target" ]; then
       local cs
@@ -162,7 +166,6 @@ write_metadata() {
 
   # Include TypeScript rules if installed
   for mapping in "${TS_RULES_MAP[@]}"; do
-    local tpl="${mapping%%:*}"
     local target="${mapping#*:}"
     if [ -f "$target" ]; then
       local cs
@@ -186,7 +189,7 @@ write_metadata() {
     while IFS= read -r -d '' _skill; do
       local _target="${_skill#./}"
       local _sname
-      _sname=$(echo "$_target" | sed 's|.claude/skills/\([^/]*\)/SKILL.md|\1|')
+      _sname="${_target#.claude/skills/}"; _sname="${_sname%/SKILL.md}"
       [ -f "$SCRIPT_DIR/templates/skills/$_sname/SKILL.template.md" ] || continue
       local cs
       cs=$(compute_checksum "$_target")
@@ -197,7 +200,7 @@ write_metadata() {
       local _target="${_ref#./}"
       local _sname
       local _rname
-      _sname=$(echo "$_target" | sed 's|.claude/skills/\([^/]*\)/references/.*|\1|')
+      _sname="${_target#.claude/skills/}"; _sname="${_sname%%/references/*}"
       _rname="${_target##*/}"
       [ -f "$SCRIPT_DIR/templates/skills/$_sname/references/$_rname" ] || continue
       local cs
@@ -229,14 +232,14 @@ is_current_managed_target() {
   # Skills: only protect if a matching template exists (custom skills are not tracked)
   if [[ "$target" == .claude/skills/*/SKILL.md ]]; then
     local _skill_name
-    _skill_name=$(echo "$target" | sed 's|.claude/skills/\([^/]*\)/SKILL.md|\1|')
+    _skill_name="${target#.claude/skills/}"; _skill_name="${_skill_name%/SKILL.md}"
     [ -f "$SCRIPT_DIR/templates/skills/$_skill_name/SKILL.template.md" ] && return 0
   fi
 
   if [[ "$target" == .claude/skills/*/references/*.md ]]; then
     local _skill_name
     local _ref_name
-    _skill_name=$(echo "$target" | sed 's|.claude/skills/\([^/]*\)/references/.*|\1|')
+    _skill_name="${target#.claude/skills/}"; _skill_name="${_skill_name%%/references/*}"
     _ref_name="${target##*/}"
     [ -f "$SCRIPT_DIR/templates/skills/$_skill_name/references/$_ref_name" ] && return 0
   fi

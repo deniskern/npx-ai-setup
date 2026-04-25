@@ -8,11 +8,15 @@
 ## Context
 [Why is this needed? What triggered this task?]
 
+## Stack Coverage
+- **Profiles affected**: [nuxt-storyblok | shopify-liquid | laravel | nextjs | nuxtjs | default | all]
+- **Per-stack difference**: [what changes per stack, if any — or "none, applies to all"]
+
 ## Steps
 <!-- If a step maps to an installed skill, write it as: - [ ] `/skill-name` args -->
-- [ ] Step 1: description
-- [ ] Step 2: description
-- [ ] Step 3: description
+- [ ] Step 1: `path/to/file` — description
+- [ ] Step 2: `path/to/file` — description
+- [ ] Step 3: `path/to/file` — description
 
 ## Acceptance Criteria
 - [ ] "[observable behavior verifiable by running a command]"

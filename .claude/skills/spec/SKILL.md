@@ -1,148 +1,81 @@
 ---
 name: spec
-description: "Create a new spec for a task."
+description: "Creates a structured spec before implementation. Trigger: 'let\\'s spec this', 'plan this out', 'new feature'."
+user-invocable: true
+disable-model-invocation: true
 effort: high
 model: opus
 argument-hint: "<task description>"
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Grep
+  - Bash
+  - AskUserQuestion
+  - Agent
 ---
 
-Creates a structured spec for the task: $ARGUMENTS. Use before implementing any multi-file or architectural change.
+Creates a structured spec for: $ARGUMENTS. Use before any multi-file or architectural change.
 
-## Phase 1 — Triage & Think Through
+## Phase 1 — Triage
 
-Before writing anything: triage the idea, then think the implementation completely through. Present findings in the chat.
+### 1a. Load skills
+Glob `.claude/skills/*/SKILL.md`, read first 5 lines each. Apply relevant guidance.
 
-### 1a — Load Skills
-If `.claude/skills/` exists, glob all skill directories and read each `SKILL.md` (first 5 lines only). Apply their guidance throughout.
+### 1b. Context-Scan (mandatory)
+Spawn `context-scanner` subagent (model: haiku). See `@references/context-scan.md`.
+Present the returned summary in chat, then ask one consolidated AskUserQuestion call:
 
-### 1a.5 — Documentation Discovery (if external libs/APIs involved)
-
-For each external dependency: `mcp__context7__resolve-library-id` → `mcp__context7__query-docs` (specific feature only).
-Output: verified method signatures + what does NOT exist. Feeds into 1d and spec steps.
-
-### 1b — Detect Input Type & Clarify
-
-- If `$ARGUMENTS` is an existing `.md` file: read it, ask only for missing implementation details, then continue.
-- If `$ARGUMENTS` is plain text: ask 1-3 focused questions only if ambiguity blocks a good spec.
-
-### 1c — Quick Triage
-
-Read `.agents/context/CONCEPT.md` if it exists → REJECT if clearly misaligned with core principles.
-
-**Complexity check**: If >5 files touched, new dep/system, or architectural change → `AskUserQuestion`: "Hohe Komplexitaet ([reason]). Empfehlung: /challenge zuerst." Options: "Weiter mit Spec", "Erst /challenge", "Scope reduzieren". Stop if /challenge chosen; ask clarifying questions if scope reduction chosen.
-
-### 1c.5 — Challenge Gate (mandatory)
-
-**File-Count-Check**: Glob source files relevant to $ARGUMENTS (e.g. `**/*.{js,ts,vue,sh,md}`).
-- ≤ 10 results → read top 3 directly with Glob/Grep/Read
-- > 10 results → spawn Haiku subagent (`model: haiku`, read-only: Glob/Grep/Read) to find the 3 most relevant files and return their key snippets, then evaluate findings below
-
-Stelle konkret:
-
-1. **Dopplung**: Gibt es Code der das schon macht oder teilweise löst? → Zeige `path/to/file:NN`
-2. **Pattern-Konflikt**: Widerspricht der Ansatz einem bestehenden Pattern in der Codebase? → Nenne das Pattern und wo es definiert ist
-3. **Simpler Weg**: Was ist die einfachste Alternative — und warum reicht sie nicht?
-4. **6-Monats-Schmerz**: Wo wird das schwer zu warten, zu debuggen, zu erweitern?
-
-Format in Chat:
 ```
-Challenge: [konkrete Aussage]
-Quelle: path/to/file:NN
-Empfehlung: [Weiter / Scope ändern / Ansatz überdenken]
+AskUserQuestion({
+  questions: [
+    { question: "Was soll diese Spec erreichen?", header: "Anforderung",
+      options: [plain text from $ARGUMENTS as default, "Other / eigene Eingabe"] },
+    { question: "Scope-Grenze?", header: "Scope",
+      options: ["Nur dieses Feature", "Feature + Refactor", "Breaking Change", "Other"] },
+    { question: "Stack-Coverage?", header: "Stack",
+      options: ["Single: <detected_profile>", "Multi: alle Stacks", "Spezifisch wählen", "Other"] },
+    { question: "Was ist explizit Out of Scope?", header: "OoS",
+      options: ["Tests", "Doku", "Migration", "Other"] }
+  ]
+})
 ```
 
-`AskUserQuestion`: "Challenge-Ergebnis: [1-Satz-Summary]. Weiter?" — Options: "Ja, Spec schreiben", "Ansatz anpassen", "Spec abbrechen".
-Stoppe wenn "abbrechen". Überarbeite Phase 1 sketch wenn "anpassen".
+If `$ARGUMENTS` is an existing `.md` file: read it first, skip question 1.
 
-### 1d — Think It Through
-Sketch the full implementation before writing. Use `AskUserQuestion` only at real decision points.
-- Files/systems touched; exact change in each
-- Integration path; data/state flow; what calls what
-- Edge cases; failure behavior; recoverability
-- Hidden complexity; hard-to-test parts; 6-month maintenance pain
-- **Complexity = impact surface + risk** (e.g. "3 files, new dep — Risk: memory, scroll state"). NEVER time estimates.
+### 1c. Quick triage
+Read `.agents/context/CONCEPT.md` if present — REJECT if misaligned.
+If >5 files touched or new dep/system: recommend `/challenge` first via AskUserQuestion.
 
-**Code-Flow-Analyse** (mandatory before step generation): For each function the spec will modify or call, read the source and trace:
-1. Who calls it, what guards/conditions gate execution
-2. What variables/state it already sets
-3. What error/failure paths exist
-Present as a short list in the chat (max 5 functions). This prevents redundant steps and surfaces blockers.
+### 1c.5. Challenge gate
+See `@references/challenge.md` for the 4 challenges + AskUserQuestion format.
+Stop if user aborts. Adjust approach if user requests scope change.
 
-**Step Dedup Check**: Each spec step must introduce a NEW code change. If existing code already does it → no step. If a guard/condition blocks the new flow → that removal/bypass IS a step. If an error path needs handling → explicit step.
+### 1d. Think it through
+Using context-scan output + 1b answers, sketch:
+- Files/systems touched per stack profile
+- Integration path, data flow, what calls what
+- Edge cases, failure behavior, recoverability
+- Impact surface + risk
 
-**Scope guardrail**: Spec boundary is FIXED once defined. New capabilities → "That belongs in its own spec."
+Code-flow analysis (max 5 functions): see `@references/code-flow.md`.
 
-### 1e — Surface Assumptions
-Scan 3-5 relevant source files. For each implicit assumption capture **Statement / Evidence / Confidence / If Wrong**. Only ask for confirmation when the assumption materially changes scope or implementation.
+Each spec step must introduce a NEW code change. Remove redundant steps. Add steps for blocked flows.
 
----
+### 1e. Surface assumptions
+Scan 3-5 relevant files. Capture: `Statement / Evidence / Confidence / If Wrong`.
+Only ask for confirmation when an assumption materially changes scope.
 
-## Phase 2 — Write the Spec
+## Phase 2 — Write the spec
 
-Only proceed if Phase 1c did not REJECT and user confirmed to continue.
-
-### Step 1 — Determine spec number
-Scan `specs/` (including `specs/completed/`) for existing `NNN-*.md` files, find the highest number, increment by 1. Use 3-digit zero-padded numbers.
-
-### Step 2 — Analyze the task
-Read the 2-3 most relevant source files. Use the Phase 1d sketch — do not re-analyze from scratch. List relevant installed skills in the spec Context section.
-
-### Step 3 — Create the spec file (with auto-split check)
-Translate Phase 1d sketch into spec steps with actual file paths. After drafting, check auto-split triggers:
-- **Trigger A**: draft >8 steps
-- **Trigger B**: steps span fundamentally different architectural layers
-
-If either fires: split into two specs (NNN and NNN+1), cross-reference each, note dependencies. Otherwise write a single spec.
-
-**Step dedup validation** (after drafting): For each step, verify against the Code-Flow-Analyse from 1d:
-- Does existing code already do this? → remove step
-- Does a guard/condition block this flow? → add step for guard removal/bypass
-- Is an error/failure path unhandled? → add explicit step
-
-### Step 4 — Present the spec
-Show spec to user for review and refinement.
-
-### Step 5 — Branch
-`AskUserQuestion`: "Branch fuer diese Spec erstellen?" — Ja: `git checkout -b spec/NNN-<slug>` / Nein / Spaeter.
-
-## Spec Template
-
-```markdown
-# Spec: [Clear Title]
-
-> **Spec ID**: NNN | **Created**: YYYY-MM-DD | **Status**: draft | **Complexity**: medium | **Branch**: —
-
-## Goal
-[One sentence]
-
-## Context
-[2-3 sentences. Why needed, what approach was chosen, relevant skills if any.]
-
-### Verified Assumptions
-- [Statement] — Evidence: `path/to/file` | Confidence: High | If Wrong: [consequence]
-
-## Steps
-- [ ] Step 1: description
-- [ ] Step 2: description
-
-## Acceptance Criteria
-- [ ] "[observable behavior verifiable by running a command]"
-
-## Files to Modify
-- `path/to/file` - reason
-
-## Out of Scope
-- What is NOT part of this task
-```
-
-## Constraints & Rules
-- **Goal**: 1 sentence. **Context**: 2-3 sentences.
-- **Steps**: Flat checkbox list, max 8 items. No nested sub-steps.
-- **Acceptance Criteria**: vollständig — alle beobachtbaren Outcomes. **Out of Scope**: max 3 items.
-- Steps must come from Phase 1d sketch — be specific, include file paths.
-- Use today's date. Filename: lowercase with hyphens.
-- Always create `specs/` and `specs/completed/` if they don't exist.
+1. **Spec number**: Scan `specs/` + `specs/completed/` for highest `NNN-*.md`, increment by 1.
+2. **Analyze**: Read 2-3 most relevant source files. Reuse Phase 1 sketch.
+3. **Create**: Use template from `@references/template.md`. Include **Stack Coverage** section.
+4. **Auto-split**: Draft >60 lines or >8 steps → split into NNN + NNN+1, cross-reference.
+5. **Present**: Show spec, ask for refinement.
+6. **Branch**: AskUserQuestion — create `spec/NNN-<slug>` now / later / skip.
 
 ## Next Step
 
-After the spec file is written, run `/spec-validate NNN` to score it before execution, or jump straight to `/spec-work NNN` to start implementation.
+Run `/spec-validate NNN` or jump to `/spec-work NNN`.

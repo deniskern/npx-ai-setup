@@ -1,6 +1,6 @@
-# Spec 627: Lightweight Dependency Graph (graph.json)
+# Spec: Lightweight Dependency Graph (graph.json)
 
-> **Status**: in-review
+> **Spec ID**: 629 | **Created**: 2026-01-01 | **Status**: completed | **Complexity**: medium | **Branch**: —
 > **Origin**: Research 626 (Graphify), User Decision: eigenes Lightweight-Mapping statt Python-Dependency
 > **Erstellt**: 2026-04-08
 > **Aufwand**: M (2-3 Tage)

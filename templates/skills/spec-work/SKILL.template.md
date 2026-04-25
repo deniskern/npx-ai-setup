@@ -13,6 +13,7 @@ allowed-tools:
   - Grep
   - Bash
   - Agent
+  - AskUserQuestion
 ---
 
 Executes spec $ARGUMENTS step by step and verifies acceptance criteria.

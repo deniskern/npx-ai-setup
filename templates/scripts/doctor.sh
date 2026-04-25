@@ -10,6 +10,9 @@ WARN="[WARN]"
 
 SETTINGS_FILE=".claude/settings.json"
 KNOWN_CURRENT_MODELS="
+claude-opus-4-7
+claude-sonnet-4-7
+claude-haiku-4-7
 claude-opus-4-6
 claude-sonnet-4-6
 claude-haiku-4-6
@@ -500,7 +503,7 @@ if [ -f "$_dsc_script" ] && [ -d ".agents/context" ]; then
 fi
 unset _dsc_script _dsc_out _dsc_viols _dsc_count _dsc_detail _dsc_total
 
-# 21. Hook token audit
+# 21. Hook token audit (dev-only — only runs inside npx-ai-setup repo)
 if [ -f "lib/hook-token-audit.sh" ]; then
   audit_out="$(bash lib/hook-token-audit.sh 2>/dev/null || true)"
   audit_violations="$(printf '%s\n' "$audit_out" | grep -c 'VIOLATION' 2>/dev/null || echo 0)"
@@ -510,8 +513,6 @@ if [ -f "lib/hook-token-audit.sh" ]; then
     total_tokens="$(printf '%s\n' "$audit_out" | grep -oE '^[[:space:]]*[A-Z].*[[:space:]]+[0-9]+[[:space:]]+(tokens|OK)' | awk '{sum+=$(NF-1)} END {print sum+0}' 2>/dev/null || echo '?')"
     add_row "$PASS" "Hook token budget" "All hooks within budget (~${total_tokens} tokens total)"
   fi
-else
-  add_row "$WARN" "Hook token budget" "lib/hook-token-audit.sh not found — skipping"
 fi
 
 # Output table
