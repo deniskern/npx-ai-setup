@@ -1,6 +1,6 @@
 #!/bin/bash
 # Compatibility layers and config file installation
-# Handles: OpenCode, Copilot, claudeignore, statusline
+# Handles: OpenCode, Copilot, statusline
 # Requires: core.sh ($TPL), setup.sh (_install_or_update_file)
 
 # Install all GitHub templates (copilot instructions + workflows)
@@ -119,19 +119,6 @@ generate_opencode_config() {
     cc=$(echo "$commands_json" | jq 'keys | length' 2>/dev/null || echo 0)
     echo "  opencode.json created ($ac agents, $cc commands, OpenCode compatibility)"
   fi
-}
-
-# Install .claudeignore with stack-specific patterns via managed block.
-# Uses STACK_PROFILE (set before calling) for profile selection.
-# Idempotent: re-syncs managed block, preserves user lines outside markers.
-install_claudeignore() {
-  local profile="${STACK_PROFILE:-default}"
-  local installer="$SCRIPT_DIR/lib/install-claudeignore.sh"
-  if [ ! -f "$installer" ]; then
-    echo "  install-claudeignore.sh not found, skipping" >&2
-    return 0
-  fi
-  bash "$installer" "$PWD" "$profile" "$TPL"
 }
 
 # Install statusline script globally from bundled template.

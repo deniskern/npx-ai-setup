@@ -457,7 +457,6 @@ run_reset() {
   [ -f ".claude/settings.json" ]      && TARGETS+=(".claude/settings.json")
   [ -f "WORKFLOW-GUIDE.md" ]           && TARGETS+=("WORKFLOW-GUIDE.md")
   [ -f ".ai-setup.json" ]             && TARGETS+=(".ai-setup.json")
-  [ -f ".claudeignore" ]              && TARGETS+=(".claudeignore")
   [ -f "AGENTS.md" ]                  && TARGETS+=("AGENTS.md")
   [ -f "opencode.json" ]              && TARGETS+=("opencode.json")
 

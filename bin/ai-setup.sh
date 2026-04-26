@@ -145,7 +145,7 @@ tui_step "Writing installation metadata"
 write_metadata
 update_gitignore
 
-# Detect stack profile + graphify candidate (used for claudeignore + graphify prompt)
+# Detect stack profile + graphify candidate (used for context bundles + graphify prompt)
 STACK_PROFILE="default"
 GRAPHIFY_CANDIDATE="false"
 if [ -f "$SCRIPT_DIR/lib/detect-stack.sh" ]; then
@@ -154,7 +154,6 @@ if [ -f "$SCRIPT_DIR/lib/detect-stack.sh" ]; then
   GRAPHIFY_CANDIDATE=$(printf '%s\n' "$_detect_out" | grep '^graphify_candidate=' | cut -d= -f2 || echo "false")
 fi
 export STACK_PROFILE
-install_claudeignore
 
 # Graphify opt-in (only when candidate, not skipped, and terminal is interactive)
 if [ "$GRAPHIFY_CANDIDATE" = "true" ] && [ "$FORCE_SKIP_GRAPHIFY" = "false" ] && [ -t 0 ]; then

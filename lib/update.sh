@@ -611,6 +611,7 @@ cleanup_known_orphans() {
     ".claude/hooks/transcript-ingest.sh"
     ".claude/hooks/notify.sh"
     ".claude/rules/terse-output.md"
+    ".claudeignore"
   )
   for target in "${orphans[@]}"; do
     [ -f "$target" ] || continue

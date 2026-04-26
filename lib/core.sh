@@ -36,6 +36,10 @@ build_template_map() {
     # One bundle is selected by stack and rendered into .agents/context/.
     [[ "$rel" == context-bundles/* ]] && continue
 
+    # Skip claudeignore/ — deprecated feature (replaced by permissions.deny in settings.json).
+    # Bundle files should never be installed; .claudeignore in targets is auto-cleaned via cleanup_known_orphans.
+    [[ "$rel" == claudeignore/* ]] && continue
+
     # Skip typescript.md — handled conditionally by TS_RULES_MAP in install_rules()
     [[ "$rel" == "claude/rules/typescript.md" ]] && continue
 
