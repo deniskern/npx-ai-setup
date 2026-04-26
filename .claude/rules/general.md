@@ -15,10 +15,11 @@ Before implementing anything manually, check installed skills:
 2. If a skill matches the task, invoke it via the `Skill` tool — do not reimplement
 3. If no skill matches, ask the user before proceeding with manual implementation
 
-## Web Fetching
-Library/API docs: ALWAYS try Context7 first (`mcp__context7__resolve-library-id` → `mcp__context7__query-docs`).
-Only fall back to WebFetch/defuddle if Context7 returns no library match.
-Web pages (non-library): `defuddle parse <url> --md`. WebFetch only if defuddle unavailable or page requires JS rendering.
+## External Systems & Web Fetching
+
+Library/API/SDK/CLI/Cloud-Service docs: Context7 MUST be first (`resolve-library-id` → `query-docs`). WebFetch/WebSearch only if no match — state fallback explicitly. Applies to known libs too (Nuxt, Storyblok, Shopify, Laravel, etc.) — training data stales.
+Skip Context7 only for: own-code refactor, business logic, general concepts, user-provided URL.
+Non-library web pages: `defuddle parse <url> --md`; WebFetch only if defuddle unavailable.
 
 ## MCP Servers
 Project `.mcp.json` overrides global servers with the same name.

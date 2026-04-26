@@ -23,6 +23,7 @@ Features müssen für mindestens einen Primary Stack nützlich sein. Generische 
 - **Idempotent**: mehrfaches `npx ai-setup` darf nichts kaputt machen, `--patch` für Updates.
 - **Zero build in diesem Repo**: pure bash, POSIX-kompatibel wo möglich.
 - **Host-Tools global, nicht pro Projekt**: Python/qmd/graphify einmal auf Dev-Machine, Skill ruft Binary.
+- **Context7 first**: externe Lib/API/SDK/CLI-Lookups via Context7, WebFetch nur als Fallback. Details: `.claude/rules/general.md`.
 
 ## Project Context (tiered loading)
 @.agents/context/SUMMARY.md
