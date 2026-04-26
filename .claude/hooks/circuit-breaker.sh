@@ -1,14 +1,17 @@
 #!/bin/bash
-# Circuit Breaker: Detects when Claude is going in circles
-# Tracks edit frequency per file. Warns at 5x, blocks at 8x within 10 min.
-# Dead-loop protection: BLOCK message explicitly forbids retry attempts.
+# Circuit Breaker: Detects edit-loops on the SAME file.
+# Tracks edit frequency per file. Warns at 20x, blocks at 40x within 10 min.
+# Thresholds are intentionally lenient — refactor sessions easily hit 15-30 edits
+# per file, that is normal dev flow not a loop. Block only catches real runaway.
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 [ -z "$FILE_PATH" ] && exit 0
 
-# Whitelist: spec progress files and handoff docs are edited frequently by design
+# Whitelist: spec progress files, handoff docs, and common hot files (frequent edits by design)
 case "$FILE_PATH" in
   */specs/*.md|*/HANDOFF.md) exit 0 ;;
+  */CHANGELOG.md|*/README.md) exit 0 ;;
+  */pages/*|*/components/*|*/app/*) exit 0 ;;
 esac
 
 PROJ_HASH=$(echo "$PWD" | shasum | cut -c1-8)
@@ -16,18 +19,18 @@ LOG="/tmp/claude-cb-${PROJ_HASH}.log"
 touch "$LOG" && chmod 600 "$LOG" 2>/dev/null
 NOW=$(date +%s)
 WINDOW=600
-WARN=5
-BLOCK=8
+WARN=20
+BLOCK=40
 
 # Raise thresholds when a spec is actively in-progress — planned edits, not a loop
 if [ -d specs ] && grep -ql "Status.*in-progress" specs/*.md 2>/dev/null; then
-  WARN=12
-  BLOCK=20
+  WARN=50
+  BLOCK=100
   # Further raise when multiple specs are in-progress (spec-work-all batch scenario)
   SPEC_COUNT=$(grep -rl "Status.*in-progress" specs/*.md 2>/dev/null | wc -l | tr -d ' ')
   if [ "${SPEC_COUNT:-0}" -ge 2 ]; then
-    WARN=25
-    BLOCK=40
+    WARN=100
+    BLOCK=200
   fi
 fi
 
